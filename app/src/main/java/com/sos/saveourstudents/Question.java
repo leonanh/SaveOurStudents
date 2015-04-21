@@ -1,0 +1,16 @@
+package com.sos.saveourstudents;
+
+/**
+ * Created by deamon on 4/21/15.
+ */
+public class Question {
+    String title;
+
+
+    public Question(){
+        this.title = "Unset";
+    }
+    public Question(String title){
+        this.title = title;
+    }
+}

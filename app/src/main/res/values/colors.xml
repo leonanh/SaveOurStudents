@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2012 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<resources>
+    
+    <color name="primary_light">#B2EBF2</color>
+    <color name="primary_dark">#0097A7</color>
+    <color name="primary">#00BCD4</color>
+    <color name="accent">#FFC107</color>
+    <color name="accent_dark">#FFA000</color>
+    <color name="primary_text">#212121</color>
+    <color name="primary_text1">#FFFFFF</color>
+    
+	<color name="hint_text">#727272</color>
+	<color name="transparent">#00000000</color>
+	<color name="transparent_black">#12000000</color>
+	
+	<color name="bright_pink">#FF007F</color>
+    <color name="red">#FF0000</color>
+    <color name="orange">#FF7F00</color>
+    <color name="green">#00FF00</color>
+    <color name="spring_green">#00FF7F</color>
+    <color name="cyan">#00FFFF</color>
+    <color name="azure">#007FFF</color>
+    <color name="blue">#0000FF</color>
+    <color name="violet">#7F00FF</color>
+    <color name="magenta">#FF00FF</color>
+	<color name="color_1">#E64A19</color>
+	<color name="color_2">#FF5722</color>
+	
+	<color name="color_4">#FFEB3B</color>
+	<color name="color_5">#448AFF</color>
+	<color name="color_6">#03A9F4</color>
+	<color name="color_7">#FF9800</color>
+	<color name="color_8">#673AB7</color>
+	<color name="color_9">#009688</color>
+</resources>
