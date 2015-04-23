@@ -6,14 +6,24 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.andexert.library.RippleView;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,38 +33,42 @@ import java.util.List;
  */
 public class FragmentFeed extends Fragment {
 
+    private final String TAG = "SOS Tag";
     private RecycleViewAdapter mAdapter;
 
     static CardManager mCardManagerInstance;
     RecyclerView mRecyclerView;
-    RecyclerView.LayoutManager mLayoutManager;
 
     Context mContext;
-    //private String[] myDataset = {"1", "2", "1", "2", "1", "2"};
 
     static List<Question> mQuestionList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
 
+        // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.feed_layout, container,
                 false);
 
 
-        //TODO Move into server call (Async or volley)
+        mContext = this.getActivity().getBaseContext();
+
+        if(!Singleton.hasBeenInitialized()){
+            Singleton.initialize(mContext);
+        }
+
+
+        //TODO Move into server call (volley)
         mQuestionList = new ArrayList<Question>();
-        for(int a = 0;a<5;a++){
+        for(int a = 0;a<15;a++){
             Question temp = new Question("Question "+a);
             mQuestionList.add(temp);
         }
 
 
-        mContext = this.getActivity().getBaseContext();
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.my_recycler_view);
-        //mRecyclerView.setHasFixedSize(true);
 
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.my_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
@@ -65,32 +79,131 @@ public class FragmentFeed extends Fragment {
 
 
 
+        //VOLLEYExamples
 
+        //String url ="http://54.200.33.91:8080/hello/";
 
-
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-        //mRecyclerView.setHasFixedSize(true);
+        String url = "http://10.0.2.2:8080/com.mysql.services/rest/serviceclass/getVenues";
 
         /*
-        // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        // Request a string response from the provided URL.
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Display the first 500 characters of the response string.
+                        //mTextView.setText("Response is: "+ response.substring(0,500));
+                        System.out.println("Response is: "+ response);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                System.out.println("That didn't work: "+error);
+            }
+        });
+// Add the request to the RequestQueue.
+        //Singleton.getInstance().mRequestQueue.add(stringRequest);
+
+    Singleton.getInstance().addToRequestQueue(stringRequest);
+*/
 
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.cardList);
-        mRecyclerView.setHasFixedSize(true);
 
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        TextView mTxtDisplay;
+        ImageView mImageView;
+        //mTxtDisplay = (TextView) findViewById(R.id.txtDisplay);
+        //String url = "http://my-json-feed";
 
-        mAdapter = new RecycleViewAdapter(CardManager.getInstance().getCounters(), R.layout.simple_nav_drawer_item, mContext);
-        mRecyclerView.setAdapter(mAdapter);
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url, (JSONObject)null, new Response.Listener<JSONObject>() {
 
-        // specify an adapter (see also next example)
-        mAdapter = new MyAdapter(myDataset);
-        mRecyclerView.setAdapter(mAdapter);
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        System.out.println("Response: " + response.toString());
+                        //mTxtDisplay.setText("Response: " + response.toString());
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+                        System.out.println("Error: " + error.toString());
+                    }
+                });
+
+        // Access the RequestQueue through your singleton class.
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+
+
+
+        /**
+         * JSON Array Example
+         */
+        // Tag used to cancel the request
+        String tag_json_arry = "json_array_req";
+        String url1 = "http://api.androidhive.info/volley/person_array.json";
+
+        JsonArrayRequest req = new JsonArrayRequest(url1,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d(TAG, response.toString());
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+
+            }
+        });
+
+        // Adding request to request queue
+        //Singleton.getInstance().addToRequestQueue(req, tag_json_arry);
+
+        /**
+         * Image Request Example
+         */
+        String urlimage = "http://i01.i.aliimg.com/img/pb/487/830/416/416830487_639.jpg";
+        //ImageLoader imageLoader = Singleton.getInstance().getImageLoader();
+
+        // If you are using normal ImageView
+        /*
+        imageLoader.get(urlimage, new ImageLoader.ImageListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Image Load Error: " + error.getMessage());
+            }
+
+            @Override
+            public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
+                if (response.getBitmap() != null) {
+                    // load image into imageview
+                    //TODO imageview.setImageBitmap(response.getBitmap());
+                }
+            }
+        });
         */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         return rootView;
     }

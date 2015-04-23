@@ -3,4 +3,10 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+    <string name="drawer_open">drawer open</string>
+    <string name="drawer_close">drawer closed</string>
+
+    <string name="api_key">AIzaSyAv06a77IQVdgPXIjKpFjDjmv_u--tKV_M</string>
+
 </resources>

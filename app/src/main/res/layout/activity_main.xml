@@ -1,3 +1,4 @@
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -34,4 +35,40 @@
         android:layout_gravity="center"
         android:textColor="@android:color/black"/>
 
+
+
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <!-- Main layout -->
+
+        <FrameLayout
+            android:id="@+id/main_fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!-- Nav drawer -->
+
+        <fragment
+            android:id="@+id/fragment_drawer"
+
+            android:layout_width="@dimen/drawer_width_least"
+            android:layout_height="match_parent"
+            android:layout_gravity="left"
+            class="com.sos.saveourstudents.FragmentVenueNavDrawer" />
+
+
+
+    </android.support.v4.widget.DrawerLayout>
+
+
+
+
+
 </LinearLayout>
+
+
+
+
