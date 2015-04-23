@@ -1,16 +1,9 @@
 package com.sos.saveourstudents;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.andexert.library.RippleView;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -18,6 +11,11 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.andexert.library.RippleView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FragmentVenueNavDrawer extends Fragment {
     boolean mDualPane;
@@ -32,9 +30,10 @@ public class FragmentVenueNavDrawer extends Fragment {
     
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+        /*
 		View rootView = inflater.inflate(R.layout.nav_drawer_layout, container,
 				false);
-		
+
 		mCounterList = new ArrayList<Venue>();
 		for(int a = 0;a<5;a++){
 			Venue temp = new Venue("Venue "+a);
@@ -51,8 +50,8 @@ public class FragmentVenueNavDrawer extends Fragment {
 		mAdapter = new RecycleViewAdapter(CardManager.getInstance().getCounters(), R.layout.simple_nav_drawer_item, mContext);
 		mRecyclerView.setAdapter(mAdapter);
 		
-		
-		return rootView;
+		*/
+		return null; //TODO
 	}
     
     
