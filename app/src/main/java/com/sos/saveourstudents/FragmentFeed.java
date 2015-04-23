@@ -280,7 +280,7 @@ public class FragmentFeed extends Fragment {
 
             public ViewHolder(View itemView) {
                 super(itemView);
-                questionText = (TextView) itemView.findViewById(R.id.feed_text);
+                questionText = (TextView) itemView.findViewById(R.id.question_text);
                 rippleView = (RippleView) itemView.findViewById(R.id.more);
                 //rippleView.setRippleColor(getResources().getColor(R.color.blue));
 
