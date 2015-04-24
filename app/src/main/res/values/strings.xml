@@ -8,5 +8,12 @@
     <string name="drawer_close">drawer closed</string>
 
     <string name="api_key">AIzaSyAv06a77IQVdgPXIjKpFjDjmv_u--tKV_M</string>
+    <string name="title_activity_profile">ProfileActivity</string>
+
+    <string name="profile_rating">Rating: </string>
+    <string name="profile_aboutme">About Me</string>
+    <string name="profile_school">School: </string>
+    <string name="profile_major">Major: </string>
+    <string name="profile_description">Description: </string>
 
 </resources>

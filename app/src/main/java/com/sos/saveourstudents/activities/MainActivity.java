@@ -1,6 +1,5 @@
-package com.sos.saveourstudents;
+package com.sos.saveourstudents.activities;
 
-import android.app.FragmentTransaction;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -14,9 +13,11 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
-import com.google.android.gms.maps.MapFragment;
+import com.sos.saveourstudents.R;
+import com.sos.saveourstudents.SlidingTabLayout;
+import com.sos.saveourstudents.fragments.FragmentFeed;
+import com.sos.saveourstudents.fragments.FragmentMap;
 
 
 public class MainActivity extends ActionBarActivity {

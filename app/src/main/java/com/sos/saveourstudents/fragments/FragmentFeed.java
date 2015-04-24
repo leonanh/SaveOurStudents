@@ -1,4 +1,4 @@
-package com.sos.saveourstudents;
+package com.sos.saveourstudents.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -21,6 +21,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.sos.saveourstudents.models.Question;
+import com.sos.saveourstudents.R;
+import com.sos.saveourstudents.models.Singleton;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

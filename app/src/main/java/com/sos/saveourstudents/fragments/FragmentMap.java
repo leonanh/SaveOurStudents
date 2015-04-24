@@ -1,4 +1,4 @@
-package com.sos.saveourstudents;
+package com.sos.saveourstudents.fragments;
 
 import android.content.Context;
 import android.location.Location;
@@ -13,6 +13,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.sos.saveourstudents.R;
 
 /**
  * Created by deamon on 4/21/15.
