@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,13 +22,14 @@ import java.net.URL;
 
 public class ProfileActivity extends Activity {
     private ImageView profileImage;
-    private TextView profileFullname;
+    private TextView profileFirstName;
+    private TextView profileLastName;
     private TextView profileRating;
     private TextView profileAboutme;
     private TextView profileSchool;
     private TextView profileMajor;
     private TextView profileDescription;
-    private Button editButton;
+    private ImageButton editButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,21 +37,15 @@ public class ProfileActivity extends Activity {
         setContentView(R.layout.activity_profile);
 
         profileImage = (ImageView) findViewById(R.id.profile_image);
-        profileFullname = (TextView) findViewById(R.id.profile_fullname);
+        profileFirstName = (TextView) findViewById(R.id.profile_firstName);
+        profileLastName = (TextView) findViewById(R.id.profile_lastName);
         profileRating = (TextView) findViewById(R.id.profile_rating);
         profileAboutme = (TextView) findViewById(R.id.profile_aboutme);
         profileSchool = (TextView) findViewById(R.id.profile_school);
         profileMajor = (TextView) findViewById(R.id.profile_major);
         profileDescription = (TextView) findViewById(R.id.profile_description);
 
-        profileFullname.setText("TODO: GRAB NAME FROM DATABASE");
-        profileRating.setText(R.string.profile_rating + "TODO: GRAB RATING FROM DATABASE");
-        profileAboutme.setText(R.string.profile_aboutme);
-        profileSchool.setText(R.string.profile_school + "TODO: GRAB SCHOOL FROM DATABASE");
-        profileMajor.setText(R.string.profile_major + "TODO: GRAB MAJOR FROM DATABASE");
-        profileDescription.setText(R.string.profile_description + "TODO: GRAB DESCRIPTION FROM DATABASE");
-
-        editButton = (Button) this.findViewById(R.id.edit_profile);
+        editButton = (ImageButton) this.findViewById(R.id.edit_profile);
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
