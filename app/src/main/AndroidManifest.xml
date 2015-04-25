@@ -46,6 +46,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sos.saveourstudents.activities.MainActivity" />
         </activity>
+        <activity
+            android:name=".activities.EditProfileActivity"
+            android:label="@string/title_activity_edit_profile"
+            android:parentActivityName=".activities.ProfileActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.sos.saveourstudents.activities.ProfileActivity" />
+        </activity>
     </application>
 
 </manifest>

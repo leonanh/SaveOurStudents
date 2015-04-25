@@ -1,14 +1,23 @@
 package com.sos.saveourstudents.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sos.saveourstudents.R;
+
+import org.json.JSONObject;
+
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class ProfileActivity extends Activity {
     private ImageView profileImage;
@@ -18,6 +27,7 @@ public class ProfileActivity extends Activity {
     private TextView profileSchool;
     private TextView profileMajor;
     private TextView profileDescription;
+    private Button editButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +48,14 @@ public class ProfileActivity extends Activity {
         profileSchool.setText(R.string.profile_school + "TODO: GRAB SCHOOL FROM DATABASE");
         profileMajor.setText(R.string.profile_major + "TODO: GRAB MAJOR FROM DATABASE");
         profileDescription.setText(R.string.profile_description + "TODO: GRAB DESCRIPTION FROM DATABASE");
+
+        editButton = (Button) this.findViewById(R.id.edit_profile);
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ProfileActivity.this, EditProfileActivity.class));
+            }
+        });
     }
 
 
@@ -62,4 +80,5 @@ public class ProfileActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
 }

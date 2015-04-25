@@ -1,5 +1,6 @@
 package com.sos.saveourstudents.activities;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -131,6 +132,11 @@ public class MainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            return true;
+        }
+
+        if (id == R.id.view_profile) {
+            startActivity(new Intent(this, ProfileActivity.class));
             return true;
         }
 
