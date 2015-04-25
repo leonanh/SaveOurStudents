@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">SaveOurStudents</string>
-
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="login">Log in</string>
@@ -15,5 +14,7 @@
     <string name="create_email_prompt">Enter e-mail here.</string>
     <string name="send_email_prompt">Send e-mail</string>
     <string name="forgot_credentials_prompt">Forget your login? Enter your email here and we'll send you your info.</string>
-
+    <string name="openDrawer">drawer open</string>
+    <string name="closeDrawer">drawer closed</string>
+    <string name="api_key">AIzaSyAv06a77IQVdgPXIjKpFjDjmv_u--tKV_M</string>
 </resources>
