@@ -7,7 +7,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
@@ -17,7 +21,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 /**
  * Created by deamon on 4/21/15.
  */
-public class FragmentMap extends Fragment {
+public class FragmentMap extends Fragment implements
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener{
 
     static final LatLng UCSD = new LatLng(32.8810, 117.2380);
     static final LatLng GEISEL = new LatLng(32.8812, 117.2375);
@@ -28,6 +34,7 @@ public class FragmentMap extends Fragment {
     private Context mContext;
 
     private View rootView;
+    private GoogleApiClient mGoogleApiClient;
 
 
     public FragmentMap() {
@@ -38,6 +45,7 @@ public class FragmentMap extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        mContext = this.getActivity();
         rootView = inflater.inflate(R.layout.map_layout, container,
                 false);
 
@@ -50,7 +58,7 @@ public class FragmentMap extends Fragment {
 
 
         try {
-            MapsInitializer.initialize(getActivity());
+            MapsInitializer.initialize(mContext);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -58,8 +66,19 @@ public class FragmentMap extends Fragment {
         setUpMapIfNeeded();
 
         //mMap.getUiSettings().setMyLocationButtonEnabled(false);
-        //mMap.setMyLocationEnabled(true);
+        if(mMap != null)
+            mMap.setMyLocationEnabled(true);
 
+        buildGoogleApiClient();
+
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        if (mLastLocation != null) {
+            TextView mLatitudeText = (TextView) rootView.findViewById(R.id.lat_text);
+            mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
+            TextView mLongitudeText = (TextView) rootView.findViewById(R.id.long_text);
+            mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
+        }
         //setUpMapIfNeeded();
 
 
@@ -86,6 +105,21 @@ public class FragmentMap extends Fragment {
 
 
         return rootView;
+    }
+
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(mContext)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+
+        /*GoogleApiClient client = new GoogleApiClient.Builder(this)
+                .addApi(Plus.API)
+                .addScope(Plus.SCOPE_PLUS_LOGIN)
+                .setAccountName("users.account.name@gmail.com")
+                .build();*/
+        mGoogleApiClient.connect();
     }
 
 
@@ -128,8 +162,18 @@ public class FragmentMap extends Fragment {
     }
 
 
+    @Override
+    public void onConnected(Bundle bundle) {
 
+    }
 
+    @Override
+    public void onConnectionSuspended(int i) {
 
+    }
 
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
 }

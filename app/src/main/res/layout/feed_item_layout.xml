@@ -19,7 +19,7 @@
             android:id="@+id/more"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            ripple:rv_color="@android:color/black">
+            ripple:rv_color="@color/primary">
 
      <ImageView
          android:id="@+id/question_image"
