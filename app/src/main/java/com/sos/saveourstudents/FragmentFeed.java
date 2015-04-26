@@ -88,35 +88,10 @@ public class FragmentFeed extends Fragment {
 
         String url = "http://10.0.2.2:8080/com.mysql.services/rest/serviceclass/getVenues";
 
-        /*
-        // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
-                        //mTextView.setText("Response is: "+ response.substring(0,500));
-                        System.out.println("Response is: "+ response);
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-                System.out.println("That didn't work: "+error);
-            }
-        });
-// Add the request to the RequestQueue.
-        //Singleton.getInstance().mRequestQueue.add(stringRequest);
-
-    Singleton.getInstance().addToRequestQueue(stringRequest);
-*/
-
 
 
         TextView mTxtDisplay;
         ImageView mImageView;
-        //mTxtDisplay = (TextView) findViewById(R.id.txtDisplay);
-        //String url = "http://my-json-feed";
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url, (JSONObject)null, new Response.Listener<JSONObject>() {
 
@@ -192,22 +167,6 @@ public class FragmentFeed extends Fragment {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         return rootView;
     }
 
@@ -248,7 +207,7 @@ public class FragmentFeed extends Fragment {
 
         @Override
         public void onBindViewHolder(ViewHolder viewHolder, int i) {
-            viewHolder.questionText.setText(mCardManagerInstance.getCounters().get(i).title+"");
+            //viewHolder.questionText.setText(mCardManagerInstance.getCounters().get(i).title+"");
             //viewHolder.venueType.setText(mInstance.getCounters().get(i)+"");
 
 			/*
@@ -283,7 +242,7 @@ public class FragmentFeed extends Fragment {
 
             public ViewHolder(View itemView) {
                 super(itemView);
-                questionText = (TextView) itemView.findViewById(R.id.feed_text);
+                questionText = (TextView) itemView.findViewById(R.id.question_text);
                 rippleView = (RippleView) itemView.findViewById(R.id.more);
                 //rippleView.setRippleColor(getResources().getColor(R.color.blue));
 
