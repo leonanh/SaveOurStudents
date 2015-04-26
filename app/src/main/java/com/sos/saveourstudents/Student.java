@@ -1,11 +1,13 @@
 package com.sos.saveourstudents;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.widget.ImageView;
 
 /**
  * Created by Brady on 4/25/15.
  */
-public class Student {
+public class Student implements Parcelable{
     private String firstName;
     private String lastName;
     private int rating;
@@ -78,5 +80,15 @@ public class Student {
 
     public void setProfilePicture(ImageView profilePicture) {
         this.profilePicture = profilePicture;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
     }
 }

@@ -2,6 +2,7 @@ package com.sos.saveourstudents;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,38 +11,34 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class ProfileActivity extends Activity {
-    private ImageView profileImage;
-    private TextView profileFirstName;
-    private TextView profileLastName;
-    private TextView profileRating;
-    private TextView profileAboutme;
-    private TextView profileSchool;
-    private TextView profileMajor;
-    private TextView profileDescription;
-    private ImageButton editButton;
+import it.gmariotti.cardslib.library.internal.Card;
+
+public class ProfileActivity extends Activity
+        implements ViewProfileFragment.OnFragmentInteractionListener{
+
+    private Student currStudent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        profileImage = (ImageView) findViewById(R.id.profile_image);
-        profileFirstName = (TextView) findViewById(R.id.profile_firstName);
-        profileLastName = (TextView) findViewById(R.id.profile_lastName);
-        profileRating = (TextView) findViewById(R.id.profile_rating);
-        profileAboutme = (TextView) findViewById(R.id.profile_aboutme);
-        profileSchool = (TextView) findViewById(R.id.profile_school);
-        profileMajor = (TextView) findViewById(R.id.profile_major);
-        profileDescription = (TextView) findViewById(R.id.profile_description);
+        // editButton = (ImageButton) this.findViewById(R.id.edit_profile);
+        // editButton.setOnClickListener(new View.OnClickListener() {
+        //     @Override
+        //     public void onClick(View v) {
+        //         startActivity(new Intent(ProfileActivity.this, EditProfileActivity.class));
+        //     }
+        // });
 
-        editButton = (ImageButton) this.findViewById(R.id.edit_profile);
-        editButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(ProfileActivity.this, EditProfileActivity.class));
-            }
-        });
+        // TODO: Grab currStudent from database
+        currStudent = new Student("Brady", "Shi", 0, "UCSD", "Computer Engineering", "Coffee Addict",
+                null);
+
+        ViewProfileFragment viewProfileFragment = ViewProfileFragment.newInstance(currStudent);
+        getFragmentManager().beginTransaction().add(R.id.profile_activity_container, viewProfileFragment)
+                .commit();
+
     }
 
 
@@ -67,4 +64,8 @@ public class ProfileActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
 }
