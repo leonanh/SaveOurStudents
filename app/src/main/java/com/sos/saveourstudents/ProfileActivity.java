@@ -11,10 +11,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import it.gmariotti.cardslib.library.internal.Card;
-
 public class ProfileActivity extends Activity
-        implements ViewProfileFragment.OnFragmentInteractionListener{
+        implements ViewProfileFragment.OnEditButtonListener{
 
     private Student currStudent;
 
@@ -32,7 +30,10 @@ public class ProfileActivity extends Activity
         // });
 
         // TODO: Grab currStudent from database
-        currStudent = new Student("Brady", "Shi", 0, "UCSD", "Computer Engineering", "Coffee Addict",
+        currStudent = new Student("Brady", "Shi", 0, "UCSD", "Computer Engineering",
+                "Coffee Addict Coffee AddictCoffee AddictCoffee AddictCoffee AddictCoffee AddictCoffee AddictCoffee Addic" +
+                        "Coffee AddictCoffee AddictCoffee AddictCoffee AddictCoffee AddictCoffee AddictCoffee Addic" +
+                        "Coffee AddictCoffee AddictCoffee AddictCoffee Addicttt",
                 null);
 
         ViewProfileFragment viewProfileFragment = ViewProfileFragment.newInstance(currStudent);
@@ -65,7 +66,7 @@ public class ProfileActivity extends Activity
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onEditButton(Uri uri) {
 
     }
 }

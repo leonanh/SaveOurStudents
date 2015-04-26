@@ -15,4 +15,18 @@
         card:cardBackgroundColor="@color/primary_dark"
         card:card_layout_resourceID="@layout/native_material_largeimage_card"/>
 
+    <it.gmariotti.cardslib.library.view.CardViewNative
+        android:id="@+id/profile_aboutMe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/profile_header"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginBottom="0dp"
+        card:cardBackgroundColor="@color/primary_text1"
+        card:card_layout_resourceID="@layout/native_material_topcolored_card">
+
+    </it.gmariotti.cardslib.library.view.CardViewNative>
+
 </RelativeLayout>
