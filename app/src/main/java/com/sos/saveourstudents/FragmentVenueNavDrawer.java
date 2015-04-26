@@ -1,4 +1,4 @@
-package com.sos.saveourstudents.fragments;
+package com.sos.saveourstudents;
 
 
 import java.util.ArrayList;

@@ -57,7 +57,7 @@
             android:layout_width="@dimen/drawer_width_least"
             android:layout_height="match_parent"
             android:layout_gravity="left"
-            class="com.sos.saveourstudents.fragments.FragmentVenueNavDrawer" />
+            class="com.sos.saveourstudents.FragmentVenueNavDrawer" />
 
 
 

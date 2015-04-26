@@ -1,4 +1,4 @@
-package com.sos.saveourstudents.models;
+package com.sos.saveourstudents;
 
 /**
  * Created by deamon on 4/21/15.

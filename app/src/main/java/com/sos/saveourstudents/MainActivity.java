@@ -1,4 +1,4 @@
-package com.sos.saveourstudents.activities;
+package com.sos.saveourstudents;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -14,11 +14,6 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import com.sos.saveourstudents.R;
-import com.sos.saveourstudents.SlidingTabLayout;
-import com.sos.saveourstudents.fragments.FragmentFeed;
-import com.sos.saveourstudents.fragments.FragmentMap;
 
 
 public class MainActivity extends ActionBarActivity {
