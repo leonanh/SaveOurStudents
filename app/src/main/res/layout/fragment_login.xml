@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="fill_parent"
@@ -15,14 +15,16 @@
     display notifications such as "incorrect login"-->
     <TextView
         android:id="@+id/login_prompt"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Prompt Text//Will not be seen"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="false"
+        android:gravity="center" />
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -53,30 +55,25 @@
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="right">
 
             <ImageButton
                 android:id="@+id/facebook_login_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/ic_launcher"
-                android:layout_weight="1" />
+                android:src="@drawable/ic_fb"
+                android:layout_width="@dimen/login_icon_size"
+                android:layout_height="@dimen/login_icon_size"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY" />
 
             <ImageButton
                 android:id="@+id/google_login_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:scaleType="fitXY"
+                android:adjustViewBounds="true"
+                android:layout_width="@dimen/login_icon_size"
+                android:layout_height="@dimen/login_icon_size"
                 android:focusableInTouchMode="false"
-                android:src="@mipmap/ic_launcher"
-                android:layout_weight="1" />
-
-            <ImageButton
-                android:id="@+id/other_login_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/ic_launcher"
-                android:layout_weight="1" />
+                android:src="@drawable/ic_gplus" />
 
         </LinearLayout>
 
@@ -87,27 +84,38 @@
     TODO: I need to find a way to align both the forgot login/ sign up labels horizontally and push
     them to either end of the LinearLayout.
      -->
-    <LinearLayout
-        android:orientation="vertical"
+    <RelativeLayout
+        android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="center">
+        android:gravity="center"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentBottom="true">
 
         <TextView
             android:id="@+id/forgot_login_btn"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:enabled="true"
             android:text="@string/forgot_login"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:clickable="true"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            />
 
         <TextView
+            android:clickable="true"
             android:id="@+id/signup_btn"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="@string/sign_up"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentEnd="false"
+            android:gravity="end" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
-</LinearLayout>
+</RelativeLayout>
