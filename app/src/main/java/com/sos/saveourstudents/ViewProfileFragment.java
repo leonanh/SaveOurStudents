@@ -9,6 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.gc.materialdesign.views.Button;
+import com.gc.materialdesign.views.ButtonFloat;
+
 import it.gmariotti.cardslib.library.cards.material.MaterialLargeImageCard;
 import it.gmariotti.cardslib.library.cards.topcolored.TopColoredCard;
 import it.gmariotti.cardslib.library.internal.Card;
@@ -26,6 +29,7 @@ import it.gmariotti.cardslib.library.view.CardViewNative;
  */
 public class ViewProfileFragment extends Fragment {
     private static final String ARG_PARAM1 = "student";
+    private Button editButton;
 
     private Student currStudent;
 
@@ -107,14 +111,17 @@ public class ViewProfileFragment extends Fragment {
         CardViewNative aboutMeCardView = (CardViewNative) getActivity().findViewById(R.id.profile_aboutMe);
         aboutMeCardView.setCard(aboutMeCard);
 
+        editButton = (ButtonFloat) getActivity().findViewById(R.id.profile_editButton);
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mListener != null) {
+                    mListener.onEditButton();
+                }
+            }
+        });
 
-    }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onEditButton(uri);
-        }
     }
 
     @Override
@@ -145,7 +152,7 @@ public class ViewProfileFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnEditButtonListener{
-        public void onEditButton(Uri uri);
+        public void onEditButton();
     }
 
 }

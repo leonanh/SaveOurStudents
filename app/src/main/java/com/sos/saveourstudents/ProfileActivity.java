@@ -11,30 +11,23 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.gc.materialdesign.views.Button;
+import com.gc.materialdesign.views.ButtonFloat;
+
 public class ProfileActivity extends Activity
-        implements ViewProfileFragment.OnEditButtonListener{
+        implements ViewProfileFragment.OnEditButtonListener, EditProfileFragment.OnFragmentInteractionListener {
 
     private Student currStudent;
+    private Button editButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        // editButton = (ImageButton) this.findViewById(R.id.edit_profile);
-        // editButton.setOnClickListener(new View.OnClickListener() {
-        //     @Override
-        //     public void onClick(View v) {
-        //         startActivity(new Intent(ProfileActivity.this, EditProfileActivity.class));
-        //     }
-        // });
-
         // TODO: Grab currStudent from database
         currStudent = new Student("Brady", "Shi", 0, "UCSD", "Computer Engineering",
-                "Coffee Addict Coffee AddictCoffee AddictCoffee AddictCoffee AddictCoffee AddictCoffee AddictCoffee Addic" +
-                        "Coffee AddictCoffee AddictCoffee AddictCoffee AddictCoffee AddictCoffee AddictCoffee Addic" +
-                        "Coffee AddictCoffee AddictCoffee AddictCoffee Addicttt",
-                null);
+                "Coffee Addict", null);
 
         ViewProfileFragment viewProfileFragment = ViewProfileFragment.newInstance(currStudent);
         getFragmentManager().beginTransaction().add(R.id.profile_activity_container, viewProfileFragment)
@@ -66,7 +59,14 @@ public class ProfileActivity extends Activity
     }
 
     @Override
-    public void onEditButton(Uri uri) {
+    public void onEditButton() {
+        EditProfileFragment editProfileFragment = EditProfileFragment.newInstance(currStudent);
+        getFragmentManager().beginTransaction().addToBackStack(null)
+                .replace(R.id.profile_activity_container, editProfileFragment).commit();
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
 
     }
 }
