@@ -1,5 +1,6 @@
 package com.sos.saveourstudents;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -18,7 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.sos.saveourstudents.supportclasses.SlidingTabLayout;
-
 
 public class MainActivity extends ActionBarActivity {
 
@@ -178,6 +178,11 @@ public class MainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            return true;
+        }
+
+        if (id == R.id.view_profile) {
+            startActivity(new Intent(this, ProfileActivity.class));
             return true;
         }
 
