@@ -17,6 +17,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Marker;
 
 /**
  * Created by deamon on 4/21/15.
@@ -25,8 +26,8 @@ public class FragmentMap extends Fragment implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener{
 
-    static final LatLng UCSD = new LatLng(32.8810, 117.2380);
-    static final LatLng GEISEL = new LatLng(32.8812, 117.2375);
+    static final LatLng UCSD = new LatLng(32.88006, -117.234013);
+    static final LatLng GEISEL = new LatLng(32.881151, -117.23744999999997);
     private GoogleMap mMap;
     private MapView mMapView;
     private Bundle mBundle;
@@ -66,8 +67,18 @@ public class FragmentMap extends Fragment implements
         setUpMapIfNeeded();
 
         //mMap.getUiSettings().setMyLocationButtonEnabled(false);
-        if(mMap != null)
+        if(mMap != null)//Fernando test
+        {
+            Marker ucsd = mMap.addMarker(new MarkerOptions().position(UCSD)
+                    .title("UCSD"));
+            Marker geisel = mMap.addMarker(new MarkerOptions()
+                            .position(GEISEL)
+                            .title("GEISEL")
+                            .snippet("GEISEL is cool"));
+
             mMap.setMyLocationEnabled(true);
+        }
+
 
         buildGoogleApiClient();
 
@@ -176,4 +187,23 @@ public class FragmentMap extends Fragment implements
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
     }
+
+    // Marker info bubble
+
+    // Add window
+    /*static final LatLng MELBOURNE = new LatLng(-37.81319, 144.96298);
+    Marker melbourne = mMap.addMarker(new MarkerOptions()
+            .position(MELBOURNE)
+            .title("Melbourne")
+            .snippet("Population: 4,137,400"));
+
+    // Show window
+
+    static final LatLng MELBOURNE = new LatLng(-37.81319, 144.96298);
+    melbourne = mMap.addMarker(new MarkerOptions()
+            .position(MELBOURNE)
+            .title("Melbourne"));
+    melbourne.showInfoWindow();*/
+
+
 }
