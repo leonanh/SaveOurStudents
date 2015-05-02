@@ -1,25 +1,15 @@
 package com.sos.saveourstudents;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.gc.materialdesign.views.Button;
-import com.gc.materialdesign.views.ButtonFloat;
 
 public class ProfileActivity extends Activity
         implements ViewProfileFragment.OnEditButtonListener, EditProfileFragment.OnFragmentInteractionListener {
 
     private Student currStudent;
-    private Button editButton;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
