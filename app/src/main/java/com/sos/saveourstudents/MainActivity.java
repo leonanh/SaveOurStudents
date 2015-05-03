@@ -35,13 +35,22 @@ public class MainActivity extends ActionBarActivity {
     ActionBarDrawerToggle mDrawerToggle;
 
 
-    int ICONS[] = {R.drawable.ic_launcher,R.drawable.ic_launcher,R.drawable.ic_launcher,R.drawable.ic_launcher,R.drawable.ic_launcher};
-    String TITLES[] = {"Home","Events","Mail","Shop","Travel"};
+    int ICONS[] = {R.drawable.ic_launcher,R.drawable.ic_launcher, R.drawable.ic_launcher};
+    String TITLES[] = {"Profile","Logout","Help"};
     int PROFILEIMAGE = R.drawable.ic_launcher;
+
+    static boolean LOGGED_IN = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        /*
+        if(!LOGGED_IN){
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            return;
+        }
+        */
         setContentView(R.layout.activity_main);
 
         //Our AppCompat Toolbar
@@ -74,7 +83,7 @@ public class MainActivity extends ActionBarActivity {
 
         mRecyclerView.setHasFixedSize(true);                            // Letting the system know that the list objects are of fixed size
 
-        mAdapter = new MyAdapter(TITLES,ICONS,"Name","Email",PROFILEIMAGE);       // Creating the Adapter of MyAdapter class(which we are going to see in a bit)
+        mAdapter = new MyAdapter(TITLES,ICONS,"Name","Email", PROFILEIMAGE);       // Creating the Adapter of MyAdapter class(which we are going to see in a bit)
         // And passing the titles,icons,header view name, header view email,
         // and header view profile picture
 
@@ -91,14 +100,11 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                // code here will execute once the drawer is opened( As I dont want anything happened whe drawer is
-                // open I am not going to put anything here)
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                // Code here will execute once drawer is closed
             }
 
 
@@ -107,45 +113,26 @@ public class MainActivity extends ActionBarActivity {
         Drawer.setDrawerListener(mDrawerToggle); // Drawer Listener set to the Drawer toggle
         mDrawerToggle.syncState();               // Finally we set the drawer toggle sync State
 
-/*
-
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerToggle = new ActionBarDrawerToggle(
-                this,                  // host Activity
-                mDrawerLayout,         // DrawerLayout object
-                R.drawable.ic_navigation_drawer,  // nav drawer icon to replace 'Up' caret
-                R.string.drawer_open,  // "open drawer" description
-                R.string.drawer_close  // "close drawer" description
-        ) {
-
-            // Called when a drawer has settled in a completely closed state.
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-                //getActionBar().setTitle(mTitle);
-            }
-
-            // Called when a drawer has settled in a completely open state.
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                //getActionBar().setTitle(mDrawerTitle);
-            }
-        };
-
-        // Set the drawer toggle as the DrawerListener
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-*/
-
-
-
 
 
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
 
+        // Logs 'install' and 'app activate' App Events.
+        //AppEventsLogger.activateApp(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Logs 'app deactivate' App Event.
+        //AppEventsLogger.deactivateApp(this);
+    }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -176,7 +163,6 @@ public class MainActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -195,28 +181,28 @@ public class MainActivity extends ActionBarActivity {
 }
 
 
-    class MyPagerAdapter extends FragmentPagerAdapter {
+class MyPagerAdapter extends FragmentPagerAdapter {
 
-        FragmentFeed feed = new FragmentFeed();
-        FragmentMap map = new FragmentMap();
-        String[] tabNames = {"Feed", "Map"};
+    FragmentFeed feed = new FragmentFeed();
+    FragmentMap map = new FragmentMap();
+    String[] tabNames = {"Feed", "Map"};
 
-        public MyPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
+    public MyPagerAdapter(FragmentManager fm) {
+        super(fm);
+    }
 
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return tabNames[position];
-        }
+    @Override
+    public CharSequence getPageTitle(int position) {
+        return tabNames[position];
+    }
 
-        @Override
+    @Override
     public Fragment getItem(int position) {
-            if(position == 0){
-                return feed;
-            }
-            else
-                return map;
+        if(position == 0){
+            return feed;
+        }
+        else
+            return map;
     }
 
     @Override
