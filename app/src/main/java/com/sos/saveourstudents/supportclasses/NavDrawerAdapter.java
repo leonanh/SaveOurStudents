@@ -1,7 +1,6 @@
 package com.sos.saveourstudents.supportclasses;
 
 
-import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -88,7 +87,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
         if (viewType == TYPE_ITEM) {
             theView = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_nav_drawer_item,parent,false);
             text = (TextView)theView.findViewById(R.id.textview);
-            text.setTypeface(Typeface.createFromAsset(parent.getContext().getAssets(), "plane.ttf"));
+            //text.setTypeface(Typeface.createFromAsset(parent.getContext().getAssets(), "fonts/plane.ttf"));
 
         } else if (viewType == TYPE_HEADER) {
             theView = LayoutInflater.from(parent.getContext()).inflate(R.layout.nav_header,parent,false);
