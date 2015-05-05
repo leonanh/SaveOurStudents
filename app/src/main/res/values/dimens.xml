@@ -10,5 +10,5 @@
     <dimen name="fab_size">56dp</dimen>
     <dimen name="fab_size_small">40dp</dimen>
     <dimen name="fab_icon_size">24dp</dimen>
-    <dimen name="login_icon_size">75dp</dimen>
+    <dimen name="login_icon_size">55dp</dimen>
 </resources>

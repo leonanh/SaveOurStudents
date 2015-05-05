@@ -28,7 +28,7 @@ public class FragmentLogin extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_login, container, false);
+        View rootView = inflater.inflate(R.layout.activity_login, container, false);
 
 //        username = (EditText) getView().findViewById(R.id.username_textfield);
 //        password = (EditText) getView().findViewById(R.id.password_textfield);

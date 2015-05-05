@@ -1,33 +1,23 @@
 package com.sos.saveourstudents;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.view.View;
-import java.util.regex.*;
+import android.support.v7.app.ActionBarActivity;
 
-private final Pattern hasUppercase = Pattern.compile("[A-Z]");
-private final Pattern hasLowercase = Pattern.compile("[a-z]");
-private final Pattern hasNumber = Pattern.compile("\\d");
-private final Pattern hasSpecialChar = Pattern.compile("[^a-zA-Z0-9 ]");
+import java.util.regex.Pattern;
+
+
 
 /**
  * Created by HTPC on 4/26/2015.
  */
-public class Validations extends Activity implements View.OnClickListener {
+public class Validations extends ActionBarActivity {
 
-/*
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_signup);
-    }
+    private final Pattern hasUppercase = Pattern.compile("[A-Z]");
+    private final Pattern hasLowercase = Pattern.compile("[a-z]");
+    private final Pattern hasNumber = Pattern.compile("\\d");
+    private final Pattern hasSpecialChar = Pattern.compile("[^a-zA-Z0-9 ]");
 
-    @Override
-    public void onClick(View v) {
-    }
-    */
 
-    boolean = false;  //test result
+    //boolean = false;  //test result
 
     public static boolean validUsername( String userName )
     {
@@ -46,4 +36,46 @@ public class Validations extends Activity implements View.OnClickListener {
         return true;
 
     }
+
+
+    /**
+     * Verify password is valid, can return bool or int or whatever is clear to distinguish validity
+     * @param pass1
+     * @return
+     */
+    public String validateNewPass(String pass1) {
+        if (pass1 == null) {
+            //return error
+        }
+
+        if (pass1.isEmpty()) {
+            //return error
+        }
+
+        if (!hasUppercase.matcher(pass1).find()) {
+            //error - logger.info(pass1 + " <-- needs uppercase");
+        }
+
+        if (!hasLowercase.matcher(pass1).find()) {
+            //error - logger.info(pass1 + " <-- needs lowercase");
+        }
+
+        if (!hasNumber.matcher(pass1).find()) {
+            //error - logger.info(pass1 + "<-- needs a number");
+        }
+
+        if (!hasSpecialChar.matcher(pass1).find()) {
+            //error - logger.info(pass1 + "<-- needs a specail character");
+        }
+
+
+        return null; //return whatever indicator you feel is useful
+    }
+
+
+
+
+
+
+
 }
