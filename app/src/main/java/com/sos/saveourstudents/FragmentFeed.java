@@ -21,9 +21,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.sos.saveourstudents.Question;
-import com.sos.saveourstudents.R;
-import com.sos.saveourstudents.Singleton;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -244,9 +241,7 @@ public class FragmentFeed extends Fragment {
                 super(itemView);
                 questionText = (TextView) itemView.findViewById(R.id.question_text);
                 rippleView = (RippleView) itemView.findViewById(R.id.more);
-                //rippleView.setRippleColor(getResources().getColor(R.color.blue));
-
-                //rippleView.setOnTouchListener(this);
+                rippleView.setOnTouchListener(this);
 
 				/*
 				counterName = (TextView) itemView.findViewById(R.id.counter_name);
@@ -267,7 +262,14 @@ public class FragmentFeed extends Fragment {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                // TODO Auto-generated method stub
+
+                if(v ==  rippleView && event.getAction() == MotionEvent.ACTION_DOWN){
+                    System.out.println("Clicked Question");
+
+                }
+
+
+
                 return false;
             }
 

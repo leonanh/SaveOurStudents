@@ -18,6 +18,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.sos.saveourstudents.supportclasses.NavDrawerAdapter;
+import com.sos.saveourstudents.supportclasses.RecyclerItemClickListener;
 import com.sos.saveourstudents.supportclasses.SlidingTabLayout;
 
 public class MainActivity extends ActionBarActivity {
@@ -30,7 +32,7 @@ public class MainActivity extends ActionBarActivity {
     RecyclerView mRecyclerView;                           // Declaring RecyclerView
     RecyclerView.Adapter mAdapter;                        // Declaring Adapter For Recycler View
     RecyclerView.LayoutManager mLayoutManager;            // Declaring Layout Manager as a linear layout manager
-    DrawerLayout Drawer;                                  // Declaring DrawerLayout
+    DrawerLayout mDrawer;                                 // Declaring DrawerLayout
 
     ActionBarDrawerToggle mDrawerToggle;
 
@@ -39,18 +41,10 @@ public class MainActivity extends ActionBarActivity {
     String TITLES[] = {"Profile","Logout","Help"};
     int PROFILEIMAGE = R.drawable.ic_launcher;
 
-    static boolean LOGGED_IN = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*
-        if(!LOGGED_IN){
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            return;
-        }
-        */
+
         setContentView(R.layout.activity_main);
 
         //Our AppCompat Toolbar
@@ -81,21 +75,31 @@ public class MainActivity extends ActionBarActivity {
 
         mRecyclerView = (RecyclerView) findViewById(R.id.RecyclerView); // Assigning the RecyclerView Object to the xml View
 
-        mRecyclerView.setHasFixedSize(true);                            // Letting the system know that the list objects are of fixed size
+        mRecyclerView.setHasFixedSize(true);                            // Letting the system know we wont change the size of the list
+        mAdapter = new NavDrawerAdapter(TITLES, ICONS, "Name","Email", PROFILEIMAGE);
 
-        mAdapter = new MyAdapter(TITLES,ICONS,"Name","Email", PROFILEIMAGE);       // Creating the Adapter of MyAdapter class(which we are going to see in a bit)
-        // And passing the titles,icons,header view name, header view email,
-        // and header view profile picture
 
         mRecyclerView.setAdapter(mAdapter);                              // Setting the adapter to RecyclerView
 
+
         mLayoutManager = new LinearLayoutManager(this);                 // Creating a layout Manager
-
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
 
+                    @Override public void onItemClick(View view, int position) {
+                        System.out.println("clicked "+position);
 
-        Drawer = (DrawerLayout) findViewById(R.id.drawer_layout);        // Drawer object Assigned to the view
-        mDrawerToggle = new ActionBarDrawerToggle(this,Drawer,toolbar,R.string.openDrawer,R.string.closeDrawer){
+                        if(position == 1){
+                            startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+                        }
+
+                    }
+                })
+        );
+
+        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);        // Drawer object Assigned to the view
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer, toolbar,R.string.openDrawer,R.string.closeDrawer){
 
             @Override
             public void onDrawerOpened(View drawerView) {
@@ -110,9 +114,8 @@ public class MainActivity extends ActionBarActivity {
 
 
         }; // Drawer Toggle Object Made
-        Drawer.setDrawerListener(mDrawerToggle); // Drawer Listener set to the Drawer toggle
+        mDrawer.setDrawerListener(mDrawerToggle); // Drawer Listener set to the Drawer toggle
         mDrawerToggle.syncState();               // Finally we set the drawer toggle sync State
-
 
 
 
@@ -122,16 +125,11 @@ public class MainActivity extends ActionBarActivity {
     protected void onResume() {
         super.onResume();
 
-        // Logs 'install' and 'app activate' App Events.
-        //AppEventsLogger.activateApp(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-
-        // Logs 'app deactivate' App Event.
-        //AppEventsLogger.deactivateApp(this);
     }
 
     @Override
@@ -164,23 +162,28 @@ public class MainActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-            return true;
+            ///return true;
         }
-
+/*
         if (id == R.id.view_profile) {
             startActivity(new Intent(this, ProfileActivity.class));
-            return true;
+            //return true;
         }
-
+*/
         //if (mDrawerToggle.onOptionsItemSelected(item)) {
         //    return true;
         //}
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }
 
 
+/**
+ * Handles all work that pertains to the 2 main fragments
+ */
 class MyPagerAdapter extends FragmentPagerAdapter {
 
     FragmentFeed feed = new FragmentFeed();
@@ -210,3 +213,5 @@ class MyPagerAdapter extends FragmentPagerAdapter {
         return 2;
     }
 }
+
+

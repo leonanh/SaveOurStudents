@@ -7,7 +7,7 @@
     <string name="openDrawer">drawer open</string>
     <string name="closeDrawer">drawer closed</string>
 
-    <string name="api_key">AIzaSyAv06a77IQVdgPXIjKpFjDjmv_u--tKV_M</string>
+    <string name="api_key">AIzaSyDbZqfUNxou2MHKsr9T42MNynUqRDDlRrs</string>
     <string name="title_activity_profile">ProfileActivity</string>
 
     <string name="profile_rating">Rating</string>
@@ -24,5 +24,7 @@
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_edit_profile">EditProfileActivity</string>
+
+
 
 </resources>
