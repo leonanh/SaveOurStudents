@@ -7,7 +7,7 @@
     android:layout_height="48dp"
     android:background="@android:color/white"
     >
-    
+    <!--
     <com.andexert.library.RippleView
         android:id="@+id/ripple"
         xmlns:ripple="http://schemas.android.com/apk/res-auto"
@@ -15,7 +15,7 @@
         android:layout_height="match_parent"
         ripple:rv_color="@color/primary"
         ripple:rv_rippleDuration="180">
-        
+    -->
     <ImageView 
         android:id="@+id/imageview"
         android:layout_width="wrap_content"
@@ -36,5 +36,7 @@
         android:gravity="center"
         android:textColor="@android:color/black"
         android:text="TESTSTES" />
+    <!--
 </com.andexert.library.RippleView>
+-->
 </RelativeLayout>

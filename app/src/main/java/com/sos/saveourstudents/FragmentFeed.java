@@ -90,6 +90,7 @@ public class FragmentFeed extends Fragment {
         TextView mTxtDisplay;
         ImageView mImageView;
 
+
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url, (JSONObject)null, new Response.Listener<JSONObject>() {
 
                     @Override
@@ -107,7 +108,7 @@ public class FragmentFeed extends Fragment {
                 });
 
         // Access the RequestQueue through your singleton class.
-        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+        //Singleton.getInstance().addToRequestQueue(jsObjRequest);
 
 
 

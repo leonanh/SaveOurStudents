@@ -2,7 +2,7 @@ package com.sos.saveourstudents;
 
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,7 +17,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
+import com.gc.materialdesign.views.ButtonFloat;
 import com.sos.saveourstudents.supportclasses.NavDrawerAdapter;
 import com.sos.saveourstudents.supportclasses.RecyclerItemClickListener;
 import com.sos.saveourstudents.supportclasses.SlidingTabLayout;
@@ -36,6 +38,10 @@ public class MainActivity extends ActionBarActivity {
 
     ActionBarDrawerToggle mDrawerToggle;
 
+    ButtonFloat fab;
+
+    //Custom font
+    Typeface font;
 
     int ICONS[] = {R.drawable.ic_launcher,R.drawable.ic_launcher, R.drawable.ic_launcher};
     String TITLES[] = {"Profile","Logout","Help"};
@@ -47,10 +53,14 @@ public class MainActivity extends ActionBarActivity {
 
         setContentView(R.layout.activity_main);
 
+        font = Typeface.createFromAsset(getAssets(), "plane.ttf");
+
         //Our AppCompat Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.the_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("SOS");
+
+        TextView toolText = (TextView) toolbar.findViewById(R.id.toolbar_text);
+        toolText.setTypeface(font);
 
 
 
@@ -64,10 +74,12 @@ public class MainActivity extends ActionBarActivity {
         mTabs.setDistributeEvenly(true);
 
         mTabs.setViewPager(mViewPager);
+
         mTabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
-                return Color.WHITE;
+                //eturn Color.WHITE;
+                return MainActivity.this.getResources().getColor(R.color.dark_primary);
             }
         });
 
@@ -124,12 +136,13 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        mDrawer.closeDrawers();
+
     }
 
     @Override
@@ -210,7 +223,7 @@ class MyPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 2;
+        return tabNames.length;
     }
 }
 

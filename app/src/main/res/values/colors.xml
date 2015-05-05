@@ -16,13 +16,13 @@
 -->
 <resources>
     
-    <color name="primary_light">#B2EBF2</color>
-    <color name="primary_dark">#0097A7</color>
-    <color name="primary">#00BCD4</color>
+    <color name="light_primary">#BBDEFB</color>
+    <color name="dark_primary">#1976D2</color>
+    <color name="primary">#2196F3</color>
     <color name="accent">#FFC107</color>
-    <color name="accent_dark">#FFA000</color>
+    <color name="secondary_text">#727272</color>
     <color name="primary_text">#212121</color>
-    <color name="primary_text1">#FFFFFF</color>
+    <color name="diver_color">#B6B6B6</color>
     
 	<color name="hint_text">#727272</color>
 	<color name="transparent">#00000000</color>
