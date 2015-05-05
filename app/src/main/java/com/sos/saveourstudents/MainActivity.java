@@ -2,7 +2,6 @@ package com.sos.saveourstudents;
 
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,7 +16,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
 import com.gc.materialdesign.views.ButtonFloat;
 import com.sos.saveourstudents.supportclasses.NavDrawerAdapter;
@@ -41,7 +39,7 @@ public class MainActivity extends ActionBarActivity {
     ButtonFloat fab;
 
     //Custom font
-    Typeface font;
+    //Typeface font;
 
     int ICONS[] = {R.drawable.ic_launcher,R.drawable.ic_launcher, R.drawable.ic_launcher};
     String TITLES[] = {"Profile","Logout","Help"};
@@ -53,14 +51,19 @@ public class MainActivity extends ActionBarActivity {
 
         setContentView(R.layout.activity_main);
 
-        font = Typeface.createFromAsset(getAssets(), "plane.ttf");
+        if(!Singleton.hasBeenInitialized()){
+            Singleton.initialize(this);
+        }
+
+
+        //font = Typeface.createFromAsset(getAssets(), "fonts/plane.ttf");
 
         //Our AppCompat Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.the_toolbar);
         setSupportActionBar(toolbar);
 
-        TextView toolText = (TextView) toolbar.findViewById(R.id.toolbar_text);
-        toolText.setTypeface(font);
+        //TextView toolText = (TextView) toolbar.findViewById(R.id.toolbar_text);
+        //toolText.setTypeface(font);
 
 
 

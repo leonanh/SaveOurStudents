@@ -167,7 +167,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
         textView.setPadding(padding, padding, padding, padding);
 
 
-        textView.setTypeface(Typeface.createFromAsset(context.getAssets(), "plane.ttf"));
+        textView.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/plane.ttf"));
 
         return textView;
     }

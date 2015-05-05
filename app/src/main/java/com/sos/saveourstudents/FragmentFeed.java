@@ -59,6 +59,7 @@ public class FragmentFeed extends Fragment {
         }
 
 
+
         //TODO Move into server call (volley)
         mQuestionList = new ArrayList<Question>();
         for(int a = 0;a<15;a++){
@@ -234,13 +235,21 @@ public class FragmentFeed extends Fragment {
 
         public class ViewHolder extends RecyclerView.ViewHolder implements View.OnTouchListener {
 
+            public ImageView userImage;
             public TextView questionText;
+            public TextView nameText;
+            public TextView dateText;
+            public TextView distanceText;
             private RippleView rippleView;
 
 
             public ViewHolder(View itemView) {
                 super(itemView);
                 questionText = (TextView) itemView.findViewById(R.id.question_text);
+                nameText = (TextView) itemView.findViewById(R.id.question_text);
+                dateText = (TextView) itemView.findViewById(R.id.question_text);
+                distanceText = (TextView) itemView.findViewById(R.id.question_text);
+                //userImage = (ImageView) itemView.findViewById(R.id.question_text);
                 rippleView = (RippleView) itemView.findViewById(R.id.more);
                 rippleView.setOnTouchListener(this);
 
