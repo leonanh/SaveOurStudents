@@ -1,6 +1,6 @@
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
-    xmlns:customfontdemo="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -38,8 +38,8 @@
             android:text="SaveOurStudents"
             android:gravity="left|center_vertical"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            customfontdemo:fontName="plane.ttf"
             />
+
 
 
     </android.support.v7.widget.Toolbar>
@@ -76,11 +76,12 @@
         -->
         <com.melnykov.fab.FloatingActionButton
             android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/fab_size"
+            android:layout_height="@dimen/fab_size"
             android:layout_gravity="bottom|right"
-            android:layout_margin="16dp"
-            android:src="@drawable/ic_cab_done_mtrl_alpha"
+            android:layout_margin="@dimen/fab_margin"
+            android:src="@drawable/ic_add_white_36dp"
+            android:tint="@android:color/white"
             fab:fab_colorNormal="@color/accent"
             fab:fab_colorPressed="@color/accent"
             fab:fab_colorRipple="@android:color/white"
