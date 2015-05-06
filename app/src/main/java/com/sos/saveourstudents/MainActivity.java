@@ -41,7 +41,7 @@ public class MainActivity extends ActionBarActivity {
     //Custom font
     //Typeface font;
 
-    int ICONS[] = {R.drawable.ic_launcher,R.drawable.ic_launcher, R.drawable.ic_launcher};
+    int ICONS[] = {R.drawable.ic_settings_black_36dp,R.drawable.ic_exit_to_app_black_36dp, R.drawable.ic_help_black_36dp};
     String TITLES[] = {"Profile","Logout","Help"};
     int PROFILEIMAGE = R.drawable.ic_launcher;
 
