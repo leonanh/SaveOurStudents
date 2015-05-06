@@ -24,8 +24,26 @@
     <string name="openDrawer">drawer open</string>
     <string name="closeDrawer">drawer closed</string>
 
-    <string name="api_key">AIzaSyDbZqfUNxou2MHKsr9T42MNynUqRDDlRrs</string>
+    <string name="api_key_fb">AIzaSyDbZqfUNxou2MHKsr9T42MNynUqRDDlRrs</string>
     <string name="facebook_app_id">1378269939169390</string>
     <string name="facebook_secret">b2a7fef9a5fa6681b7b96984fd4e7e8e</string>
+
+    <string name="api_key">AIzaSyAv06a77IQVdgPXIjKpFjDjmv_u--tKV_M</string>
+    <string name="title_activity_profile">ProfileActivity</string>
+
+    <string name="profile_rating">Rating</string>
+    <string name="profile_aboutMe">About Me</string>
+    <string name="profile_school">School</string>
+    <string name="profile_major">Major</string>
+    <string name="profile_description">Description</string>
+
+    <string name="view_profile">View Profile</string>
+    <string name="profile_editProfile">Edit Profile</string>"
+    <string name="profile_firstName">First Name</string>
+    <string name="profile_lastName">Last Name</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_edit_profile">EditProfileActivity</string>
 
 </resources>

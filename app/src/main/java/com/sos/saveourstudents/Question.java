@@ -4,7 +4,7 @@ package com.sos.saveourstudents;
  * Created by deamon on 4/21/15.
  */
 public class Question {
-    String title;
+    public String title;
 
 
     public Question(){

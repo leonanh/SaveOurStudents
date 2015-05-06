@@ -1,6 +1,12 @@
 package com.sos.saveourstudents;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.andexert.library.RippleView;
+import com.sos.saveourstudents.R;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
