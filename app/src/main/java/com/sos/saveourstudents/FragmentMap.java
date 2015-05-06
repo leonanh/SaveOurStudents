@@ -17,7 +17,6 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.sos.saveourstudents.R;
 
 /**
  * Created by deamon on 4/21/15.
@@ -64,7 +63,7 @@ public class FragmentMap extends Fragment implements
             e.printStackTrace();
         }
 
-        setUpMapIfNeeded();
+        //setUpMapIfNeeded();
 
         //mMap.getUiSettings().setMyLocationButtonEnabled(false);
         if(mMap != null)
@@ -73,7 +72,8 @@ public class FragmentMap extends Fragment implements
         buildGoogleApiClient();
 
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
+        mGoogleApiClient);
+
         if (mLastLocation != null) {
             TextView mLatitudeText = (TextView) rootView.findViewById(R.id.lat_text);
             mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));

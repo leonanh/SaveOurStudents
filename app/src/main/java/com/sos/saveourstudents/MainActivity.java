@@ -39,7 +39,7 @@ public class MainActivity extends ActionBarActivity {
     String TITLES[] = {"Home","Events","Mail","Shop","Travel"};
     int PROFILEIMAGE = R.drawable.ic_launcher;
 
-    static boolean LOGGED_IN = false;
+    static boolean LOGGED_IN = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -190,6 +190,11 @@ public class MainActivity extends ActionBarActivity {
 
         if (id == R.id.view_profile) {
             startActivity(new Intent(this, ProfileActivity.class));
+            return true;
+        }
+
+        if (id == R.id.view_question) {
+            startActivity(new Intent(this, QuestionActivity.class));
             return true;
         }
 

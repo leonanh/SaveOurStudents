@@ -29,4 +29,5 @@
     <style name="SpacedElement">
         <item name="android:layout_margin">10dp</item>
     </style>
+
 </resources>

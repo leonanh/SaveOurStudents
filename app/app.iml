@@ -111,11 +111,8 @@
     <orderEntry type="library" exported="" name="play-services-nearby-7.0.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-fitness-7.0.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-22.0.0" level="project" />
-<<<<<<< HEAD
     <orderEntry type="library" exported="" name="facebook-android-sdk-4.0.0" level="project" />
-=======
     <orderEntry type="library" exported="" name="circleimageview-1.2.2" level="project" />
->>>>>>> 0bc7084f41511d66f9b8848f71a5595a911b8748
     <orderEntry type="library" exported="" name="play-services-analytics-7.0.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-appstate-7.0.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-identity-7.0.0" level="project" />

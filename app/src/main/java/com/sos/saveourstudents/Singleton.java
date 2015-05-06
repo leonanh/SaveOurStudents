@@ -1,6 +1,7 @@
 package com.sos.saveourstudents;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.android.volley.Request;
@@ -8,18 +9,23 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.sos.saveourstudents.supportclasses.LruBitmapCache;
 
 
-public class Singleton {
-	
-	private final String TAG = "LiveSpot Tag";
+public class Singleton implements
+		GoogleApiClient.ConnectionCallbacks,
+		GoogleApiClient.OnConnectionFailedListener{
+
+	private final String TAG = "SOS Tag";
 	private static Singleton instance = null;
 	private static Context mContext;
 	
 	private RequestQueue mRequestQueue;
     private ImageLoader mImageLoader;
-	
+	private GoogleApiClient mGoogleApiClient;
 	
 	/**
 	 * To initialize the class. It must be called before call the method getInstance()
@@ -103,6 +109,38 @@ public class Singleton {
             mRequestQueue.cancelAll(tag);
         }
     }
-	
-	
+
+	/**
+	 * +oogle Maps api
+	 */
+	protected synchronized void buildGoogleApiClient() {
+		mGoogleApiClient = new GoogleApiClient.Builder(mContext)
+				.addConnectionCallbacks(this)
+				.addOnConnectionFailedListener(this)
+				.addApi(LocationServices.API)
+				.build();
+
+        /*GoogleApiClient client = new GoogleApiClient.Builder(this)
+                .addApi(Plus.API)
+                .addScope(Plus.SCOPE_PLUS_LOGIN)
+                .setAccountName("users.account.name@gmail.com")
+                .build();*/
+		mGoogleApiClient.connect();
+	}
+
+
+	@Override
+	public void onConnected(Bundle bundle) {
+
+	}
+
+	@Override
+	public void onConnectionSuspended(int i) {
+
+	}
+
+	@Override
+	public void onConnectionFailed(ConnectionResult connectionResult) {
+
+	}
 }

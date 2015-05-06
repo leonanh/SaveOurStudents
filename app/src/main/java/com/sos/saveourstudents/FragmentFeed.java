@@ -21,9 +21,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.sos.saveourstudents.Question;
-import com.sos.saveourstudents.R;
-import com.sos.saveourstudents.Singleton;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -110,7 +107,7 @@ public class FragmentFeed extends Fragment {
                 });
 
         // Access the RequestQueue through your singleton class.
-        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+        //Singleton.getInstance().addToRequestQueue(jsObjRequest);
 
 
 
