@@ -39,9 +39,16 @@ public class MainActivity extends ActionBarActivity {
     String TITLES[] = {"Home","Events","Mail","Shop","Travel"};
     int PROFILEIMAGE = R.drawable.ic_launcher;
 
+    static boolean LOGGED_IN = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(!LOGGED_IN){
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            return;
+        }
         setContentView(R.layout.activity_main);
 
         //Our AppCompat Toolbar
