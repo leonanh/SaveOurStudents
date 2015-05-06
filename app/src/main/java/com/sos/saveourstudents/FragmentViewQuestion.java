@@ -74,7 +74,7 @@ public class FragmentViewQuestion extends Fragment implements
 
         //TODO turn into server call (volley)
         mQuestionList = new ArrayList<Question>();
-        for(int a = 0;a < 3;a++){
+        for(int a = 0;a < 7;a++){
             Question temp = new Question("Question "+a);
             mQuestionList.add(temp);
         }
