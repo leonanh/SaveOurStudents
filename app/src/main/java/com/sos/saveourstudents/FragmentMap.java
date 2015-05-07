@@ -24,6 +24,18 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.sos.saveourstudents.R;
 
+import java.awt.Image;
+import java.lang.Override;
+import java.lang.String;
+import java.util.ArrayList;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObje
+
 /**
  * Created by deamon on 4/21/15.
  */
@@ -55,14 +67,9 @@ public class FragmentMap extends Fragment implements
         rootView = inflater.inflate(R.layout.map_layout, container,
                 false);
 
-
-
         createAndShowMap();
 
-
         getMapData();
-
-
 
         return rootView;
     }
@@ -124,16 +131,42 @@ public class FragmentMap extends Fragment implements
     }
 
 
-    public void getMapData(){
+    public void getMapData()
+    {
+        //Singleton is asynchronous, carries over from FragmentFeed
 
+        //TODO: Make volley call
+        String url = "http://10.0.2.2:8080/com.mysql.services/rest/serviceclass/getVenues";
 
-        //TODO Make Volley call
+        /*
+        String mTitle;
+        String mDesc;
+        Image mProfPic;
+        double mTime = howMuchTimeAgo(GETSYSTEMTIME);
+        double mDist = calculateDistfromLatLng(yourLatLng, theirLatLng);
+        */
 
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
+                url,
+                (JSONObject)null,
+                new Response.Listener<JSONObject>()
+                {
+                    @Override
+                    public void onResponse(JSONObject response)
+                    {
+                        //System.out.println("Response: " + response.toString());
+                        createUI();
+                    }
+                }, new Response.ErrorListener(){
 
-        //After volley create UI
-        createUI();
-
-
+                    @Override
+                    public void onErrorResponse(VolleyError error)
+                    {
+                        //System.out.println("Error: " + error.toString());
+                        displayError();
+                    }
+                });
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
     }
 
     /**
@@ -142,10 +175,28 @@ public class FragmentMap extends Fragment implements
      * and build the map according to index of list
      * TODO
      */
-    private void createUI() {
-
+    private void createUI()
+    {
+        mPostList = new ArrayList<Question>();
+        /*
+        for (int i = 0; i < Json Array Length; i++)
+        {
+            if (jsonobjectarray[i].distance <= user.distance)
+            {
+                Question temp = new Question(whatever);
+                mPostList.add(temp);
+            }
+        }
+            */
         if(mMap != null)//Fernando test
         {
+            for (int i = 0; i < mPostList.size(); i++)
+            {
+                     /*mMap.addMarker(new MarkerOptions()
+                    .position(mLatLng)
+                    .title(mTitle)
+                    .snippet());*/
+            }
             Marker ucsd = mMap.addMarker(new MarkerOptions().position(UCSD)
                     .title("UCSD"));
             Marker geisel = mMap.addMarker(new MarkerOptions()
@@ -158,6 +209,10 @@ public class FragmentMap extends Fragment implements
 
     }
 
+    private void displayError()
+    {
+        /* Display an error message to the user if request fails */
+    }
 
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(mContext)
