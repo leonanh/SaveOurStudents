@@ -32,7 +32,7 @@ public class MainActivity extends ActionBarActivity {
     RecyclerView mRecyclerView;                           // Declaring RecyclerView
     RecyclerView.Adapter mAdapter;                        // Declaring Adapter For Recycler View
     RecyclerView.LayoutManager mLayoutManager;            // Declaring Layout Manager as a linear layout manager
-    DrawerLayout mDrawer;                                 // Declaring DrawerLayout
+    DrawerLayout Drawer;                                  // Declaring DrawerLayout
 
     ActionBarDrawerToggle mDrawerToggle;
 
@@ -45,9 +45,16 @@ public class MainActivity extends ActionBarActivity {
     String TITLES[] = {"Profile","Logout","Help"};
     int PROFILEIMAGE = R.drawable.ic_launcher;
 
+    static boolean LOGGED_IN = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(!LOGGED_IN){
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            return;
+        }
 
         setContentView(R.layout.activity_main);
 
@@ -62,8 +69,6 @@ public class MainActivity extends ActionBarActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.the_toolbar);
         setSupportActionBar(toolbar);
 
-        //TextView toolText = (TextView) toolbar.findViewById(R.id.toolbar_text);
-        //toolText.setTypeface(font);
 
 
 
@@ -108,13 +113,6 @@ public class MainActivity extends ActionBarActivity {
                         if(position == 1){
                             startActivity(new Intent(MainActivity.this, ProfileActivity.class));
                         }
-
-                    }
-                })
-        );
-
-        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);        // Drawer object Assigned to the view
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer, toolbar,R.string.openDrawer,R.string.closeDrawer){
 
             @Override
             public void onDrawerOpened(View drawerView) {

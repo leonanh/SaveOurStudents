@@ -1,13 +1,33 @@
 <resources>
     <string name="app_name">SaveOurStudents</string>
-
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
+    <!-- Login strings -->
+    <string name="login">Log in</string>
+    <string name="username_hint">Username</string>
+    <string name="password_hint">Password</string>
+    <string name="forgot_login">Forgot login?</string>
+    <string name="sign_up">SIGN UP</string>
+    <string name="create_username_prompt">Create your username here. User names must contain X to Y characters.</string>
+    <string name="create_password_prompt">Create your password here. Passwords must contain X to Y characters.</string>
+    <string name="create_password_confirmation_prompt">Enter your password again.</string>
+    <string name="email_hint">E-mail</string>
+    <string name="create_email_prompt">Enter e-mail here.</string>
+    <string name="send_email_prompt">Send e-mail</string>
+    <string name="forgot_credentials_prompt">Forget your login? Enter your email here and we\'ll send you your info.</string>
+    <string name="usernameEmpty">Username field is empty!</string>
+    <string name="passwordEmpty">Password field is empty!</string>
+    <string name="invalidLogin">Login is invalid!</string>
+
+    <!-- -->
     <string name="openDrawer">drawer open</string>
     <string name="closeDrawer">drawer closed</string>
 
     <string name="api_key">AIzaSyDbZqfUNxou2MHKsr9T42MNynUqRDDlRrs</string>
+    <string name="facebook_app_id">1378269939169390</string>
+    <string name="facebook_secret">b2a7fef9a5fa6681b7b96984fd4e7e8e</string>
+
     <string name="title_activity_profile">ProfileActivity</string>
 
     <string name="profile_rating">Rating</string>
@@ -24,7 +44,5 @@
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_edit_profile">EditProfileActivity</string>
-
-
 
 </resources>
