@@ -83,6 +83,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
     EditText usernameField, passwordField;
     Button loginBtn;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

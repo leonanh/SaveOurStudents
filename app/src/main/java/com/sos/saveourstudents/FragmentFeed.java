@@ -73,7 +73,7 @@ public class FragmentFeed extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        mAdapter = new RecycleViewAdapter(CardManager.getInstance().getCounters(), R.layout.feed_item_layout, mContext);
+        mAdapter = new RecycleViewAdapter(CardManager.getInstance().getCounters(), R.layout.feed_item_layout_new, mContext);
         mRecyclerView.setAdapter(mAdapter);
 
 

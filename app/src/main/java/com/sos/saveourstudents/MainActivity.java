@@ -32,29 +32,22 @@ public class MainActivity extends ActionBarActivity {
     RecyclerView mRecyclerView;                           // Declaring RecyclerView
     RecyclerView.Adapter mAdapter;                        // Declaring Adapter For Recycler View
     RecyclerView.LayoutManager mLayoutManager;            // Declaring Layout Manager as a linear layout manager
-    DrawerLayout Drawer;                                  // Declaring DrawerLayout
+    DrawerLayout mDrawer;                                 // Declaring DrawerLayout
 
     ActionBarDrawerToggle mDrawerToggle;
 
     ButtonFloat fab;
 
-    //Custom font
-    //Typeface font;
-
     int ICONS[] = {R.drawable.ic_settings_black_36dp,R.drawable.ic_exit_to_app_black_36dp, R.drawable.ic_help_black_36dp};
     String TITLES[] = {"Profile","Logout","Help"};
     int PROFILEIMAGE = R.drawable.ic_launcher;
 
-    static boolean LOGGED_IN = false;
+
+    static boolean LOGGED_IN = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(!LOGGED_IN){
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            return;
-        }
 
         setContentView(R.layout.activity_main);
 
@@ -62,14 +55,15 @@ public class MainActivity extends ActionBarActivity {
             Singleton.initialize(this);
         }
 
-
-        //font = Typeface.createFromAsset(getAssets(), "fonts/plane.ttf");
+        if(!LOGGED_IN){
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            return;
+        }
 
         //Our AppCompat Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.the_toolbar);
         setSupportActionBar(toolbar);
-
-
 
 
         FragmentManager manager = getSupportFragmentManager();
@@ -114,6 +108,13 @@ public class MainActivity extends ActionBarActivity {
                             startActivity(new Intent(MainActivity.this, ProfileActivity.class));
                         }
 
+                    }
+                })
+        );
+
+        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);        // Drawer object Assigned to the view
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer, toolbar,R.string.openDrawer,R.string.closeDrawer){
+
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
@@ -142,7 +143,8 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        mDrawer.closeDrawers();
+        if(mDrawer != null)
+            mDrawer.closeDrawers();
 
     }
 
@@ -227,5 +229,3 @@ class MyPagerAdapter extends FragmentPagerAdapter {
         return tabNames.length;
     }
 }
-
-
