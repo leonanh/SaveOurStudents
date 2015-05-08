@@ -30,6 +30,9 @@ public class QuestionActivity extends ActionBarActivity {
             if(a == 0){
                 theFragToShow = new FragmentViewQuestion();
             }
+            else{
+                //theFragToShow = new FragmentEditQuestion();
+            }
 
 
 
