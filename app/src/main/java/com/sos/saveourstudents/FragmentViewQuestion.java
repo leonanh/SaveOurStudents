@@ -38,6 +38,8 @@ public class FragmentViewQuestion extends Fragment implements
     RecycleViewAdapter mAdapter;
     RecyclerView mRecyclerView;
 
+
+
     private GoogleMap mMap;
     private MapView mMapView;
     private Context mContext;
@@ -85,7 +87,7 @@ public class FragmentViewQuestion extends Fragment implements
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        mAdapter = new RecycleViewAdapter(CardManager.getCounters(), R.layout.feed_item_layout, this.getActivity());
+        mAdapter = new RecycleViewAdapter(R.layout.feed_item_layout, this.getActivity());
         mRecyclerView.setAdapter(mAdapter);
 
 
@@ -159,9 +161,12 @@ public class FragmentViewQuestion extends Fragment implements
 
         private static final int TYPE_MAP = 0;
         private static final int TYPE_ITEM = 1;
-        private List<Question> questions;
-        private int rowLayout;
+        private static final int TYPE_MEMBER = 2;
 
+        Context context;
+        private int rowLayout;
+        RecycleViewAdapter memberAdapter;
+        RecyclerView memberRecyclerView;
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             int Holderid;
@@ -177,53 +182,87 @@ public class FragmentViewQuestion extends Fragment implements
             public ViewHolder(View itemView, int viewType) {
                 super(itemView);
 
-                System.out.println("ViewType: "+viewType);
+                System.out.println("ViewType: " + viewType);
                 //0 index should be a map
                 if(viewType == TYPE_ITEM) {
                     //textView = (TextView) itemView.findViewById(R.id.textview);
                     //imageView = (ImageView) itemView.findViewById(R.id.imageview);
-                    Holderid = 1;
+                    Holderid = TYPE_ITEM;
+                }
+                else if(viewType == TYPE_MEMBER){
+                    memberRecyclerView = (RecyclerView) itemView.findViewById(R.id.my_recycler_view);
+                    buildMemberRecyclerView();
+
+
+
+                    Holderid = TYPE_MEMBER;
                 }
                 else{
                     mMapView = (MapView) itemView.findViewById(R.id.map);
                     initializeMap();
 
 
-                    Holderid = 0;
+                    Holderid = TYPE_MAP;
                 }
             }
 
 
+
+
+
         }
 
+        private void buildMemberRecyclerView(){
 
-        public RecycleViewAdapter(List<Question> questions, int rowLayout, Context context) {
-            this.questions = questions;
+
+
+
+            memberRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+            memberRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+            String[] dataset = new String[5];
+            dataset[0] = "12343";
+            dataset[1] = "fdgf";
+            dataset[2] = "12fvdfggfd343";
+            dataset[3] = "gfdgdfg";
+            MemberListAdapter adapter = new MemberListAdapter(dataset);
+            memberRecyclerView.setAdapter(adapter);
+
+
+
+        }
+
+        public RecycleViewAdapter(int rowLayout, Context context) {
+            //this.questions = questions;
             this.rowLayout = rowLayout;
+            this.context = context;
         }
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-            if (viewType == 1) {
-                View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_item_layout,parent,false);
-                ViewHolder vhItem = new ViewHolder(v, viewType);
-                return vhItem;
-
-            } else if (viewType == 0) {
-                View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.question_map_item,parent,false);
-                ViewHolder vhHeader = new ViewHolder(v, viewType);
-                return vhHeader;
-
+            View v = null;
+            if (viewType == TYPE_ITEM) {
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_item_layout,parent,false);
+            } else if (viewType == TYPE_MAP) {
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.question_map_item,parent,false);
             }
-            return null;
+            if (viewType == TYPE_MEMBER) {
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.question_group_item,parent,false);
+            }
+
+            ViewHolder vhItem = new ViewHolder(v, viewType);
+            return vhItem;
 
         }
 
 
         @Override
         public void onBindViewHolder(ViewHolder viewHolder, int position) {
-            if(viewHolder.Holderid == 1) {
+            if(viewHolder.Holderid == TYPE_ITEM) {
+                //viewHolder.textView.setText(mNavTitles[position - 1]);
+                //viewHolder.imageView.setImageResource(mIcons[position -1]);
+            }
+            else if(viewHolder.Holderid == TYPE_MEMBER) {
                 //viewHolder.textView.setText(mNavTitles[position - 1]);
                 //viewHolder.imageView.setImageResource(mIcons[position -1]);
             }
@@ -237,7 +276,7 @@ public class FragmentViewQuestion extends Fragment implements
 
         @Override
         public int getItemCount() {
-            return questions == null ? 0 : questions.size();
+            return mQuestionList == null ? 0 : mQuestionList.size();
         }
 
         // With the following method we check what type of view is being passed
@@ -245,13 +284,14 @@ public class FragmentViewQuestion extends Fragment implements
         public int getItemViewType(int position) {
             if (position == 0)
                 return TYPE_MAP;
+            else if (position == 1)
+                return TYPE_MEMBER;
 
             return TYPE_ITEM;
         }
 
 
     }
-
 
 
 
@@ -315,9 +355,62 @@ public class FragmentViewQuestion extends Fragment implements
     }
 
 
+
+
+
+
+
+
+
+
+
 }
 
 
 
 
+
+
+class MemberListAdapter extends RecyclerView.Adapter<MemberListAdapter.ViewHolder> {
+    private String[] mDataset;
+
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+
+        public View mTextView;
+        public ViewHolder(View v) {
+            super(v);
+            mTextView = v;
+        }
+    }
+
+    public MemberListAdapter(String[] myDataset) {
+        mDataset = myDataset;
+    }
+
+    @Override
+    public MemberListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_nav_drawer_item, parent, false);
+        // set the view's size, margins, paddings and layout parameters
+
+        ViewHolder vh = new ViewHolder(v);
+        return vh;
+    }
+
+    // Replace the contents of a view (invoked by the layout manager)
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        // - get element from your dataset at this position
+        // - replace the contents of the view with that element
+        //holder.mTextView.setText(mDataset[position]);
+
+    }
+
+    // Return the size of your dataset (invoked by the layout manager)
+    @Override
+    public int getItemCount() {
+        return mDataset.length;
+    }
+}
 
