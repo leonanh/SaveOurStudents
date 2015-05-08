@@ -12,6 +12,7 @@
         <item name="android:windowFullscreen">true</item>
     	<item name="android:windowContentOverlay">@null</item>
          All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="android:textViewStyle">@style/CustomTextView</item>
     </style>
 
     <style name="Transparent">
@@ -28,5 +29,10 @@
 
     <style name="SpacedElement">
         <item name="android:layout_margin">10dp</item>
+    </style>
+
+    <style name="CustomTextView" parent="android:Widget.TextView">
+        <item name="android:textSize">2dp</item>
+        <item name="android:textColor">@color/primary_text1</item>
     </style>
 </resources>

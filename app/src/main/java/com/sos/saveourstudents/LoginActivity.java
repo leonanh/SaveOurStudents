@@ -7,6 +7,7 @@ import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -103,6 +104,10 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         loginBtn = (Button) findViewById(R.id.login_btn);
         loginBtn.setOnClickListener(this);
 
+        Typeface font = Typeface.createFromAsset(getAssets(),"fonts/orange juice 2.0.ttf");
+        prompt.setTypeface(font);
+        signupBtn.setTypeface(font);
+        forgotLoginBtn.setTypeface(font);
 
         googleSignin = (ImageView) findViewById(R.id.google_login_btn);
         googleSignin.setOnClickListener(this);
