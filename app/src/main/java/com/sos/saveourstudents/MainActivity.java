@@ -39,7 +39,7 @@ public class MainActivity extends ActionBarActivity {
     String TITLES[] = {"Home","Events","Mail","Shop","Travel"};
     int PROFILEIMAGE = R.drawable.ic_launcher;
 
-    static boolean LOGGED_IN = true;
+    static boolean LOGGED_IN = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
