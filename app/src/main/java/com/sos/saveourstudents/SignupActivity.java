@@ -64,24 +64,24 @@ public class SignupActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    //TODO: REDO TO USE NEW TEXTFIELDS
     private boolean verifyPassword(String incomingPass1, String incomingPass2) {
-        int verifyPassword1 = validations.testPass(incomingPass1,incomingPass2);
+        int verifyPassword = validations.testPass(incomingPass1,incomingPass2);
 
 
-        if (verifyPassword1 == Validations.INCORRECT_LENGTH_TOP) {
+        if (verifyPassword == Validations.INCORRECT_LENGTH_TOP) {
+            userInput.setError("INCORRECT LENFT");
             return false;
         }
 
-        if ( verifyPassword1 == Validations.INCORRECT_LENGTH_BOT) {
+        if ( verifyPassword == Validations.INCORRECT_LENGTH_BOT) {
             return false;
         }
 
-        if (verifyPassword1 == Validations.REPEAT_NOT_SAME){
+        if (verifyPassword == Validations.REPEAT_NOT_SAME){
             return false;
         }
 
-        if (verifyPassword1 == Validations.VALIDATION_PASSED) {
+        if (verifyPassword == Validations.VALIDATION_PASSED) {
             return true;
         }
 
