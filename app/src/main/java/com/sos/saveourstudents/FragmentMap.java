@@ -23,7 +23,6 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.sos.saveourstudents.R;
 
 //import java.awt.Image;
 import java.lang.Override;
@@ -33,8 +32,8 @@ import java.util.ArrayList;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.JsonArrayRequest;
+//import com.android.volley.VolleyLog;
+//import com.android.volley.toolbox.JsonArrayRequest;
 
 import org.json.JSONObject;
 
@@ -50,7 +49,6 @@ public class FragmentMap extends Fragment implements
     private GoogleMap mMap;
     private MapView mMapView;
     private Bundle mBundle;
-    private Location mLastLocation;
     private Context mContext;
 
     private View rootView;
@@ -169,6 +167,7 @@ public class FragmentMap extends Fragment implements
                     }
                 });
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
+        createUI();
     }
 
     /**
@@ -262,11 +261,6 @@ public class FragmentMap extends Fragment implements
 
     }
 
-
-
-    /**
-     * Magic
-     */
     private void zoomToMyPosition(){
 
         LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
@@ -281,11 +275,10 @@ public class FragmentMap extends Fragment implements
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
                     .zoom(17)                   // Sets the zoom
-                    .bearing(90)                // Sets the orientation of the camera to east
-                    .tilt(40)                   // Sets the tilt of the camera to 30 degrees
+                    .bearing(0)                // Sets the orientation of the camera to east
+                    .tilt(20)                   // Sets the tilt of the camera to 30 degrees
                     .build();                   // Creates a CameraPosition from the builder
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
         }
 
 
