@@ -1,6 +1,8 @@
 package com.sos.saveourstudents;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -39,12 +41,17 @@ public class MainActivity extends ActionBarActivity {
     String TITLES[] = {"Home","Events","Mail","Shop","Travel"};
     int PROFILEIMAGE = R.drawable.ic_launcher;
 
-    static boolean LOGGED_IN = false;
+    SharedPreferences sharedPref;
+    //static boolean LOGGED_IN = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(!LOGGED_IN){
+
+        sharedPref = getSharedPreferences("sos.com.saveourstudents", Context.MODE_PRIVATE);
+        System.out.println("CONATNSONSFS: "+sharedPref.getString("first_name", null));
+
+        if(!sharedPref.contains("first_name")){
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             return;
