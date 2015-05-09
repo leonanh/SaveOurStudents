@@ -82,7 +82,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
     Toast prompt;
     Context appContext;
-    TextView forgotLoginBtn, signupBtn;
+    TextView logoLabel, forgotLoginBtn, signupBtn;
     EditText usernameField, passwordField;
     Button loginBtn;
     int toastLocation[];
@@ -94,26 +94,33 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         callbackManager = CallbackManager.Factory.create();
         loginManager = LoginManager.getInstance();
 
-        setContentView(R.layout.activity_login);
-        toastLocation = new int[2];
-        forgotLoginBtn = (TextView) findViewById(R.id.forgot_login_btn);
+        setContentView(R.layout.activity_login);    //Load layout before assigning interactivity.
+
+        forgotLoginBtn = (TextView) findViewById(R.id.forgot_login_btn);   //Find each View and assign onClickListeners if needed.
         forgotLoginBtn.setOnClickListener(this);
         signupBtn = (TextView) findViewById(R.id.signup_btn);
         signupBtn.setOnClickListener(this);
+        logoLabel = (TextView)findViewById(R.id.login_logo_label);
         usernameField = (EditText) findViewById(R.id.username_textfield);
         passwordField = (EditText) findViewById(R.id.password_textfield);
         loginBtn = (Button) findViewById(R.id.login_btn);
         loginBtn.setOnClickListener(this);
+
+        toastLocation = new int[2];     //Set up toast notification location.
         loginBtn.getLocationOnScreen(toastLocation);
 
-        appContext = getApplicationContext();
-        prompt = Toast.makeText(appContext, "Test", Toast.LENGTH_SHORT);
+        appContext = getApplicationContext();   //Instantiate toast.
+        prompt = Toast.makeText(appContext, "", Toast.LENGTH_SHORT);
         prompt.setGravity(Gravity.TOP|Gravity.LEFT,loginBtn.getRight()+5, toastLocation[1]-10);
-        prompt = Toast.makeText(appContext, "Test", Toast.LENGTH_SHORT);
 
-//        Typeface font = Typeface.createFromAsset(getAssets(),"fonts/orange juice 2.0.ttf");
-//        signupBtn.setTypeface(font);
-//        forgotLoginBtn.setTypeface(font);
+        //Apply fonts to each view
+        Typeface font = Typeface.createFromAsset(getAssets(),"fonts/Moon Flower Bold.ttf");
+        logoLabel.setTypeface(font);
+        signupBtn.setTypeface(font);
+        forgotLoginBtn.setTypeface(font);
+
+        font = Typeface.createFromAsset(getAssets(),"fonts/CODE Bold.otf");
+        loginBtn.setTypeface(font);
 
         googleSignin = (ImageView) findViewById(R.id.google_login_btn);
         googleSignin.setOnClickListener(this);

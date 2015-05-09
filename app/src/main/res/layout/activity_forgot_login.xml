@@ -31,7 +31,7 @@
         android:gravity="center"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:textSize="20sp"
+        android:textSize="@dimen/textview_font_size"
         />
 
     <EditText

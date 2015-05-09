@@ -50,7 +50,8 @@
                     android:text="@string/create_username_prompt"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/primary_text1"
-                    android:textSize="15sp"/>
+                    android:textSize="@dimen/textview_font_size"
+                    android:id="@+id/create_username_textview_prompt" />
 
             </LinearLayout>
 
@@ -74,7 +75,8 @@
                     android:text="@string/create_password_prompt"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/primary_text1"
-                    android:textSize="15sp"/>
+                    android:textSize="@dimen/textview_font_size"
+                    android:id="@+id/create_password_textview_prompt" />
             </LinearLayout>
 
             <LinearLayout
@@ -97,7 +99,8 @@
                     android:text="@string/create_password_confirmation_prompt"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/primary_text1"
-                    android:textSize="15sp"/>
+                    android:textSize="@dimen/textview_font_size"
+                    android:id="@+id/confirm_password_textview_prompt" />
             </LinearLayout>
 
             <LinearLayout

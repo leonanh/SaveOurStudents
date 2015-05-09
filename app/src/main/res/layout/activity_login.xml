@@ -60,7 +60,9 @@
         android:layout_below="@+id/password_textfield"
         android:text="@string/login"
         android:background="@color/primary_light"
-        android:layout_marginBottom="@dimen/container_padding" />
+        android:layout_marginBottom="@dimen/container_padding"
+        android:textSize="30dp"
+        android:textColor="@color/primary_dark" />
 
     <ImageView
         android:id="@+id/facebook_login_btn"
