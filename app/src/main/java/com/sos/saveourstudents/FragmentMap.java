@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -24,7 +25,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.sos.saveourstudents.R;
 
-import java.awt.Image;
+//import java.awt.Image;
 import java.lang.Override;
 import java.lang.String;
 import java.util.ArrayList;
@@ -34,7 +35,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObje
+
+import org.json.JSONObject;
 
 /**
  * Created by deamon on 4/21/15.
@@ -177,7 +179,7 @@ public class FragmentMap extends Fragment implements
      */
     private void createUI()
     {
-        mPostList = new ArrayList<Question>();
+        ArrayList<Question> mPostList = new ArrayList<Question>();
         /*
         for (int i = 0; i < Json Array Length; i++)
         {

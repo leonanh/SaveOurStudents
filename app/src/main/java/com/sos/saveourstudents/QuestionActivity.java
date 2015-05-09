@@ -10,7 +10,7 @@ import android.view.MenuItem;
 public class QuestionActivity extends ActionBarActivity {
 
     int a = 0;
-    Fragment theFragToShow;
+    FragmentViewQuestion theFragToShow;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
