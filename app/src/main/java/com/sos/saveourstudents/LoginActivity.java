@@ -83,7 +83,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
     String SENDER_ID = "862374215545"; //TODO
     GoogleCloudMessaging gcm;
     String regid;
-
+    boolean isLogging = false;
 
     TextView prompt, forgotLoginBtn, signupBtn;
     EditText usernameField, passwordField;
@@ -221,7 +221,10 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
             protected void onCurrentProfileChanged(Profile oldProfile, Profile currentProfile) {
                 System.out.println("Current profile has changed");
 
-                if(currentProfile != null){
+
+
+                if(currentProfile != null && !isLogging){
+                    isLogging = true;
                     createSOSUser("facebook",
                             currentProfile.getFirstName(),
                             currentProfile.getLastName(),
@@ -636,6 +639,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                     } else {
                         if (response.getString("result").substring(0, response.getString("result").indexOf(" ")).equalsIgnoreCase("Duplicate")) {
                             //TODO Watch for duplicate deviceIDS?
+                            isLogging = false;
                         }
                     }
 
@@ -651,6 +655,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
             @Override
             public void onErrorResponse(VolleyError error) {
                 System.out.println("Error: " + error.toString());
+                isLogging = false;
             }
         });
 
