@@ -19,6 +19,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -34,6 +38,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
+
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -92,6 +98,9 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
         setContentView(R.layout.activity_login);
 
+        if(!Singleton.hasBeenInitialized()){
+            Singleton.initialize(this);
+        }
 
         prompt = (TextView) findViewById(R.id.login_prompt);
         forgotLoginBtn = (TextView) findViewById(R.id.forgot_login_btn);
@@ -483,9 +492,9 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         Toast.makeText(this, "User is connected!", Toast.LENGTH_LONG).show();
 
         // Get user's information
-        getProfileInformation();
-        //System.out.println("In onConnected, get profile info from here?");
+        //getProfileInformation();
 
+        doSOSLogin("google");
         // Update the UI after signin
         //updateUI(true);
 
@@ -552,7 +561,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         }
     }
 
-
+/*
     private void getProfileInformation() {
         try {
             if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
@@ -588,8 +597,109 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         }
     }
 
+*/
 
 
+
+    private void doSOSLogin(String provider){
+
+
+        if(provider.equalsIgnoreCase("google")){
+            System.out.println("doing G+ login");
+            try {
+                if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
+                    Person currentPerson = Plus.PeopleApi
+                            .getCurrentPerson(mGoogleApiClient);
+
+
+                    //Need firstName, lastName, password (userId)
+                    //Need email, deviceId
+                    //String personName = currentPerson.getDisplayName();
+
+
+                    String firstName = currentPerson.getName().getGivenName();
+                    String lastName = currentPerson.getName().getFamilyName();
+                    String userId = currentPerson.getId();
+                    String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
+                    String deviceId = "";
+                    if(regid != null)
+                        deviceId = regid;
+
+                    prompt.setText("Welcome, " + firstName + " "+lastName);
+
+
+                    //TODO User userEmail for email and userId for password, that should work nicely
+                    //TODO Try to create user first
+
+/*
+                    JSONObject params = new JSONObject();
+                    try {
+                        params.put("firstName", "Androidhive");
+                        params.put("lastName", "abc@androidhive.info");
+                        params.put("email", "password123");
+                        params.put("password", "password123");
+                        params.put("deviceId", "deviceId123");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+*/
+
+                    String url = "http://10.0.3.2:8080/com.mysql.services/rest/serviceclass/createUser?" +
+                            "firstName="+firstName+
+                            "&lastName="+lastName+
+                            "&password="+userId+
+                            "&email="+email+
+                            "&deviceId="+"deviceID";
+
+
+                    JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url,
+                            (JSONObject)null, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            System.out.println("Response: " + response.toString());
+                        }
+                    }, new Response.ErrorListener() {
+
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            System.out.println("Error: " + error.toString());
+                        }
+                    });
+
+
+                    // Access the RequestQueue through your singleton class.
+                    Singleton.getInstance().addToRequestQueue(jsonObjReq);
+
+
+                    //TODO If create User fails, try to login
+                    //If login fails..... user email exists on database but password (userID) is not the right password
+                    //This should not happen if logged in with FB or G+
+                    //Dont let them change/access password if they log in with FB or G+
+
+
+
+
+                } else {
+                    Toast.makeText(getApplicationContext(),
+                            "Person information is null", Toast.LENGTH_LONG).show();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+        else if(provider.equalsIgnoreCase("facebook")){
+
+
+
+        }
+        else{
+
+        }
+
+
+
+    }
 
 
 
