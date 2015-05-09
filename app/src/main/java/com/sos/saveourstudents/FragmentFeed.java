@@ -83,17 +83,18 @@ public class FragmentFeed extends Fragment {
 
 
         //VOLLEYExamples
-
         //String url ="http://54.200.33.91:8080/hello/";
 
         String url = "http://10.0.2.2:8080/com.mysql.services/rest/serviceclass/getVenues";
 
-
-
         TextView mTxtDisplay;
         ImageView mImageView;
 
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url, (JSONObject)null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
+                                                               url,
+                                                               (JSONObject)null,
+                                                               new Response.Listener<JSONObject>()
+                {
 
                     @Override
                     public void onResponse(JSONObject response) {
@@ -111,8 +112,6 @@ public class FragmentFeed extends Fragment {
 
         // Access the RequestQueue through your singleton class.
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
-
-
 
         /**
          * JSON Array Example
