@@ -44,7 +44,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class LoginActivity extends Activity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -75,14 +74,12 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
 
     //GCM
-    public static final String EXTRA_MESSAGE = "message";
+    //public static final String EXTRA_MESSAGE = "message";
     public static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "appVersion";
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     String SENDER_ID = "862374215545"; //TODO
     GoogleCloudMessaging gcm;
-    AtomicInteger msgId = new AtomicInteger();
-    SharedPreferences prefs;
     String regid;
 
 
@@ -103,6 +100,8 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
             Singleton.initialize(this);
         }
 
+
+
         prompt = (TextView) findViewById(R.id.login_prompt);
         forgotLoginBtn = (TextView) findViewById(R.id.forgot_login_btn);
         forgotLoginBtn.setOnClickListener(this);
@@ -116,8 +115,6 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
         googleSignin = (ImageView) findViewById(R.id.google_login_btn);
         googleSignin.setOnClickListener(this);
-        //btnSignIn = (SignInButton) findViewById(R.id.sign_in_button);
-        //btnSignIn.setOnClickListener(this);
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this).addApi(Plus.API)
@@ -130,17 +127,14 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         loginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-
             }
 
             @Override
             public void onCancel() {
-
             }
 
             @Override
             public void onError(FacebookException exception) {
-
             }
         });
 
@@ -193,6 +187,16 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
             Log.i(TAG, "No valid Google Play Services APK found.");
         }
 
+
+        //TODO Clear shared prefs, logout of all accounts
+        logoutAll();
+
+
+    }
+
+    private void logoutAll() {
+        doFacebookLogout();
+        signOutFromGplus();
 
     }
 
@@ -329,10 +333,10 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         final SharedPreferences prefs = getGCMPreferences(context);
         int appVersion = getAppVersion(context);
         Log.i(TAG, "Saving regId on app version " + appVersion);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(PROPERTY_REG_ID, regId);
-        editor.putInt(PROPERTY_APP_VERSION, appVersion);
-        editor.commit();
+        //SharedPreferences.Editor editor = prefs.edit();
+        //editor.putString(PROPERTY_REG_ID, regId);
+        //editor.putInt(PROPERTY_APP_VERSION, appVersion);
+        //editor.commit();
     }
 
 
@@ -425,9 +429,8 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
             }
 
         } else if (v == googleSignin) {
-            //System.out.println("g+: "+Plus.PeopleApi.getCurrentPerson(mGoogleApiClient));
+
             if (mGoogleApiClient.isConnected()) {
-                //if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
                 signOutFromGplus();
 
             } else {
@@ -443,10 +446,8 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                 return;
             }
             //TODO: Database validation performed here.
-            Intent mainActivity = new Intent(this, MainActivity.class);
-            //MainActivity.LOGGED_IN = true;//TODO: Temporary variable
-            startActivity(mainActivity);
-            finish();
+            doSOSLogin("SOS", usernameField.getText().toString(), passwordField.getText().toString());
+
         } else if (v == signupBtn) {
 
             Intent signup = new Intent(this, SignupActivity.class);
@@ -459,16 +460,6 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
 
     }
-
-
-
-
-
-
-            /*
-            Intent i = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(i);
-            LoginActivity.this.finish();*/
 
 
     public void doFacebookLogin() {
@@ -486,8 +477,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         mSignInClicked = false;
         Toast.makeText(this, "User is connected!", Toast.LENGTH_LONG).show();
 
-        // Get user's information
-        //getProfileInformation();
+        //Userinfo
         if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
             Person currentPerson = Plus.PeopleApi
                     .getCurrentPerson(mGoogleApiClient);
@@ -495,7 +485,6 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
             //Need firstName, lastName, password (userId)
             //Need email, deviceId
-            //String personName = currentPerson.getDisplayName();
 
 
             String firstName = currentPerson.getName().getGivenName();
@@ -618,115 +607,44 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
 
     private void createSOSUser(final String provider, String firstName, String lastName,
-                            final String password, final String email) {
+                               final String password, final String email) {
 
 
         String deviceId = "";
         if (regid != null)
             deviceId = regid;
 
-            System.out.println("doing G+ login");
-
-            //Need firstName, lastName, password (userId)
-            //Need email, deviceId
-
-            //TODO User userEmail for email and userId for password, that should work nicely
-            //TODO Try to create user first
+        //Need firstName, lastName, password (userId)
+        //Need email, deviceId
 
 
-            String url = "http://10.0.3.2:8080/com.mysql.services/rest/serviceclass/createUser?" +
-                    "firstName=" + firstName +
-                    "&lastName=" + lastName +
-                    "&password=" + password +
-                    "&email=" + email +
-                    "&deviceId=" + "deviceID";
-
-
-            JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url,
-                    (JSONObject) null, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    System.out.println("Response: " + response.toString());
-                    try {
-
-                        //If success = 1, result = success string
-                        //If success = 0, result = error string
-                        if (response.getString("success").equalsIgnoreCase("1")) {
-                            System.out.println("Successful create");
-                            //Save prefs?
-                        }else {
-                            if(response.getString("result").substring(0, response.getString("result").indexOf(" ")).equalsIgnoreCase("Duplicate")){
-
-                                //TODO Watch for duplicate deviceIDS?
-                                //This is good, now login
-                                //Save prefs?
-                            }
-                        }
-
-                        doSOSLogin(provider, email, password);
-
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }, new Response.ErrorListener() {
-
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    System.out.println("Error: " + error.toString());
-                }
-            });
-
-
-            Singleton.getInstance().addToRequestQueue(jsonObjReq);
-
-
-            //TODO If create User fails, try to login
-            //If login fails..... user email exists on database but password (userID) is not the right password
-            //This should not happen if logged in with FB or G+
-            //Dont let them change/access password if they log in with FB or G+
-
-
-
-    }
-
-
-    private void doSOSLogin(final String provider, String email, String password){
-
-
-        String url = "http://10.0.3.2:8080/com.mysql.services/rest/serviceclass/doLogin?" +
-                "email=" + email +
-                "&password=" + password;
+        String url = "http://10.0.3.2:8080/com.mysql.services/rest/serviceclass/createUser?" +
+                "firstName=" + firstName +
+                "&lastName=" + lastName +
+                "&password=" + password +
+                "&email=" + email +
+                "&deviceId=" + deviceId;
 
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url,
                 (JSONObject) null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-
+                System.out.println("Response: " + response.toString());
                 try {
 
-                    if(response.getString("success").equalsIgnoreCase("1")){
-                        System.out.println("Login success Response: " + response.toString());
-
-                        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPref.edit();
-                        editor.putString("first_name", response.getJSONArray("result").getJSONObject(0).getString("first_name"));
-                        editor.putString("last_name", response.getJSONArray("result").getJSONObject(0).getString("last_name"));
-                        editor.putString("email", response.getJSONArray("result").getJSONObject(0).getString("email"));
-                        editor.putString("image", response.getJSONArray("result").getJSONObject(0).getString("image"));
-                        editor.putString("user_id", response.getJSONArray("result").getJSONObject(0).getString("user_id"));
-                        editor.putString("provider", provider);
-                        editor.commit();
-                        System.out.println("Prefs saved: "+sharedPref.getString("first_name", null));
-
+                    //If success = 1, result = success string
+                    //If success = 0, result = error string
+                    if (response.getString("success").equalsIgnoreCase("1")) {
+                        System.out.println("Successful create");
+                        //Save prefs?
+                    } else {
+                        if (response.getString("result").substring(0, response.getString("result").indexOf(" ")).equalsIgnoreCase("Duplicate")) {
+                            //TODO Watch for duplicate deviceIDS?
+                        }
                     }
-                    else if(response.getString("success").equalsIgnoreCase("0")){
 
-                        System.out.println("Login Error: "+response.toString());
-
-                    }
+                    doSOSLogin(provider, email, password);
 
 
                 } catch (JSONException e) {
@@ -747,6 +665,64 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
     }
 
+
+    private void doSOSLogin(final String provider, String email, String password) {
+
+
+        String url = "http://10.0.3.2:8080/com.mysql.services/rest/serviceclass/doLogin?" +
+                "email=" + email +
+                "&password=" + password;
+
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url,
+                (JSONObject) null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+                try {
+
+                    if (response.getString("success").equalsIgnoreCase("1")) {
+                        //System.out.println("Login success Response: " + response.toString());
+
+                        SharedPreferences sharedPref = getSharedPreferences(
+                                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putString("first_name", response.getJSONArray("result").getJSONObject(0).getString("first_name"));
+                        editor.putString("last_name", response.getJSONArray("result").getJSONObject(0).getString("last_name"));
+                        editor.putString("email", response.getJSONArray("result").getJSONObject(0).getString("email"));
+                        editor.putString("image", response.getJSONArray("result").getJSONObject(0).getString("image"));
+                        editor.putString("user_id", response.getJSONArray("result").getJSONObject(0).getString("user_id"));
+                        editor.putString("provider", provider);
+                        editor.commit();
+
+
+                        Intent mainActivity = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(mainActivity);
+                        finish();
+                    } else if (response.getString("success").equalsIgnoreCase("0")) {
+
+                        System.out.println("Login Error: " + response.toString());
+                        //TODO Let user know what happened
+                    }
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("Error: " + error.toString());
+            }
+        });
+
+
+        Singleton.getInstance().addToRequestQueue(jsonObjReq);
+
+
+    }
 
 
 }

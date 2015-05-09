@@ -42,20 +42,19 @@ public class MainActivity extends ActionBarActivity {
     int PROFILEIMAGE = R.drawable.ic_launcher;
 
     SharedPreferences sharedPref;
-    //static boolean LOGGED_IN = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        sharedPref = getSharedPreferences("sos.com.saveourstudents", Context.MODE_PRIVATE);
-        System.out.println("CONATNSONSFS: "+sharedPref.getString("first_name", null));
+        sharedPref = getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
         if(!sharedPref.contains("first_name")){
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            return;
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
         }
+
         setContentView(R.layout.activity_main);
 
         //Our AppCompat Toolbar
