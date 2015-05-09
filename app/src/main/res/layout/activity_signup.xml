@@ -44,15 +44,6 @@
                     android:hint="@string/username_hint"
                     android:gravity="center" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/create_username_prompt"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/primary_text1"
-                    android:textSize="@dimen/textview_font_size"
-                    android:id="@+id/create_username_textview_prompt" />
-
             </LinearLayout>
 
             <LinearLayout
@@ -69,14 +60,6 @@
                     android:hint="@string/password_hint"
                     android:gravity="center" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/create_password_prompt"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="@color/primary_text1"
-                    android:textSize="@dimen/textview_font_size"
-                    android:id="@+id/create_password_textview_prompt" />
             </LinearLayout>
 
             <LinearLayout
@@ -93,14 +76,6 @@
                     android:hint="@string/confirm_password_hint"
                     android:gravity="center" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/create_password_confirmation_prompt"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="@color/primary_text1"
-                    android:textSize="@dimen/textview_font_size"
-                    android:id="@+id/confirm_password_textview_prompt" />
             </LinearLayout>
 
             <LinearLayout
