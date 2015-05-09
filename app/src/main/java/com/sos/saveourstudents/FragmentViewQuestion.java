@@ -76,7 +76,7 @@ public class FragmentViewQuestion extends Fragment implements
 
         //TODO turn into server call (volley)
         mQuestionList = new ArrayList<Question>();
-        for(int a = 0;a < 7;a++){
+        for(int a = 0; a < 4; a++){
             Question temp = new Question("Question "+a);
             mQuestionList.add(temp);
         }
@@ -87,7 +87,7 @@ public class FragmentViewQuestion extends Fragment implements
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        mAdapter = new RecycleViewAdapter(R.layout.feed_item_layout, this.getActivity());
+        mAdapter = new RecycleViewAdapter(CardManager.getCounters(), R.layout.fragment_question_comment, this.getActivity());
         mRecyclerView.setAdapter(mAdapter);
 
 
@@ -182,7 +182,7 @@ public class FragmentViewQuestion extends Fragment implements
             public ViewHolder(View itemView, int viewType) {
                 super(itemView);
 
-                System.out.println("ViewType: " + viewType);
+                System.out.println("ViewType: "+viewType);
                 //0 index should be a map
                 if(viewType == TYPE_ITEM) {
                     //textView = (TextView) itemView.findViewById(R.id.textview);
