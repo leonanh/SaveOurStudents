@@ -11,6 +11,7 @@ import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -79,10 +80,12 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
     SharedPreferences prefs;
     String regid;
 
-
-    TextView prompt, forgotLoginBtn, signupBtn;
+    Toast prompt;
+    Context appContext;
+    TextView forgotLoginBtn, signupBtn;
     EditText usernameField, passwordField;
     Button loginBtn;
+    int toastLocation[];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,9 +95,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         loginManager = LoginManager.getInstance();
 
         setContentView(R.layout.activity_login);
-
-
-        prompt = (TextView) findViewById(R.id.login_prompt);
+        toastLocation = new int[2];
         forgotLoginBtn = (TextView) findViewById(R.id.forgot_login_btn);
         forgotLoginBtn.setOnClickListener(this);
         signupBtn = (TextView) findViewById(R.id.signup_btn);
@@ -103,11 +104,16 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         passwordField = (EditText) findViewById(R.id.password_textfield);
         loginBtn = (Button) findViewById(R.id.login_btn);
         loginBtn.setOnClickListener(this);
+        loginBtn.getLocationOnScreen(toastLocation);
 
-        Typeface font = Typeface.createFromAsset(getAssets(),"fonts/orange juice 2.0.ttf");
-        prompt.setTypeface(font);
-        signupBtn.setTypeface(font);
-        forgotLoginBtn.setTypeface(font);
+        appContext = getApplicationContext();
+        prompt = Toast.makeText(appContext, "Test", Toast.LENGTH_SHORT);
+        prompt.setGravity(Gravity.TOP|Gravity.LEFT,loginBtn.getRight()+5, toastLocation[1]-10);
+        prompt = Toast.makeText(appContext, "Test", Toast.LENGTH_SHORT);
+
+//        Typeface font = Typeface.createFromAsset(getAssets(),"fonts/orange juice 2.0.ttf");
+//        signupBtn.setTypeface(font);
+//        forgotLoginBtn.setTypeface(font);
 
         googleSignin = (ImageView) findViewById(R.id.google_login_btn);
         googleSignin.setOnClickListener(this);
@@ -150,7 +156,8 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
                 if (currentProfile == null) {
                     System.out.println("Profile changed: logged out");
-                    prompt.setText("Logged out");
+                    prompt = Toast.makeText(appContext, "Logged Out", Toast.LENGTH_SHORT);
+                    prompt.show();
                 } else {
                     System.out.println("Profile changed: " + currentProfile.getFirstName());
                     System.out.println("Save: " + currentProfile.getFirstName());
@@ -158,8 +165,8 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                     System.out.println("Save: " + currentProfile.getId());
                     System.out.println("Save: " + currentProfile.getProfilePictureUri(100, 100));
                     //TODO Send to server and save local info
-                    prompt.setText("Logged in as " + Profile.getCurrentProfile().getName());
-
+                    prompt = Toast.makeText(appContext, "Logged in as " + Profile.getCurrentProfile().getName(), Toast.LENGTH_SHORT);
+                    prompt.show();
                 }
             }
         };
@@ -170,7 +177,8 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         fbLogin.setOnClickListener(this);
 
         if (Profile.getCurrentProfile() != null) {
-            prompt.setText("Logged in as " + Profile.getCurrentProfile().getName());
+            prompt = Toast.makeText(appContext, "Logged in as " + Profile.getCurrentProfile().getName(), Toast.LENGTH_SHORT);
+            prompt.show();
         }
 
 
@@ -290,7 +298,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
 
             protected void onPostExecute(String msg) {
-                prompt.append(msg + "\n");
+                /*TODO: Disabled because I switched to toasts for prompts. prompt.append(msg + "\n");*/
             }
 /*
             @Override
@@ -432,10 +440,12 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         }
         else  if(v==loginBtn){
             if (usernameField.getText().toString().isEmpty()) {
-                prompt.setText(R.string.usernameEmpty);
+                prompt = Toast.makeText(appContext, R.string.usernameEmpty, Toast.LENGTH_SHORT);
+                prompt.show();
                 return;
             } else if (passwordField.getText().toString().isEmpty()) {
-                prompt.setText(R.string.passwordEmpty);
+                prompt = Toast.makeText(appContext, R.string.passwordEmpty, Toast.LENGTH_SHORT);
+                prompt.show();
                 return;
             }
             //TODO: Database validation performed here.
@@ -538,7 +548,8 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
             mGoogleApiClient.disconnect();
             mGoogleApiClient.connect();
             //updateUI(false);
-            prompt.setText("Logged out");
+            prompt = Toast.makeText(appContext, "Logged out", Toast.LENGTH_SHORT);
+            prompt.show();
         }
     }
 
@@ -572,7 +583,8 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                         + personGooglePlusProfile + ", email: " + email
                         + ", Image: " + personPhotoUrl);
 
-                prompt.setText("Logged in as " + personName);
+                prompt = Toast.makeText(appContext, "Logged in as " + personName, Toast.LENGTH_SHORT);
+                prompt.show();
                 //txtEmail.setText(email);
 
                 // by default the profile url gives 50x50 px image only

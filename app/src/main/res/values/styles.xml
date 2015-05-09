@@ -13,6 +13,7 @@
     	<item name="android:windowContentOverlay">@null</item>
          All customizations that are NOT specific to a particular API-level can go here. -->
         <item name="android:textViewStyle">@style/CustomTextView</item>
+        <item name="android:editTextStyle">@style/CustomEditText</item>
     </style>
 
     <style name="Transparent">
@@ -31,8 +32,15 @@
         <item name="android:layout_margin">10dp</item>
     </style>
 
+    <!-- Customizes all TextViews -->
     <style name="CustomTextView" parent="android:Widget.TextView">
-        <item name="android:textSize">2dp</item>
-        <item name="android:textColor">@color/primary_text1</item>
     </style>
+
+    <!-- Customizes all EditTexts -->
+    <style name="CustomEditText" parent="android:Widget.EditText">
+        <item name="android:background">@drawable/custom_edittext_layout</item>
+        <item name="android:layout_marginLeft">5dp</item>
+        <item name="android:layout_marginRight">5dp</item>
+    </style>
+
 </resources>
