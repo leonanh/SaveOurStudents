@@ -204,9 +204,12 @@ public class MainActivity extends ActionBarActivity {
             return true;
         }
 
-        //if (mDrawerToggle.onOptionsItemSelected(item)) {
-        //    return true;
-        //}
+        if (id == R.id.logout) {
+            Intent mainActivity = new Intent(this, LoginActivity.class);
+            startActivity(mainActivity);
+            finish();
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }

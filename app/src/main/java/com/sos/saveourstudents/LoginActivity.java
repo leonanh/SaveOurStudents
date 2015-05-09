@@ -113,6 +113,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         loginBtn.setOnClickListener(this);
 
 
+
         googleSignin = (ImageView) findViewById(R.id.google_login_btn);
         googleSignin.setOnClickListener(this);
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -120,6 +121,9 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                 .addOnConnectionFailedListener(this).addApi(Plus.API)
                 .addScope(Plus.SCOPE_PLUS_LOGIN).build();
 
+
+//TODO Clear shared prefs, logout of all accounts
+        logoutAll();
 
         /**
          * This is the result from selecting facebook login button
@@ -188,8 +192,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         }
 
 
-        //TODO Clear shared prefs, logout of all accounts
-        logoutAll();
+
 
 
     }
@@ -197,7 +200,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
     private void logoutAll() {
         doFacebookLogout();
         signOutFromGplus();
-
+        getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE).edit().clear().commit();
     }
 
 
@@ -364,7 +367,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
     protected void onStart() {
         super.onStart();
-        mGoogleApiClient.connect();
+        //mGoogleApiClient.connect();
     }
 
     protected void onStop() {
@@ -429,11 +432,10 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
             }
 
         } else if (v == googleSignin) {
+            mGoogleApiClient.connect();
 
             if (mGoogleApiClient.isConnected()) {
                 signOutFromGplus();
-
-            } else {
                 signInWithGplus();
             }
 
