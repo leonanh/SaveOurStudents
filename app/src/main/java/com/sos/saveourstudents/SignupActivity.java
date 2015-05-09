@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
+import com.rey.material.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,30 +70,18 @@ public class SignupActivity extends Activity implements View.OnClickListener {
 
 
         if (verifyPassword1 == Validations.INCORRECT_LENGTH_TOP) {
-            prompt = Toast.makeText(appContext, R.string.create_password_promp_err, Toast.LENGTH_SHORT);
-            prompt.show();
             return false;
         }
 
         if ( verifyPassword1 == Validations.INCORRECT_LENGTH_BOT) {
-            prompt = Toast.makeText(appContext, R.string.create_password_promp_err, Toast.LENGTH_SHORT);
-            prompt.show();
             return false;
         }
 
         if (verifyPassword1 == Validations.REPEAT_NOT_SAME){
-            prompt = Toast.makeText(appContext, R.string.create_password_promp_notsame, Toast.LENGTH_SHORT);
-            prompt.show();
             return false;
         }
 
         if (verifyPassword1 == Validations.VALIDATION_PASSED) {
-            prompt = Toast.makeText(appContext, R.string.create_password_promp_err, Toast.LENGTH_SHORT);
-            prompt.show();
-            passBottom1.setTextColor(Color.BLACK);
-            passBottom2.setTextColor(Color.BLACK);
-            passBottom2.setText(R.string.create_password_confirmation_prompt);
-            passBottom1.setText(R.string.create_password_prompt);
             return true;
         }
 
@@ -103,12 +91,8 @@ public class SignupActivity extends Activity implements View.OnClickListener {
     private boolean verifyEmail(String incomingEmail) {
         boolean emailIsValid = validations.testEmailSignUp(incomingEmail);
 
-        emailText.setTextColor(Color.BLACK);
-        emailText.setText(R.string.create_email_prompt);
 
         if (emailIsValid == false) {
-            emailText.setTextColor(Color.RED);
-            emailText.setText(R.string.create_email_prompt_err);
             return false;
         }
         return true;
@@ -117,12 +101,8 @@ public class SignupActivity extends Activity implements View.OnClickListener {
 
     private boolean verifyUser(String incomingUser) {
         boolean user = validations.testUserName(incomingUser);
-        userText.setTextColor(Color.BLACK);
-        userText.setText(R.string.create_username_prompt);
 
         if (!user) {
-            userText.setTextColor(Color.RED);
-            userText.setText(R.string.create_username_prompt_err);
             return false;
         }
 

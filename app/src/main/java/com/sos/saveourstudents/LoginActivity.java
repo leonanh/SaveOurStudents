@@ -116,8 +116,13 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         //Apply fonts to each view
         Typeface font = Typeface.createFromAsset(getAssets(),"fonts/Moon Flower Bold.ttf");
         logoLabel.setTypeface(font);
+
         signupBtn.setTypeface(font);
         forgotLoginBtn.setTypeface(font);
+
+        font = Typeface.createFromAsset(getAssets(),"fonts/Soft Elegance.ttf");
+        usernameField.setTypeface(font);
+        passwordField.setTypeface(font);
 
         font = Typeface.createFromAsset(getAssets(),"fonts/CODE Bold.otf");
         loginBtn.setTypeface(font);

@@ -21,7 +21,6 @@
         android:id="@+id/scrollView"
         android:layout_alignParentTop="true"
         android:layout_above="@id/signup_confirm_signup_btn"
-        android:background="@color/primary"
         android:fillViewport="false">
 
         <LinearLayout
@@ -36,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <EditText
+                <com.rey.material.widget.EditText
                     android:inputType="textPersonName"
                     android:id="@+id/signup_username_textfield"
                     android:layout_width="fill_parent"
@@ -52,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <EditText
+                <com.rey.material.widget.EditText
                     android:inputType="textPersonName"
                     android:id="@+id/signup_password_textfield"
                     android:layout_width="fill_parent"
@@ -68,7 +67,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <EditText
+                <com.rey.material.widget.EditText
                     android:inputType="textPersonName"
                     android:id="@+id/signup_password_confirm_textfield"
                     android:layout_width="fill_parent"
@@ -84,7 +83,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
 
-                <EditText
+                <com.rey.material.widget.EditText
                     android:inputType="textEmailAddress"
                     android:id="@+id/signup_email_textfield"
                     android:layout_width="fill_parent"
