@@ -72,6 +72,7 @@
                     android:id="@+id/signup_password_confirm_textfield"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:hint="@string/confirm_password_hint"
                     android:gravity="center" />
 
             </LinearLayout>

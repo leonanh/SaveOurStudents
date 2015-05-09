@@ -7,9 +7,11 @@ import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -75,6 +77,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
     ImageView fbLogin;
     String facebookEmail;
 
+
     //GCM
     //public static final String EXTRA_MESSAGE = "message";
     public static final String PROPERTY_REG_ID = "registration_id";
@@ -85,9 +88,13 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
     String regid;
     boolean isLogging = false;
 
+    Toast prompt;
+    Context appContext;
+    TextView logoLabel;
     TextView prompt, forgotLoginBtn, signupBtn;
     EditText usernameField, passwordField;
     Button loginBtn;
+    int toastLocation[];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,21 +116,23 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         forgotLoginBtn.setOnClickListener(this);
         signupBtn = (TextView) findViewById(R.id.signup_btn);
         signupBtn.setOnClickListener(this);
+        logoLabel = (TextView)findViewById(R.id.login_logo_label);
         usernameField = (EditText) findViewById(R.id.username_textfield);
         passwordField = (EditText) findViewById(R.id.password_textfield);
         loginBtn = (Button) findViewById(R.id.login_btn);
         loginBtn.setOnClickListener(this);
 
-
+        toastLocation = new int[2];     //Set up toast notification location.
+        loginBtn.getLocationOnScreen(toastLocation);
 
         googleSignin = (ImageView) findViewById(R.id.google_login_btn);
         googleSignin.setOnClickListener(this);
+        //btnSignIn = (SignInButton) findViewById(R.id.sign_in_button);
+        //btnSignIn.setOnClickListener(this);
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this).addApi(Plus.API)
-                .addScope(Plus.SCOPE_PLUS_PROFILE)
-                //.addScope(Plus.SCOPE_PLUS_LOGIN)
-                .build();
+                .addScope(Plus.SCOPE_PLUS_LOGIN).build();
 
 
         //TODO Clear shared prefs, logout of all accounts
@@ -219,7 +228,6 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         profileTracker = new ProfileTracker() {
             @Override
             protected void onCurrentProfileChanged(Profile oldProfile, Profile currentProfile) {
-                System.out.println("Current profile has changed");
 
 
 
@@ -242,7 +250,8 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         fbLogin.setOnClickListener(this);
 
         if (Profile.getCurrentProfile() != null) {
-            prompt.setText("Logged in as " + Profile.getCurrentProfile().getName());
+            //prompt = Toast.makeText(appContext, "Logged in as " + Profile.getCurrentProfile().getName(), Toast.LENGTH_SHORT);
+            //prompt.show();
         }
 
 
@@ -267,7 +276,6 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         getGCMPreferences(this).edit().clear().commit();
         getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE).edit().clear().commit();
     }
-
 
     /**
      * Gets the current registration ID for application on GCM service.
@@ -469,7 +477,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         if (v == fbLogin) {
             //Profile profile = Profile.getCurrentProfile();
             //if (profile == null) {
-                doFacebookLogin();
+            doFacebookLogin();
             //} else {
             //    doFacebookLogout();
             //}
