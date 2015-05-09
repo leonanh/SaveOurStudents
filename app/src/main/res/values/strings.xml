@@ -20,6 +20,7 @@
     <string name="usernameEmpty">Username field is empty!</string>
     <string name="passwordEmpty">Password field is empty!</string>
     <string name="invalidLogin">Login is invalid!</string>
+    <string name="emailEmpty">Email is empty!</string>
 
     <!-- -->
     <string name="openDrawer">drawer open</string>
