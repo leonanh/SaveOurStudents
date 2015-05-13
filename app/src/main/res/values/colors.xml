@@ -49,4 +49,11 @@
 	<color name="color_9">#009688</color>
 
 
+    <array name="progress_colors">
+        <item>@color/primary</item>
+        <item>#FFD8433C</item>
+        <item>#FFF2AF3A</item>
+        <item>#FF279B5E</item>
+    </array>
+
 </resources>

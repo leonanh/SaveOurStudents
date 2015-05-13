@@ -35,4 +35,9 @@
     <style name="SpacedElement">
         <item name="android:layout_margin">10dp</item>
     </style>
+
+    <style name="ColorsCircularProgressDrawableStyle" parent="Material.Drawable.CircularProgress">
+        <item name="cpd_strokeColors">@array/progress_colors</item>
+    </style>
+
 </resources>
