@@ -9,13 +9,12 @@ import android.view.MenuItem;
 
 public class QuestionActivity extends ActionBarActivity {
 
-    int a = 0;
-    FragmentViewQuestion theFragToShow;
+    //int a = 0;
+    Fragment theFragToShow;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question);
-
 
 
 
@@ -26,18 +25,19 @@ public class QuestionActivity extends ActionBarActivity {
                 return;
             }
 
+            if(getIntent().hasExtra("type")){
+                if(getIntent().getExtras().getInt("type") == 0){
+                    theFragToShow = new FragmentViewQuestion();
+                }
+                else{
+                    theFragToShow = new FragmentCreateQuestion();
+                }
 
-            if(a == 0){
-                theFragToShow = new FragmentViewQuestion();
             }
-            else{
-                //theFragToShow = new FragmentEditQuestion();
-            }
 
 
 
-            //If we want to pass some information to the fragment, probably not
-            //firstFragment.setArguments(getIntent().getExtras());
+
 
             // Add the fragment to the 'fragment_container' FrameLayout
             getSupportFragmentManager().beginTransaction()

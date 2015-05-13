@@ -76,7 +76,7 @@ public class FragmentViewQuestion extends Fragment implements
 
         //TODO turn into server call (volley)
         mQuestionList = new ArrayList<Question>();
-        for(int a = 0; a < 4; a++){
+        for(int a = 0; a < 5; a++){
             Question temp = new Question("Question "+a);
             mQuestionList.add(temp);
         }
@@ -87,7 +87,7 @@ public class FragmentViewQuestion extends Fragment implements
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        mAdapter = new RecycleViewAdapter(CardManager.getCounters(), R.layout.fragment_question_comment, this.getActivity());
+        mAdapter = new RecycleViewAdapter(mQuestionList, R.layout.fragment_question_comment, this.getActivity());
         mRecyclerView.setAdapter(mAdapter);
 
 
@@ -232,7 +232,7 @@ public class FragmentViewQuestion extends Fragment implements
 
         }
 
-        public RecycleViewAdapter(int rowLayout, Context context) {
+        public RecycleViewAdapter(List mQuestionList, int rowLayout, Context context) {
             //this.questions = questions;
             this.rowLayout = rowLayout;
             this.context = context;
