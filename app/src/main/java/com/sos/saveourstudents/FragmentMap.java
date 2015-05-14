@@ -23,6 +23,8 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;// Testing infowindow event handle
+import android.widget.Toast; //ditto
 
 //import java.awt.Image;
 import java.lang.Override;
@@ -42,7 +44,7 @@ import org.json.JSONObject;
  */
 public class FragmentMap extends Fragment implements
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener{
+        GoogleApiClient.OnConnectionFailedListener, OnInfoWindowClickListener{
 
     static final LatLng UCSD = new LatLng(32.88006, -117.234013);
     static final LatLng GEISEL = new LatLng(32.881151, -117.23744999999997);
@@ -124,7 +126,7 @@ public class FragmentMap extends Fragment implements
 
                 TextView tvTitle = (TextView) v.findViewById(R.id.title);
                 tvTitle.setText(arg0.getTitle());
-                TextView tvSnippet = ((TextView)rootView.findViewById(R.id.snippet));
+                TextView tvSnippet = ((TextView)v.findViewById(R.id.snippet));
                 tvSnippet.setText(arg0.getSnippet());
 
                 // Returning the view containing InfoWindow contents
@@ -132,6 +134,16 @@ public class FragmentMap extends Fragment implements
 
             }
         });
+
+        mMap.setOnInfoWindowClickListener(this); //Testing infowindow event handle
+
+    }
+
+    // testing infowindow event handle
+    public void onInfoWindowClick(Marker marker) {
+        Toast.makeText(this.mContext,
+                "Info Window clicked@" + marker.getId(),
+                Toast.LENGTH_SHORT).show();
 
     }
 
@@ -205,7 +217,8 @@ public class FragmentMap extends Fragment implements
             }
             Marker ucsd = mMap.addMarker(new MarkerOptions()
                     .position(UCSD)
-                    .title("UCSD"));
+                    .title("UCSD")
+                    .snippet("UCSD Rules"));
             Marker geisel = mMap.addMarker(new MarkerOptions()
                     .position(GEISEL)
                     .title("GEISEL")
