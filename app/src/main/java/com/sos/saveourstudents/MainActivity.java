@@ -1,8 +1,12 @@
 package com.sos.saveourstudents;
 
+import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -13,6 +17,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -180,6 +185,43 @@ public class MainActivity extends ActionBarActivity {
         if (id == R.id.action_settings) {
             ///return true;
         }
+        else if (id == R.id.action_filter) {
+
+            DisplayMetrics metrics = new DisplayMetrics();
+            SharedPreferences sharedPref = getSharedPreferences(
+                    getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
+            System.out.println("Main: "+sharedPref.getStringSet("filter_list", null).toString());
+
+            getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            //DialogFragment newFragment = TagDialogFragment.newInstance(this, metrics, sharedPref);
+
+            DialogFragment newFragment = new TagDialogFragment(this, metrics, sharedPref);
+
+            //dialog.getWindow().setLayout(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT).
+
+            newFragment.setCancelable(true);
+
+            newFragment.show(getSupportFragmentManager(), "");
+
+
+
+
+
+
+
+            // showDialog();
+            // Set the title
+            //dialog.setTitle("Dialog Title");
+
+            // inflate the layout
+            //dialog.setContentView(R.layout.tag_dialog_layout);
+            //dialog.show();
+        }
+
+
+
 /*
         if (id == R.id.view_profile) {
             startActivity(new Intent(this, ProfileActivity.class));
@@ -195,6 +237,11 @@ public class MainActivity extends ActionBarActivity {
 
 
 }
+
+
+
+
+
 
 
 /**
@@ -229,3 +276,5 @@ class MyPagerAdapter extends FragmentPagerAdapter {
         return tabNames.length;
     }
 }
+
+
