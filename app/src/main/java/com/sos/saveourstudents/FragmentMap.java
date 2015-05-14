@@ -111,16 +111,21 @@ public class FragmentMap extends Fragment implements
                 LatLng latLng = arg0.getPosition();
 
                 // Getting reference to the TextView to set latitude
-                TextView tvLat = (TextView) v.findViewById(R.id.tv_lat);
+                TextView tv_lat = (TextView) v.findViewById(R.id.tv_lat);
 
                 // Getting reference to the TextView to set longitude
-                TextView tvLng = (TextView) v.findViewById(R.id.tv_lng);
+                TextView tv_lng = (TextView) v.findViewById(R.id.tv_lng);
 
                 // Setting the latitude
-                tvLat.setText("Latitude:" + latLng.latitude);
+                tv_lat.setText("Latitude:" + latLng.latitude);
 
                 // Setting the longitude
-                tvLng.setText("Longitude:" + latLng.longitude);
+                tv_lng.setText("Longitude:" + latLng.longitude);
+
+                TextView tvTitle = (TextView) v.findViewById(R.id.title);
+                tvTitle.setText(arg0.getTitle());
+                TextView tvSnippet = ((TextView)rootView.findViewById(R.id.snippet));
+                tvSnippet.setText(arg0.getSnippet());
 
                 // Returning the view containing InfoWindow contents
                 return v;
@@ -178,7 +183,7 @@ public class FragmentMap extends Fragment implements
      */
     private void createUI()
     {
-        ArrayList<Question> mPostList = new ArrayList<Question>();
+        ArrayList<Question> mPostList = new ArrayList<>();
         /*
         for (int i = 0; i < Json Array Length; i++)
         {
@@ -198,7 +203,8 @@ public class FragmentMap extends Fragment implements
                     .title(mTitle)
                     .snippet());*/
             }
-            Marker ucsd = mMap.addMarker(new MarkerOptions().position(UCSD)
+            Marker ucsd = mMap.addMarker(new MarkerOptions()
+                    .position(UCSD)
                     .title("UCSD"));
             Marker geisel = mMap.addMarker(new MarkerOptions()
                     .position(GEISEL)
@@ -274,14 +280,12 @@ public class FragmentMap extends Fragment implements
 
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
-                    .zoom(17)                   // Sets the zoom
+                    .zoom(13)                   // Sets the zoom
                     .bearing(0)                // Sets the orientation of the camera to east
-                    .tilt(20)                   // Sets the tilt of the camera to 30 degrees
+                    .tilt(40)                   // Sets the tilt of the camera to 30 degrees
                     .build();                   // Creates a CameraPosition from the builder
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         }
-
-
 
     }
 
