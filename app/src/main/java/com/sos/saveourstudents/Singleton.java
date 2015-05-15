@@ -9,26 +9,33 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.sos.saveourstudents.supportclasses.LruBitmapCache;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
-public class Singleton {
 
-	private final String TAG = "LiveSpot Tag";
+public class Singleton implements
+		GoogleApiClient.ConnectionCallbacks,
+		GoogleApiClient.OnConnectionFailedListener{
+
+	private final String TAG = "SOS Tag";
 	private static Singleton instance = null;
 	private static Context mContext;
-
+	
 	private RequestQueue mRequestQueue;
-	private ImageLoader mImageLoader;
-
+    private ImageLoader mImageLoader;
+	private GoogleApiClient mGoogleApiClient;
 	//static Typeface face;
 	static public android.graphics.Typeface face;
-
 	/**
 	 * To initialize the class. It must be called before call the method getInstance()
 	 * @param ctx The Context used
 	 */
-
+	
 	public static void initialize(Context ctx) {
 		mContext = ctx;
 		face = Typeface.createFromAsset(mContext.getAssets(), "plane.ttf");
@@ -108,5 +115,36 @@ public class Singleton {
 		}
 	}
 
+	/**
+	 * +oogle Maps api
+	 */
+	protected synchronized void buildGoogleApiClient() {
+		mGoogleApiClient = new GoogleApiClient.Builder(mContext)
+				.addConnectionCallbacks(this)
+				.addOnConnectionFailedListener(this)
+				.addApi(LocationServices.API)
+				.build();
 
-}
+        /*GoogleApiClient client = new GoogleApiClient.Builder(this)
+                .addApi(Plus.API)
+                .addScope(Plus.SCOPE_PLUS_LOGIN)
+                .setAccountName("users.account.name@gmail.com")
+                .build();*/
+		mGoogleApiClient.connect();
+	}
+
+
+	@Override
+	public void onConnected(Bundle bundle) {
+
+	}
+
+	@Override
+	public void onConnectionSuspended(int i) {
+
+	}
+
+	@Override
+	public void onConnectionFailed(ConnectionResult connectionResult) {
+
+	}}

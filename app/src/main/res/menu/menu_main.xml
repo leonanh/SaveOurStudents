@@ -32,4 +32,9 @@
 
 
 
+    <item
+        android:id="@+id/logout"
+        android:title="Logout"
+        app:showAsAction="never" />
+
 </menu>
