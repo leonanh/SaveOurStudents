@@ -7,11 +7,9 @@ import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -88,10 +86,10 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
     String regid;
     boolean isLogging = false;
 
-    Toast prompt;
+    //Toast prompt;
     Context appContext;
     TextView logoLabel;
-    TextView prompt, forgotLoginBtn, signupBtn;
+    TextView forgotLoginBtn, signupBtn;
     EditText usernameField, passwordField;
     Button loginBtn;
     int toastLocation[];
@@ -111,7 +109,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
         registerInBackground();
 
-        prompt = (TextView) findViewById(R.id.login_prompt);
+        //prompt = (TextView) findViewById(R.id.login_prompt);
         forgotLoginBtn = (TextView) findViewById(R.id.forgot_login_btn);
         forgotLoginBtn.setOnClickListener(this);
         signupBtn = (TextView) findViewById(R.id.signup_btn);
@@ -378,7 +376,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
 
             protected void onPostExecute(String msg) {
-                prompt.append(msg + "\n");
+                //prompt.append(msg + "\n");
             }
 
             /*
@@ -492,10 +490,10 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
         } else if (v == loginBtn) {
             if (usernameField.getText().toString().isEmpty()) {
-                prompt.setText(R.string.usernameEmpty);
+                //prompt.setText(R.string.usernameEmpty);
                 return;
             } else if (passwordField.getText().toString().isEmpty()) {
-                prompt.setText(R.string.passwordEmpty);
+                //prompt.setText(R.string.passwordEmpty);
                 return;
             }
 
@@ -545,7 +543,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
             String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
 
 
-            prompt.setText("Welcome, " + firstName + " " + lastName);
+            //prompt.setText("Welcome, " + firstName + " " + lastName);
 
             createSOSUser("google", firstName, lastName, userId, email);
 
@@ -593,7 +591,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
             Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
             mGoogleApiClient.disconnect();
             mGoogleApiClient.connect();
-            prompt.setText("Logged out");
+            //prompt.setText("Logged out");
         }
     }
 
