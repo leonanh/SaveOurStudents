@@ -59,7 +59,7 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setStyle(DialogFragment.STYLE_NO_FRAME, 0);
+        setStyle(DialogFragment.STYLE_NO_TITLE, 1);
 
 
 
@@ -77,7 +77,11 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
         params.height = (int) (dispMetrics.heightPixels * .7);
         getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
 
-        getDialog().setTitle("Filter");
+        //getDialog().setTitle("Filter");
+
+
+        getDialog().getWindow().addFlags(2);
+        getDialog().getWindow().setDimAmount(0.5f);
         super.onResume();
     }
 
