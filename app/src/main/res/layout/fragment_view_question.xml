@@ -76,59 +76,31 @@
             android:layout_below="@+id/tag_list"
             app:rd_enable="true"/>
 
-        <com.sos.saveourstudents.supportclasses.FlowLayout
+        <!--<com.sos.saveourstudents.supportclasses.FlowLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/tag_list"-->
+            <!--android:layout_below="@+id/question_text"-->
+            <!--android:layout_marginLeft="5dp"-->
+            <!--android:layout_marginRight="5dp"-->
+            <!--android:layout_marginBottom="3dp">-->
+    <!--</com.sos.saveourstudents.supportclasses.FlowLayout>-->
+
+        <HorizontalScrollView
+            android:layout_width="fill_parent"
+            android:layout_below="@+id/question_text"
+            android:id="@+id/tag_list"
+            android:scrollbars="none"
+            android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/tag_list"
-            android:layout_below="@+id/question_text"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginBottom="3dp">
+            android:id="@+id/tag_list_layout">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="150 m"
-                android:textColor="@android:color/black"
-                android:layout_marginRight="5dp"
-                android:layout_alignParentRight="true"
-                android:textSize="12sp"
-                android:layout_alignBottom="@+id/question_timestamp"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="150 m"
-                android:textColor="@android:color/black"
-                android:layout_marginRight="5dp"
-                android:layout_alignParentRight="true"
-                android:textSize="12sp"
-                android:layout_alignBottom="@+id/question_timestamp"
-                />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="150 m"
-                android:textColor="@android:color/black"
-                android:layout_marginRight="5dp"
-                android:layout_alignParentRight="true"
-                android:textSize="12sp"
-                android:layout_alignBottom="@+id/question_timestamp"
-                />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="150 m"
-                android:textColor="@android:color/black"
-                android:layout_marginRight="5dp"
-                android:layout_alignParentRight="true"
-                android:textSize="12sp"
-                android:layout_alignBottom="@+id/question_timestamp"
-                />
-    </com.sos.saveourstudents.supportclasses.FlowLayout>
-
+            </LinearLayout>
+        </HorizontalScrollView>
     </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView

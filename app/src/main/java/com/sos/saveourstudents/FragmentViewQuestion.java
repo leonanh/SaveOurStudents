@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -24,6 +25,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.sos.saveourstudents.supportclasses.FlowLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,9 +62,16 @@ public class FragmentViewQuestion extends Fragment implements
         //Call this method to initiate volley request
         getQuestionData();
 
+        View taglist = rootView.findViewById(R.id.tag_list_layout);
 
+        for(int i = 0; i < 10; i++) {
+            TextView tag = new TextView(taglist.getContext());
+            tag.setText("#dummyTag");
+            ((LinearLayout)taglist).addView(tag);
+        }
 
         return rootView;
+
 
 
     }
@@ -355,20 +364,7 @@ public class FragmentViewQuestion extends Fragment implements
     }
 
 
-
-
-
-
-
-
-
-
-
 }
-
-
-
-
 
 
 class MemberListAdapter extends RecyclerView.Adapter<MemberListAdapter.ViewHolder> {
