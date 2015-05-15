@@ -125,11 +125,15 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
                                 //No results to show
                                 return;
                             } else {
-                                popularTags = result.getJSONArray("result");
+
+                                //JSONObject temp = result.getJSONObject("result");
+                                //System.out.println("temp: "+temp.getJSONArray("myArrayList"));
+
+                                popularTags = result.getJSONObject("result").getJSONArray("myArrayList");
                             }
 
 
-                            System.out.println("popularTags " + popularTags.toString());
+                            //System.out.println("popularTags " + popularTags.toString());
 
                             showTags();
 
@@ -177,7 +181,7 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
             activeTagView.setOnClickListener(this);
             flowLayout2.addView(activeTagView);
         }
-        System.out.println("Child count: "+flowLayout2.getChildCount());
+        //System.out.println("Child count: "+flowLayout2.getChildCount());
 
     }
 
@@ -196,7 +200,7 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
                     tagView = mInflater.inflate(R.layout.tag_item_layout, null, false);
                     tagView.findViewById(R.id.the_linear).setOnClickListener(this);
                     TextView tagText = (TextView) tagView.findViewById(R.id.tag_text);
-                    String text = popularTags.getJSONObject(a).getString("tag");
+                    String text = popularTags.getJSONObject(a).getJSONObject("map").getString("tag");
                     tagText.setText(text);
 
                     if (activeFilters.contains(text))
@@ -240,7 +244,7 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
                 tagView = mInflater.inflate(R.layout.tag_item_layout, null, false);
                 tagView.findViewById(R.id.the_linear).setOnClickListener(this);
                 TextView tagText = (TextView) tagView.findViewById(R.id.tag_text);
-                String text = popularTags.getJSONObject(a).getString("tag");
+                String text = popularTags.getJSONObject(a).getJSONObject("map").getString("tag");
                 tagText.setText(text);
 
                 if(activeFilters.contains(text))
@@ -251,7 +255,7 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
 
 
                 //Add to autocomplete list
-                tagsArray[a] = popularTags.getJSONObject(a).getString("tag");
+                tagsArray[a] = text;
 
             }
 
@@ -290,7 +294,6 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
         }
         else if(v.getId() == R.id.active_tag_text){
             TextView temp = (TextView) v;
-            System.out.println("Clicked active: "+temp.getText().toString());
             removeTagFromList(temp.getText().toString());
         }
 
@@ -328,7 +331,7 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
 
         }
 
-        System.out.println(sharedPref.getStringSet("filter_list", new HashSet<String>()).toString());
+        //System.out.println(sharedPref.getStringSet("filter_list", new HashSet<String>()).toString());
 
         updateActiveTagsUI();
 
@@ -353,7 +356,7 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
         }
 
 
-        System.out.println(sharedPref.getStringSet("filter_list", new HashSet<String>()).toString());
+        //System.out.println(sharedPref.getStringSet("filter_list", new HashSet<String>()).toString());
 
         updateActiveTagsUI();
         updatePopularTagsUI();

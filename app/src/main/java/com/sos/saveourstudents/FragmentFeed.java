@@ -1,6 +1,7 @@
 package com.sos.saveourstudents;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -23,6 +24,11 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by deamon on 4/21/15.
@@ -113,7 +119,21 @@ public class FragmentFeed extends Fragment {
 
     private void getQuestionData() {
 
-        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getQuestions";
+
+        //double latitude, double longitude,  List<String> tags, double limit
+        //String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getQuestions";
+        SharedPreferences sharedPref = mContext.getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        Set<String> filterList = new HashSet<String>(sharedPref.getStringSet("filter_list", new HashSet<String>()));
+
+        List<String> myList = new ArrayList<String>();
+        myList.addAll(filterList);
+
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getQuestions"+
+                "?latitude="+32.8800604+ //TODO
+                "&longitude="+-117.2340135+  //TODO
+                "&tags="+myList+
+                "&limit="+50;
 
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
@@ -135,15 +155,14 @@ public class FragmentFeed extends Fragment {
                             }
                             if(result.getString("expectResults").equalsIgnoreCase("0")){
                                 //No results to show
-                                return;
+                                mQuestionList = result.getJSONObject("result").getJSONArray("myArrayList");
                             }
                             else{
-
-                                mQuestionList = result.getJSONArray("result");
+                                mQuestionList = result.getJSONObject("result").getJSONArray("myArrayList");
                             }
 
 
-                            //System.out.println("popularTags "+popularTags.toString());
+                            //System.out.println("mQuestionList "+mQuestionList);
                             mSwipeRefreshLayout.setRefreshing(false);
                             showQuestions();
 
