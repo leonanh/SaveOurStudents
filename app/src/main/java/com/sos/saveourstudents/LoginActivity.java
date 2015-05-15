@@ -152,6 +152,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                                 try {
 
                                     //Profile profile = Profile.getCurrentProfile();
+                                    System.out.println("FB email: "+object.getString("email"));
                                     facebookEmail = object.getString("email");
 
 
@@ -185,7 +186,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
 
 
-                if(currentProfile != null && !isLogging){
+                if(currentProfile != null && !isLogging && facebookEmail != null){
                     isLogging = true;
                     createSOSUser("facebook",
                             currentProfile.getFirstName(),
