@@ -97,6 +97,7 @@
         <activity
             android:name=".ProfileActivity"
             android:label="@string/title_activity_profile"
+            android:windowSoftInputMode="adjustPan"
             android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

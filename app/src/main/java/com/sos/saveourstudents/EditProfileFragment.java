@@ -1,13 +1,21 @@
 package com.sos.saveourstudents;
 
 import android.app.Activity;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
+
+import com.rey.material.widget.EditText;
 
 
 /**
@@ -25,7 +33,18 @@ public class EditProfileFragment extends Fragment {
 
     private Student currStudent;
     private OnFragmentInteractionListener mListener;
-
+    
+    private EditText mEditFirstName;
+    private android.widget.EditText mEditFirstNameInput;
+    private EditText mEditLastName;
+    private android.widget.EditText mEditLastNameInput;
+    private EditText mEditSchool;
+    private android.widget.EditText mEditSchoolInput;
+    private EditText mEditMajor;
+    private android.widget.EditText mEditMajorInput;
+    private EditText mEditDescription;
+    private android.widget.EditText mEditDescriptionInput;
+    
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -88,6 +107,18 @@ public class EditProfileFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        initializeMemberVariables();
+
+        initializeEditTextWithEnterExit(mEditFirstName, mEditFirstNameInput);
+        initializeEditTextWithEnterExit(mEditLastName, mEditLastNameInput);
+        initializeEditTextWithEnterExit(mEditSchool, mEditSchoolInput);
+        initializeEditTextWithEnterExit(mEditMajor, mEditMajorInput);
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -101,6 +132,54 @@ public class EditProfileFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
+    }
+
+    private void initializeMemberVariables() {
+        mEditFirstName = (EditText) getActivity().findViewById(R.id.profile_editFirstName);
+        mEditFirstNameInput = (android.widget.EditText) getActivity().findViewById(R.id.profile_editFirstName_inputId);
+        mEditLastName = (EditText) getActivity().findViewById(R.id.profile_editLastName);
+        mEditLastNameInput = (android.widget.EditText) getActivity().findViewById(R.id.profile_editLastName_inputId);
+        mEditSchool = (EditText) getActivity().findViewById(R.id.profile_editSchool);
+        mEditSchoolInput = (android.widget.EditText) getActivity().findViewById(R.id.profile_editSchool_inputId);
+        mEditMajor = (EditText) getActivity().findViewById(R.id.profile_editMajor);
+        mEditMajorInput = (android.widget.EditText) getActivity().findViewById(R.id.profile_editMajor_inputId);
+        mEditDescription = (EditText) getActivity().findViewById(R.id.profile_editDescription);
+        mEditDescriptionInput = (android.widget.EditText) getActivity().findViewById(R.id.profile_editDescription_inputId);
+        
+        mEditFirstNameInput.setText(currStudent.getFirstName());
+        mEditLastNameInput.setText(currStudent.getLastName());
+        mEditSchoolInput.setText(currStudent.getSchool());
+        mEditMajorInput.setText(currStudent.getMajor());
+        mEditDescriptionInput.setText(currStudent.getDescription());
+    }
+    private void initializeEditTextWithEnterExit(final EditText editTextWrapper,
+                                                 android.widget.EditText editTextInput) {
+        editTextInput.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editTextWrapper.setCursorVisible(true);
+            }
+        });
+        editTextWrapper.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+                    InputMethodManager in = (InputMethodManager) getActivity()
+                            .getSystemService(Context.INPUT_METHOD_SERVICE);
+                    in.hideSoftInputFromWindow(editTextWrapper.getApplicationWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
+                    editTextWrapper.setCursorVisible(false);
+                    return true;
+                } else if (event != null && (event.getKeyCode() == KeyEvent.KEYCODE_BACK)) {
+                    InputMethodManager in = (InputMethodManager) getActivity()
+                            .getSystemService(Context.INPUT_METHOD_SERVICE);
+                    in.hideSoftInputFromWindow(editTextWrapper.getApplicationWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
+                    editTextWrapper.setCursorVisible(false);
+                }
+                return false;
+            }
+        });
     }
 
 }

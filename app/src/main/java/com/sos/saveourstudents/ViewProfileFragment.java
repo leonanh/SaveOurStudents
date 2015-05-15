@@ -10,8 +10,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.gc.materialdesign.views.Button;
-import com.gc.materialdesign.views.ButtonFloat;
+import com.rey.material.widget.FloatingActionButton;
 
 import org.solovyev.android.views.llm.DividerItemDecoration;
 import org.solovyev.android.views.llm.LinearLayoutManager;
@@ -29,7 +28,7 @@ import java.util.ArrayList;
  */
 public class ViewProfileFragment extends Fragment {
     private static final String ARG_PARAM1 = "student";
-    private Button editButton;
+    private FloatingActionButton editButton;
 
     private Student currStudent;
 
@@ -80,6 +79,12 @@ public class ViewProfileFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
+        ((TextView) getActivity().findViewById(R.id.profile_firstName))
+                .setText(currStudent.getFirstName());
+
+        ((TextView) getActivity().findViewById(R.id.profile_lastName))
+                .setText(currStudent.getLastName());
+
         // Begin inserting data into the About Me of the Student
         RecyclerView aboutMeContents = (RecyclerView) getActivity().
                 findViewById(R.id.profile_aboutMeContents);
@@ -95,7 +100,7 @@ public class ViewProfileFragment extends Fragment {
         aboutMeContents.setAdapter(new RVAdapter(initializeData()));
 
         // Set the OnClickListener for the edit floating action button
-        editButton = (ButtonFloat) getActivity().findViewById(R.id.profile_editButton);
+        editButton = (FloatingActionButton) getActivity().findViewById(R.id.profile_editButton);
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
