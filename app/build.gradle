@@ -45,4 +45,7 @@ dependencies {
 
     // Dependencies for solovyev's LinearLayoutManager Library (for wrap_content functionality)
     compile 'org.solovyev.android.views:linear-layout-manager:0.2@aar'
+
+    //rey's material library
+    compile 'com.github.rey5137:material:1.1.0'
 }
