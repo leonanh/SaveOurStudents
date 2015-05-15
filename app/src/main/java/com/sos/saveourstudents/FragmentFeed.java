@@ -130,12 +130,13 @@ public class FragmentFeed extends Fragment {
         myList.addAll(filterList);
 
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getQuestions"+
-                "?latitude="+32.8800604+ //TODO
-                "&longitude="+-117.2340135+  //TODO
-                "&tags="+myList+
+                "?latitude="+1.000000+//32.8800604+ //TODO
+                "&longitude="+0.000000+//-117.2340135+  //TODO
+                "&tags="+myList.toString().replaceAll(" ","")+
                 "&limit="+50;
 
 
+        System.out.println("URL: "+url);
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
                 url,
                 (JSONObject)null,
