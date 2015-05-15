@@ -28,7 +28,7 @@ import java.util.Set;
 /**
  * Created by deamon on 5/13/15.
  */
-class TagDialogFragment extends DialogFragment implements View.OnClickListener {
+public class TagDialogFragment extends DialogFragment implements View.OnClickListener {
 
     DisplayMetrics dispMetrics;
     ViewGroup flowLayout, flowLayout2;
@@ -135,7 +135,9 @@ class TagDialogFragment extends DialogFragment implements View.OnClickListener {
 
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            updateActiveTagsUI();
                         }
+
 
 
                     }
@@ -145,12 +147,14 @@ class TagDialogFragment extends DialogFragment implements View.OnClickListener {
             public void onErrorResponse(VolleyError error) {
 
                 System.out.println("Error: " + error.toString());
+
+
+                updateActiveTagsUI();
             }
         });
 
         // Access the RequestQueue through your singleton class.
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
-
     }
 
 
@@ -184,30 +188,37 @@ class TagDialogFragment extends DialogFragment implements View.OnClickListener {
         Set activeFilters = sharedPref.getStringSet("filter_list", null);
 
 
-        try {
+        if(popularTags != null && popularTags.length() > 0) {
+            try {
 
-            for (int a = 0; a < popularTags.length(); a++) {
+                for (int a = 0; a < popularTags.length(); a++) {
 
-                tagView = mInflater.inflate(R.layout.tag_item_layout, null, false);
-                tagView.findViewById(R.id.the_linear).setOnClickListener(this);
-                TextView tagText = (TextView) tagView.findViewById(R.id.tag_text);
-                String text = popularTags.getJSONObject(a).getString("tag");
-                tagText.setText(text);
+                    tagView = mInflater.inflate(R.layout.tag_item_layout, null, false);
+                    tagView.findViewById(R.id.the_linear).setOnClickListener(this);
+                    TextView tagText = (TextView) tagView.findViewById(R.id.tag_text);
+                    String text = popularTags.getJSONObject(a).getString("tag");
+                    tagText.setText(text);
 
-                if(activeFilters.contains(text))
-                    tagView.setSelected(true);
+                    if (activeFilters.contains(text))
+                        tagView.setSelected(true);
 
-                //Add tag item view to flowlayout
-                flowLayout.addView(tagView);
+                    //Add tag item view to flowlayout
+                    flowLayout.addView(tagView);
 
 
+                }
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
+        else if(activeFilters != null){
+            //for (int a = 0; a < activeFilters.size(); a++) {
+            updateActiveTagsUI();
+            //}
 
+        }
 
     }
 

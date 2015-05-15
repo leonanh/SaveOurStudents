@@ -191,7 +191,6 @@ public class MainActivity extends ActionBarActivity {
             SharedPreferences sharedPref = getSharedPreferences(
                     getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
-            System.out.println("Main: "+sharedPref.getStringSet("filter_list", null).toString());
 
             getWindowManager().getDefaultDisplay().getMetrics(metrics);
             FragmentTransaction ft = getFragmentManager().beginTransaction();
