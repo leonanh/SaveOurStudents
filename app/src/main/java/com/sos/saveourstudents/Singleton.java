@@ -2,6 +2,9 @@ package com.sos.saveourstudents;
 
 import android.content.Context;
 import android.os.Bundle;
+
+import android.graphics.Typeface;
+
 import android.text.TextUtils;
 
 import com.android.volley.Request;
@@ -27,8 +30,15 @@ public class Singleton implements
 	
 	private RequestQueue mRequestQueue;
     private ImageLoader mImageLoader;
+
 	private GoogleApiClient mGoogleApiClient;
 	
+
+
+	//static Typeface face;
+	static public android.graphics.Typeface face;
+
+
 	/**
 	 * To initialize the class. It must be called before call the method getInstance()
 	 * @param ctx The Context used
@@ -36,6 +46,7 @@ public class Singleton implements
 	
 	public static void initialize(Context ctx) {
 		mContext = ctx;
+		face = Typeface.createFromAsset(mContext.getAssets(), "plane.ttf");
 	}
 
 	

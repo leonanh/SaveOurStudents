@@ -94,6 +94,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
     Button loginBtn;
     int toastLocation[];
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

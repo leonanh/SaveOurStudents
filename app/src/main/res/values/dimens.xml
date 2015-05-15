@@ -10,6 +10,8 @@
     <dimen name="fab_size">56dp</dimen>
     <dimen name="fab_size_small">40dp</dimen>
     <dimen name="fab_icon_size">24dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+
     <dimen name="login_icon_size">55dp</dimen>
     <dimen name="fb_and_gplus_icon_size">55dp</dimen>
     <dimen name="textview_font_size">30sp</dimen>

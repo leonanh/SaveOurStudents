@@ -38,7 +38,7 @@
                 android:layout_marginBottom="5dp"
                 android:layout_marginLeft="10dp"
                 android:src="@drawable/defaultprofile"
-                app:border_color="@color/primary_light"
+                app:border_color="@color/light_primary"
                 app:border_width="2dp" />
 
             <TextView
@@ -49,7 +49,7 @@
                 android:layout_toEndOf="@+id/profile_image"
                 android:layout_toRightOf="@+id/profile_image"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textColor="@color/primary_text1" />
+                android:textColor="@color/primary_text" />
 
             <TextView
                 android:id="@+id/profile_lastName"
@@ -60,7 +60,7 @@
                 android:layout_toEndOf="@+id/profile_firstName"
                 android:layout_toRightOf="@+id/profile_firstName"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textColor="@color/primary_text1" />
+                android:textColor="@color/primary_text" />
 
             <TextView
                 android:id="@+id/profile_rating"
@@ -71,7 +71,7 @@
                 android:layout_toRightOf="@id/profile_image"
                 android:text="@string/profile_rating"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textColor="@color/primary_text1" />
+                android:textColor="@color/primary_text" />
 
             <TextView
                 android:id="@+id/profile_myRating"
@@ -82,7 +82,7 @@
                 android:layout_marginLeft="5dp"
                 android:layout_toRightOf="@id/profile_rating"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textColor="@color/primary_text1" />
+                android:textColor="@color/primary_text" />
 
         </RelativeLayout>
 
