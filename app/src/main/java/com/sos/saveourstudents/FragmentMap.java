@@ -11,6 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -23,20 +26,12 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.sos.saveourstudents.R;
-
-//import java.awt.Image;
-import java.lang.Override;
-import java.lang.String;
-import java.util.ArrayList;
-
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.JsonArrayRequest;
 
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+//import java.awt.Image;
 
 /**
  * Created by deamon on 4/21/15.
@@ -168,7 +163,7 @@ public class FragmentMap extends Fragment implements
                         displayError();
                     }
                 });
-        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+        //Singleton.getInstance().addToRequestQueue(jsObjRequest);
     }
 
     /**
