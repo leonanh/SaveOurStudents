@@ -91,12 +91,16 @@ public class FragmentFeed extends Fragment {
          /*
         String urlimage = "http://i01.i.aliimg.com/img/pb/487/830/416/416830487_639.jpg";
         //ImageLoader imageLoader = Singleton.getInstance().getImageLoader();
+
         // If you are using normal ImageView
+
         imageLoader.get(urlimage, new ImageLoader.ImageListener() {
+
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Image Load Error: " + error.getMessage());
             }
+
             @Override
             public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
                 if (response.getBitmap() != null) {
@@ -258,11 +262,14 @@ public class FragmentFeed extends Fragment {
 			viewHolder.counterName.setText(counter.name);
 			viewHolder.counterIncrement.setText(counter.increment+"");
 			viewHolder.counterTotal.setText(counter.total+"");
+
 			int color = CounterManager.getInstance().getCounters().get(i).color;
+
 			viewHolder.rippleView.setRippleColor(color);
 			viewHolder.counterName.setTextColor(color);
 			viewHolder.counterIncrement.setTextColor(color);
 			viewHolder.counterTotal.setTextColor(color);
+
 			viewHolder.upArrow.setColorFilter(color);
 			viewHolder.downArrow.setColorFilter(color);
 			*/

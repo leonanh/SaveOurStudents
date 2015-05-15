@@ -9,6 +9,7 @@
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
 
+
         <item name="colorPrimary">@color/primary</item>
 
         <!-- colorPrimaryDark is used for the status bar -->
