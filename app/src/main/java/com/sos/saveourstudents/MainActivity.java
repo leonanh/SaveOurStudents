@@ -1,6 +1,8 @@
 package com.sos.saveourstudents;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -39,16 +41,20 @@ public class MainActivity extends ActionBarActivity {
     String TITLES[] = {"Home","Events","Mail","Shop","Travel"};
     int PROFILEIMAGE = R.drawable.ic_launcher;
 
-    static boolean LOGGED_IN = true;
+    SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(!LOGGED_IN){
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            return;
+
+        sharedPref = getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
+        if(!sharedPref.contains("first_name")){
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
         }
+
         setContentView(R.layout.activity_main);
 
         //Our AppCompat Toolbar
@@ -214,6 +220,12 @@ public class MainActivity extends ActionBarActivity {
         //if (mDrawerToggle.onOptionsItemSelected(item)) {
         //    return true;
         //}
+        if (id == R.id.logout) {
+            Intent mainActivity = new Intent(this, LoginActivity.class);
+            startActivity(mainActivity);
+            finish();
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }

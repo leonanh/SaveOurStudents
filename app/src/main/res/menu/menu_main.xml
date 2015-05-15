@@ -20,7 +20,11 @@
 
     <item
         android:id="@+id/edit_question"
-        android:title="editQuestion"
+        android:title="editQuestion" />
+
+    <item
+        android:id="@+id/logout"
+        android:title="Logout"
         app:showAsAction="never" />
 
 </menu>

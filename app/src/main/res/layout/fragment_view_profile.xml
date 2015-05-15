@@ -20,7 +20,8 @@
             android:baselineAlignBottom="false"
             android:cropToPadding="false"
             android:scaleType="centerCrop"
-            android:src="@drawable/materialwallpaperdefault" />
+            />
+            <!--TODO: Temp disabled because it was causing me bugs. android:src="@drawable/materialwallpaperdefault" /> -->
 
         <RelativeLayout
             android:id="@+id/u"
