@@ -1,0 +1,151 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <RelativeLayout
+        android:id="@+id/header_view"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp">
+
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/question_image"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                android:src="@drawable/defaultprofile"
+                app:border_color="@color/primary_light"
+                app:border_width="2dp"
+                android:clickable="true"/>
+
+            <TextView
+                android:id="@+id/question_name_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="My Name"
+                android:textSize="18sp"
+                android:textColor="@android:color/black"
+                android:layout_toRightOf="@+id/question_image"
+                android:textIsSelectable="false"
+                android:layout_toLeftOf="@+id/send_button"/>
+
+        <ImageView
+            android:id="@+id/send_button"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_send_grey600_36dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignBottom="@+id/question_image"
+            android:layout_alignParentTop="true"
+            android:padding="5dp"
+            android:tint="@color/hint_text"/>
+
+
+
+    </RelativeLayout>
+
+
+    <com.rey.material.widget.EditText
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        style="@style/Material.Widget.EditText.Light"
+        android:id="@+id/topic_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/primary_text"
+        android:textColorHint="@color/hint_text"
+        android:hint="Choose a topic..."
+        android:inputType="textCapSentences"
+        app:et_autoCompleteMode="none"
+        app:et_dividerColor="@color/primary_light"
+        app:et_dividerPadding="4dp"
+        android:layout_below="@+id/header_view"
+        app:et_supportTextErrorColor="#FFFF0000"
+        app:et_dividerErrorColor="#FFFF0000"
+        app:et_supportMode="helper"
+        />
+
+    <!--app:et_dividerColor="@color/primary"
+        app:et_inputId="@+id/textfield_auto" -->
+
+    <com.rey.material.widget.EditText
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        style="@style/Material.Widget.EditText.Light"
+        android:id="@+id/question_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/primary_text"
+        android:textColorHint="@color/hint_text"
+        android:hint="Write your question..."
+        app:et_dividerPadding="4dp"
+        android:layout_below="@+id/topic_edit_text"
+        android:layout_marginBottom="10dp"
+        android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine"
+        app:et_dividerColor="@android:color/white"
+        android:maxLength ="2000"
+        android:scrollHorizontally="false"
+        android:layout_above="@+id/linear"
+        app:et_supportTextErrorColor="#FFFF0000"
+        app:et_dividerErrorColor="#FFFF0000"
+        app:et_supportMode="helper"
+        />
+
+
+    <LinearLayout
+        android:id="@+id/linear"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:weightSum="5"
+        android:orientation="horizontal"
+        android:background="@color/primary_light"
+        android:layout_alignParentBottom="true">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="10dp"/>
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="10dp"/>
+
+        <ImageView
+            android:id="@+id/add_tag_button"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:tint="@color/hint_text"
+            android:src="@drawable/ic_queue_grey600_36dp"/>
+
+    </LinearLayout>
+
+
+
+</RelativeLayout>

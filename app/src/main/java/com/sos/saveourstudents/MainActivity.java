@@ -194,9 +194,22 @@ public class MainActivity extends ActionBarActivity {
         }
 
         if (id == R.id.view_question) {
-            startActivity(new Intent(this, QuestionActivity.class));
+
+            Intent mIntent = new Intent(this, QuestionActivity.class);
+            mIntent.putExtra("type", 0);
+            startActivity(mIntent);
             return true;
         }
+
+        if (id == R.id.edit_question) {
+
+            Intent mIntent = new Intent(this, QuestionActivity.class);
+            mIntent.putExtra("type", 1);
+            startActivity(mIntent);
+
+            return true;
+        }
+
 
         //if (mDrawerToggle.onOptionsItemSelected(item)) {
         //    return true;

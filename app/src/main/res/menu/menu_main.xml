@@ -18,4 +18,9 @@
         android:title="Question"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/edit_question"
+        android:title="editQuestion"
+        app:showAsAction="never" />
+
 </menu>

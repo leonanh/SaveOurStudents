@@ -47,4 +47,7 @@
     <string name="title_activity_edit_profile">EditProfileActivity</string>
     <string name="title_activity_question">QuestionActivity</string>
 
+    <!-- Shared Prefs -->
+    <string name="preference_file_key">com.sos.saveourstudents</string>
+
 </resources>
