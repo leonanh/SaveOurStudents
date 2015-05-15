@@ -100,7 +100,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="@dimen/container_padding"
         android:layout_marginBottom="@dimen/container_padding"
-        android:textColor="@color/white" />
+        android:textColor="@android:color/white" />
 
     <TextView
         android:id="@+id/forgot_login_btn"
@@ -114,6 +114,6 @@
         android:layout_alignParentBottom="true"
         android:layout_marginRight="@dimen/container_padding"
         android:layout_marginBottom="@dimen/container_padding"
-        android:textColor="@color/white" />
+        android:textColor="@android:color/white" />
 
 </RelativeLayout>

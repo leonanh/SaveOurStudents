@@ -38,7 +38,7 @@
                 android:layout_marginBottom="5dp"
                 android:layout_marginLeft="10dp"
                 android:src="@drawable/defaultprofile"
-                app:border_color="@color/light_primary"
+                app:border_color="@color/primary_light"
                 app:border_width="2dp" />
 
             <TextView

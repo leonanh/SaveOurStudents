@@ -21,7 +21,7 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="5dp"
                 android:src="@drawable/defaultprofile"
-                app:border_color="@color/light_primary"
+                app:border_color="@color/primary_light"
                 app:border_width="2dp"
                 android:clickable="true"/>
 
@@ -67,7 +67,7 @@
         android:hint="Choose a topic..."
         android:inputType="textCapSentences"
         app:et_autoCompleteMode="none"
-        app:et_dividerColor="@color/light_primary"
+        app:et_dividerColor="@color/primary_light"
         app:et_dividerPadding="4dp"
         android:layout_below="@+id/header_view"
         app:et_supportTextErrorColor="#FFFF0000"
@@ -110,7 +110,7 @@
         android:layout_height="50dp"
         android:weightSum="5"
         android:orientation="horizontal"
-        android:background="@color/light_primary"
+        android:background="@color/primary_light"
         android:layout_alignParentBottom="true">
 
         <ImageView

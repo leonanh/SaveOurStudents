@@ -20,7 +20,7 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="5dp"
                 android:src="@drawable/defaultprofile"
-                app:border_color="@color/light_primary"
+                app:border_color="@color/primary_light"
                 app:border_width="2dp"
                 android:clickable="true"/>
 

@@ -88,7 +88,7 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public int getIndicatorColor(int position) {
                 //eturn Color.WHITE;
-                return MainActivity.this.getResources().getColor(R.color.dark_primary);
+                return MainActivity.this.getResources().getColor(R.color.primary_dark);
             }
         });
 
@@ -207,31 +207,24 @@ public class MainActivity extends ActionBarActivity {
             newFragment.show(getSupportFragmentManager(), "");
 
 
-
-
-
-
-
-            // showDialog();
-            // Set the title
-            //dialog.setTitle("Dialog Title");
-
-            // inflate the layout
-            //dialog.setContentView(R.layout.tag_dialog_layout);
-            //dialog.show();
         }
 
-
-
-/*
         if (id == R.id.view_profile) {
             startActivity(new Intent(this, ProfileActivity.class));
-            //return true;
+            return true;
         }
-*/
-        //if (mDrawerToggle.onOptionsItemSelected(item)) {
-        //    return true;
-        //}
+
+        if (id == R.id.view_question) {
+            startActivity(new Intent(this, QuestionActivity.class));
+            return true;
+        }
+
+        if (id == R.id.logout) {
+            Intent mainActivity = new Intent(this, LoginActivity.class);
+            startActivity(mainActivity);
+            finish();
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }

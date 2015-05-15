@@ -20,7 +20,7 @@ style="?android:attr/dropDownItemStyle"
 -->
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/text1"
-    android:background="@color/light_primary"
+    android:background="@color/primary_light"
     android:textAppearance="?android:attr/textAppearanceLargePopupMenu"
     android:singleLine="true"
     android:layout_width="match_parent"
