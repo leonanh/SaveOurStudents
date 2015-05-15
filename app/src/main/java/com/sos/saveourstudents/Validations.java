@@ -51,7 +51,6 @@ public class Validations  {
 
 
         if (incomingPass1.length() > MAX_LENGTH || incomingPass1.length() < MIN_LENGTH) {
-            //passBottom.setText(R.string.create_password_promp_err);
             return INCORRECT_LENGTH_TOP;
         }
 
@@ -60,7 +59,7 @@ public class Validations  {
             return INCORRECT_LENGTH_BOT;
         }
 
-        if (incomingPass1.equals(incomingPass2)) {
+        if (!(incomingPass1.equals(incomingPass2))) {
             //passBottom2.setText(R.string.create_password_promp_notsame);
             //passBottom.setText(R.string.create_password_prompt);
             return REPEAT_NOT_SAME;

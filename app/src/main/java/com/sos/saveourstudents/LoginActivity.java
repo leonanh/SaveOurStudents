@@ -77,7 +77,6 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
 
     //GCM
-    //public static final String EXTRA_MESSAGE = "message";
     public static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "appVersion";
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -86,13 +85,12 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
     String regid;
     boolean isLogging = false;
 
-    //Toast prompt;
+    Toast prompt;
     Context appContext;
     TextView logoLabel;
     TextView forgotLoginBtn, signupBtn;
     EditText usernameField, passwordField;
     Button loginBtn;
-    int toastLocation[];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +107,6 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
         registerInBackground();
 
-        //prompt = (TextView) findViewById(R.id.login_prompt);
         forgotLoginBtn = (TextView) findViewById(R.id.forgot_login_btn);
         forgotLoginBtn.setOnClickListener(this);
         signupBtn = (TextView) findViewById(R.id.signup_btn);
@@ -119,9 +116,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         passwordField = (EditText) findViewById(R.id.password_textfield);
         loginBtn = (Button) findViewById(R.id.login_btn);
         loginBtn.setOnClickListener(this);
-
-        toastLocation = new int[2];     //Set up toast notification location.
-        loginBtn.getLocationOnScreen(toastLocation);
+        appContext = getApplicationContext();
 
         googleSignin = (ImageView) findViewById(R.id.google_login_btn);
         googleSignin.setOnClickListener(this);
@@ -473,12 +468,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
     @Override
     public void onClick(View v) {
         if (v == fbLogin) {
-            //Profile profile = Profile.getCurrentProfile();
-            //if (profile == null) {
             doFacebookLogin();
-            //} else {
-            //    doFacebookLogout();
-            //}
 
         } else if (v == googleSignin) {
             mGoogleApiClient.connect();
@@ -490,14 +480,17 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
         } else if (v == loginBtn) {
             if (usernameField.getText().toString().isEmpty()) {
-                //prompt.setText(R.string.usernameEmpty);
+                prompt = Toast.makeText(appContext, R.string.usernameEmpty, Toast.LENGTH_SHORT);
+                prompt.show();
                 return;
             } else if (passwordField.getText().toString().isEmpty()) {
-                //prompt.setText(R.string.passwordEmpty);
+                prompt = Toast.makeText(appContext, R.string.passwordEmpty, Toast.LENGTH_SHORT);
+                prompt.show();
                 return;
             }
-
+            Log.d("Debug","Logging in");
             doSOSLogin("SOS", usernameField.getText().toString(), passwordField.getText().toString());
+            Log.d("Debug","Fiished Logging in");
 
         } else if (v == signupBtn) {
 
@@ -706,11 +699,8 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                         startActivity(mainActivity);
                         finish();
                     } else if (response.getString("success").equalsIgnoreCase("1") && response.getString("expectResults").equalsIgnoreCase("0")) {
-
-                        System.out.println("Login Error: " + response.toString());
-                        //TODO Let user know what happened
-                        //TODO Error alerts
-                        //TODO
+                        prompt = Toast.makeText(appContext, "Invalid login!", Toast.LENGTH_SHORT);//TODO: Use R String
+                        prompt.show();
                     }else{
                         //Connection issue?
                     }

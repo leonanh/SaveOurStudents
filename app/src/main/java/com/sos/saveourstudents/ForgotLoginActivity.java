@@ -53,13 +53,9 @@ public class ForgotLoginActivity extends Activity implements View.OnClickListene
                 errormsg.setText(R.string.emailEmpty);
                 return;
             }
+
             //TODO: Add database validation
-            //Send to database
-            //if(/*database returns error*/false)
-            //{
-            //    errormsg.setText("hi"/*Text returned from database*/);
-            //    return;
-            //}
+
             emailsent = Toast.makeText(appContext, "Email sent!", Toast.LENGTH_SHORT);
             emailsent.show();
             Intent loginActivity = new Intent(this, LoginActivity.class);
