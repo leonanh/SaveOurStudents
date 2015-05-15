@@ -89,18 +89,7 @@
 
     </android.support.v7.widget.CardView>
 
-    <com.gc.materialdesign.views.ButtonFloat
-        android:id="@+id/profile_editButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="@color/primary"
-        materialdesign:animate="true"
-        materialdesign:iconDrawable="@drawable/ic_create_white_18dp" />
+
 
     <android.support.v7.widget.CardView
         android:id="@+id/profile_bottomCardView"

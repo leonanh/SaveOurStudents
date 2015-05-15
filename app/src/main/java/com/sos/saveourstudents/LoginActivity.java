@@ -150,58 +150,14 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                             public void onCompleted(JSONObject object, GraphResponse response) {
 
                                 try {
-                                    /*
-                                    System.out.println("object: " +object.getString("email"));
 
-                                    System.out.println("Profile changed: " + profile);
-                                    System.out.println("Save: " + profile.getFirstName());
-                                    System.out.println("Save: " + profile.getLastName());
-                                    System.out.println("Save: " + profile.getId());
-                                    System.out.println("Save: " + profile.getProfilePictureUri(100, 100));
-                                    */
-                                    Profile profile = Profile.getCurrentProfile();
+                                    //Profile profile = Profile.getCurrentProfile();
                                     facebookEmail = object.getString("email");
 
-                                    //System.out.println("Send sos login");
-                                    /*
-                                    createSOSUser("facebook",
-                                            profile.getFirstName(),
-                                            profile.getLastName(),
-                                            profile.getId(),
-                                            facebookEmail[0]);
-                                    */
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-/*
-                                profileTracker = new ProfileTracker() {
-                                    @Override
-                                    protected void onCurrentProfileChanged(Profile oldProfile, Profile currentProfile) {
-
-
-                                        if (currentProfile == null) {
-                                            System.out.println("Profile changed: logged out");
-                                            prompt.setText("Logged out");
-                                        } else {
-                                            System.out.println("Profile changed: " + currentProfile);
-                                            System.out.println("Save: " + currentProfile.getFirstName());
-                                            System.out.println("Save: " + currentProfile.getLastName());
-                                            System.out.println("Save: " + currentProfile.getId());
-                                            System.out.println("Save: " + currentProfile.getProfilePictureUri(100, 100));
-                                            //TODO Send to server and save local info
-                                            prompt.setText("FB logged in as " + Profile.getCurrentProfile().getName());
-
-                                            createSOSUser("facebook",
-                                                    currentProfile.getFirstName(),
-                                                    currentProfile.getLastName(),
-                                                    currentProfile.getId(),
-                                                    facebookEmail[0]);
-
-
-                                        }
-                                    }
-                                };*/
                             }
                         });
                 Bundle parameters = new Bundle();
@@ -473,12 +429,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
     @Override
     public void onClick(View v) {
         if (v == fbLogin) {
-            //Profile profile = Profile.getCurrentProfile();
-            //if (profile == null) {
             doFacebookLogin();
-            //} else {
-            //    doFacebookLogout();
-            //}
 
         } else if (v == googleSignin) {
             mGoogleApiClient.connect();
@@ -490,7 +441,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
         } else if (v == loginBtn) {
             if (usernameField.getText().toString().isEmpty()) {
-                //prompt.setText(R.string.usernameEmpty);
+                //TODO show editext error
                 return;
             } else if (passwordField.getText().toString().isEmpty()) {
                 //prompt.setText(R.string.passwordEmpty);
@@ -524,7 +475,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
     @Override
     public void onConnected(Bundle arg0) {
-        //mSignInClicked = false;
+
         Toast.makeText(this, "User is connected!", Toast.LENGTH_LONG).show();
 
         //Userinfo
@@ -542,8 +493,6 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
             String userId = currentPerson.getId();
             String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
 
-
-            //prompt.setText("Welcome, " + firstName + " " + lastName);
 
             createSOSUser("google", firstName, lastName, userId, email);
 
@@ -591,7 +540,6 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
             Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
             mGoogleApiClient.disconnect();
             mGoogleApiClient.connect();
-            //prompt.setText("Logged out");
         }
     }
 
@@ -630,7 +578,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                 "&deviceId=" + deviceId;
 
 
-        //System.out.println("URL: "+url);
+        //System.out.println("createSOSUser URL: "+url);
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url,
                 (JSONObject) null, new Response.Listener<JSONObject>() {
             @Override
@@ -688,16 +636,17 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                 try {
 
                     if (response.getString("success").equalsIgnoreCase("1") && response.getString("expectResults").equalsIgnoreCase("1")) {
-                        //System.out.println("Login success Response: " + response.toString());
+                        System.out.println("Login success Response: " + response.getJSONObject("result"));
                         //TODO we still "success = 1" here even from wrong password. FIX this
                         SharedPreferences sharedPref = getSharedPreferences(
                                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPref.edit();
-                        editor.putString("first_name", response.getJSONArray("result").getJSONObject(0).getString("first_name"));
-                        editor.putString("last_name", response.getJSONArray("result").getJSONObject(0).getString("last_name"));
-                        editor.putString("email", response.getJSONArray("result").getJSONObject(0).getString("email"));
-                        editor.putString("image", response.getJSONArray("result").getJSONObject(0).getString("image"));
-                        editor.putString("user_id", response.getJSONArray("result").getJSONObject(0).getString("user_id"));
+                        JSONObject userInfo = response.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map");
+                        editor.putString("first_name", userInfo.getString("first_name"));
+                        editor.putString("last_name", userInfo.getString("last_name"));
+                        editor.putString("email", userInfo.getString("email"));
+                        editor.putString("image", userInfo.getString("image"));
+                        editor.putString("user_id", userInfo.getString("user_id"));
                         editor.putString("provider", provider);
                         editor.commit();
 

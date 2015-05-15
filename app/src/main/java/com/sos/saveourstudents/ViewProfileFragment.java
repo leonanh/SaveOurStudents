@@ -1,8 +1,8 @@
 package com.sos.saveourstudents;
 
 import android.app.Activity;
-import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +11,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gc.materialdesign.views.Button;
-import com.gc.materialdesign.views.ButtonFloat;
 
 import org.solovyev.android.views.llm.DividerItemDecoration;
 import org.solovyev.android.views.llm.LinearLayoutManager;
@@ -87,16 +86,7 @@ public class ViewProfileFragment extends Fragment {
         aboutMeContents.addItemDecoration(new DividerItemDecoration(getActivity(), null));
         aboutMeContents.setAdapter(new RVAdapter(initializeData()));
 
-        // Set the OnClickListener for the edit floating action button
-        editButton = (ButtonFloat) getActivity().findViewById(R.id.profile_editButton);
-        editButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mListener != null) {
-                    mListener.onEditButton();
-                }
-            }
-        });
+
 
 
     }

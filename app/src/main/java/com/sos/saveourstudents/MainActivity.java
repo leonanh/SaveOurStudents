@@ -107,12 +107,17 @@ public class MainActivity extends ActionBarActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
-
+                    //Nav drawer listener
                     @Override public void onItemClick(View view, int position) {
-                        System.out.println("clicked "+position);
+                        System.out.println("clicked " + position);
 
                         if(position == 1){
                             startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+                        }
+                        else if(position == 2){
+                            Intent mainActivity = new Intent(MainActivity.this, LoginActivity.class);
+                            startActivity(mainActivity);
+                            finish();
                         }
 
                     }
@@ -196,11 +201,8 @@ public class MainActivity extends ActionBarActivity {
 
             getWindowManager().getDefaultDisplay().getMetrics(metrics);
             FragmentTransaction ft = getFragmentManager().beginTransaction();
-            //DialogFragment newFragment = TagDialogFragment.newInstance(this, metrics, sharedPref);
 
             DialogFragment newFragment = new TagDialogFragment(this, metrics, sharedPref);
-
-            //dialog.getWindow().setLayout(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT).
 
             newFragment.setCancelable(true);
 
@@ -209,20 +211,21 @@ public class MainActivity extends ActionBarActivity {
 
         }
 
-        if (id == R.id.view_profile) {
-            startActivity(new Intent(this, ProfileActivity.class));
-            return true;
-        }
 
         if (id == R.id.view_question) {
-            startActivity(new Intent(this, QuestionActivity.class));
+
+            Intent mIntent = new Intent(this, QuestionActivity.class);
+            mIntent.putExtra("type", 0);
+            startActivity(mIntent);
             return true;
         }
 
-        if (id == R.id.logout) {
-            Intent mainActivity = new Intent(this, LoginActivity.class);
-            startActivity(mainActivity);
-            finish();
+        if (id == R.id.edit_question) {
+
+            Intent mIntent = new Intent(this, QuestionActivity.class);
+            mIntent.putExtra("type", 1);
+            startActivity(mIntent);
+
             return true;
         }
 
