@@ -36,7 +36,7 @@
                 android:layout_marginTop="3dp"
                 android:text="My Name"
                 android:textSize="15sp"
-                android:textColor="@color/primary_dark"
+                android:textColor="@color/dark_primary"
                 android:layout_toRightOf="@+id/question_image"
                 android:textIsSelectable="false"
  />

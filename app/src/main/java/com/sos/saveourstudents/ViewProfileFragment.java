@@ -19,14 +19,7 @@ import org.solovyev.android.views.llm.LinearLayoutManager;
 import java.util.ArrayList;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link com.sos.saveourstudents.ViewProfileFragment.OnEditButtonListener} interface
- * to handle interaction events.
- * Use the {@link ViewProfileFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class ViewProfileFragment extends Fragment {
     private static final String ARG_PARAM1 = "student";
     private Button editButton;

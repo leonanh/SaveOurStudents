@@ -23,4 +23,13 @@
         android:title="editQuestion"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_filter"
+        android:title="filter"
+        android:icon="@drawable/ic_sort_white_36dp"
+        app:showAsAction="ifRoom" />
+
+
+
+
 </menu>

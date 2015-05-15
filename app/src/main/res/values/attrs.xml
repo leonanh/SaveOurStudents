@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="colorForeground" />
 
+    <attr name="colorForeground" />
 
     <!-- FlowLayout -->
     <declare-styleable name="FlowLayout">
@@ -16,10 +16,10 @@
         <attr name="android:maxLines"/>
         <attr name="android:gravity"/>
     </declare-styleable>
+
     <declare-styleable name="FlowLayout_Layout">
         <attr name="layout_breakLine" format="boolean"/>
     </declare-styleable>
-
 
 
 </resources>
