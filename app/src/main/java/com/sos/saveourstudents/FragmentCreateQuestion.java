@@ -174,6 +174,7 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
 
             //TODO show tags dialog
 
+
         }
 
 
@@ -190,13 +191,11 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
 
 
          /*
-
          editor.putString("first_name", response.getJSONArray("result").getJSONObject(0).getString("first_name"));
                         editor.putString("last_name", response.getJSONArray("result").getJSONObject(0).getString("last_name"));
                         editor.putString("email", response.getJSONArray("result").getJSONObject(0).getString("email"));
                         editor.putString("image", response.getJSONArray("result").getJSONObject(0).getString("image"));
                         editor.putString("user_id", response.getJSONArray("result").getJSONObject(0).getString("user_id"));
-
 32.8810° N, 117.2380
           */
         System.out.println("Im'a send this question to server");
@@ -264,13 +263,6 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
 
 
 
-
-
-
-
     }
-
-
-
 
 }

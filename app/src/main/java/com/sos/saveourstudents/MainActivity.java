@@ -22,7 +22,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.gc.materialdesign.views.ButtonFloat;
 import com.sos.saveourstudents.supportclasses.NavDrawerAdapter;
 import com.sos.saveourstudents.supportclasses.RecyclerItemClickListener;
 import com.sos.saveourstudents.supportclasses.SlidingTabLayout;
@@ -41,9 +40,9 @@ public class MainActivity extends ActionBarActivity {
 
     ActionBarDrawerToggle mDrawerToggle;
 
-    ButtonFloat fab;
+    //ButtonFloat fab;
 
-    int ICONS[] = {R.drawable.ic_settings_black_36dp,R.drawable.ic_exit_to_app_black_36dp, R.drawable.ic_help_black_36dp};
+    int ICONS[] = {R.drawable.ic_settings_black_24dp,R.drawable.ic_exit_to_app_black_24dp, R.drawable.ic_help_black_24dp};
     String TITLES[] = {"Profile","Logout","Help"};
     int PROFILEIMAGE = R.drawable.ic_launcher;
 
@@ -195,14 +194,15 @@ public class MainActivity extends ActionBarActivity {
         else if (id == R.id.action_filter) {
 
             DisplayMetrics metrics = new DisplayMetrics();
+            /*
             SharedPreferences sharedPref = getSharedPreferences(
                     getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-
+*/
 
             getWindowManager().getDefaultDisplay().getMetrics(metrics);
             FragmentTransaction ft = getFragmentManager().beginTransaction();
 
-            DialogFragment newFragment = new FilterDialogFragment(this, metrics, sharedPref);
+            DialogFragment newFragment = new TagDialogFragment(this, metrics, 0);
 
             newFragment.setCancelable(true);
 

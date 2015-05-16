@@ -1,7 +1,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:materialdesign="http://schemas.android.com/apk/res-auto"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:layout_below="@id/profile_toolbar"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -20,8 +24,7 @@
             android:baselineAlignBottom="false"
             android:cropToPadding="false"
             android:scaleType="centerCrop"
-            />
-            <!--TODO: Temp disabled because it was causing me bugs. android:src="@drawable/materialwallpaperdefault" /> -->
+            android:src="@drawable/materialwallpaperdefault" />
 
         <RelativeLayout
             android:id="@+id/u"
@@ -37,6 +40,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_marginBottom="5dp"
                 android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:src="@drawable/defaultprofile"
                 app:border_color="@color/primary_light"
                 app:border_width="2dp" />
@@ -49,7 +53,7 @@
                 android:layout_toEndOf="@+id/profile_image"
                 android:layout_toRightOf="@+id/profile_image"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textColor="@color/primary_text" />
+                android:textColor="@color/primary_text1" />
 
             <TextView
                 android:id="@+id/profile_lastName"
@@ -60,7 +64,7 @@
                 android:layout_toEndOf="@+id/profile_firstName"
                 android:layout_toRightOf="@+id/profile_firstName"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textColor="@color/primary_text" />
+                android:textColor="@color/primary_text1" />
 
             <TextView
                 android:id="@+id/profile_rating"
@@ -71,7 +75,7 @@
                 android:layout_toRightOf="@id/profile_image"
                 android:text="@string/profile_rating"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textColor="@color/primary_text" />
+                android:textColor="@color/primary_text1" />
 
             <TextView
                 android:id="@+id/profile_myRating"
@@ -82,14 +86,28 @@
                 android:layout_marginLeft="5dp"
                 android:layout_toRightOf="@id/profile_rating"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textColor="@color/primary_text" />
+                android:textColor="@color/primary_text1" />
 
         </RelativeLayout>
 
 
     </android.support.v7.widget.CardView>
 
-
+    <com.rey.material.widget.FloatingActionButton
+        android:id="@+id/profile_editButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        app:fab_backgroundColor="@color/accent"
+        app:fab_iconSrc="@drawable/ic_create_white_18dp"
+        app:rd_enable="true"
+        app:rd_style="@style/Material.Drawable.Ripple.Wave"
+        android:elevation="2dp"
+        />
 
     <android.support.v7.widget.CardView
         android:id="@+id/profile_bottomCardView"

@@ -8,89 +8,88 @@
     android:background="@android:color/white">
 
 
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@android:color/white"
-    >
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/the_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?android:attr/actionBarSize"
-        android:background="@color/primary"
-        android:minHeight="50sp" >
-
-<!--
-        <TextView
-            android:id="@+id/toolbar_text"
-            android:layout_width="match_parent"
-            android:layout_height="?android:attr/actionBarSize"
-            android:text="SaveOurStudents"
-            android:gravity="left|center_vertical"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            />
--->
-        <com.sos.saveourstudents.supportclasses.CustomTextView
-            android:layout_width="match_parent"
-            android:layout_height="?android:attr/actionBarSize"
-            android:text="SaveOurStudents"
-            android:gravity="left|center_vertical"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            />
-
-
-
-    </android.support.v7.widget.Toolbar>
-
-    <com.sos.saveourstudents.supportclasses.SlidingTabLayout
-        android:id="@+id/tabs"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/primary"
-        android:layout_below="@+id/the_toolbar"/>
-
-
-
-
-    <android.support.v4.view.ViewPager
-        android:id="@+id/pager"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/tabs"
+        android:orientation="vertical"
         android:background="@android:color/white"
-        />
+        >
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/the_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:background="@color/primary"
+            android:minHeight="50sp" >
+
+            <!--
+                    <TextView
+                        android:id="@+id/toolbar_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="?android:attr/actionBarSize"
+                        android:text="SaveOurStudents"
+                        android:gravity="left|center_vertical"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        />
+            -->
+            <com.sos.saveourstudents.supportclasses.CustomTextView
+                android:layout_width="match_parent"
+                android:layout_height="?android:attr/actionBarSize"
+                android:text="SaveOurStudents"
+                android:gravity="left|center_vertical"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                />
 
 
-    <com.rey.material.widget.FloatingActionButton
-        style="@style/Material.Widget.FloatingActionButton.Light"
-        android:id="@+id/fab_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
-        app:fab_iconSrc="@drawable/ic_add_white_36dp"/>
 
-<!--
-    <com.rey.material.widget.ProgressView
-        android:id="@+id/progress_pv_circular_colors"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_gravity="center"
-        app:pv_autostart = "true"
-        app:pv_circular="true"
-        app:pv_progressStyle="@style/ColorsCircularProgressDrawableStyle"
-        app:pv_progressMode="indeterminate"
-        android:layout_below="@+id/tabs"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="10dp"/>
+        </android.support.v7.widget.Toolbar>
 
--->
+        <com.sos.saveourstudents.supportclasses.SlidingTabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/primary"
+            android:layout_below="@+id/the_toolbar"/>
 
-</RelativeLayout>
+
+
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/tabs"
+            android:background="@android:color/white"
+            />
+
+
+        <com.rey.material.widget.FloatingActionButton
+            style="@style/Material.Widget.FloatingActionButton.Light"
+            android:id="@+id/fab_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="16dp"
+            app:fab_iconSrc="@drawable/ic_add_white_24dp"/>
+
+        <!--
+            <com.rey.material.widget.ProgressView
+                android:id="@+id/progress_pv_circular_colors"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center"
+                app:pv_autostart = "true"
+                app:pv_circular="true"
+                app:pv_progressStyle="@style/ColorsCircularProgressDrawableStyle"
+                app:pv_progressMode="indeterminate"
+                android:layout_below="@+id/tabs"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="10dp"/>
+        -->
+
+    </RelativeLayout>
 
 
     <android.support.v7.widget.RecyclerView
@@ -105,4 +104,3 @@
 
 
 </android.support.v4.widget.DrawerLayout>
-

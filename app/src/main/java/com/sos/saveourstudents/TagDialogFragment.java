@@ -263,7 +263,7 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
             if(v.isSelected()){
                 v.setSelected(false);
                 removeTagFromList(text.getText().toString());
-            } else {
+            }else{
                 v.setSelected(true);
                 addTagToActiveList(text.getText().toString());
             }

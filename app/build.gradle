@@ -33,15 +33,17 @@ dependencies {
     compile 'com.mcxiaoke.volley:library:1.0.+'
     compile 'com.google.android.gms:play-services:7.0.0'
     compile 'com.facebook.android:facebook-android-sdk:4.0.0'
-    compile 'com.github.rey5137:material:1.1.0'
 
+    compile 'com.github.rey5137:material:1.1.0'
 
     // Dependencies for hdodenhof's CircleImageView library
     compile 'de.hdodenhof:circleimageview:1.2.2'
 
-    // Dependencies for navasmdc's MaterialDesign Library
-    compile 'com.github.navasmdc:MaterialDesign:1.+@aar'
-
     // Dependencies for solovyev's LinearLayoutManager Library (for wrap_content functionality)
     compile 'org.solovyev.android.views:linear-layout-manager:0.2@aar'
+
+    // Dependencies for rey5137's Material Library (FABs, Buttons, etc.)
+    compile 'com.github.rey5137:material:1.1.0'
+
+    compile 'com.rengwuxian.materialedittext:library:2.1.3'
 }

@@ -25,9 +25,9 @@ public class Singleton implements
 	private final String TAG = "SOS Tag";
 	private static Singleton instance = null;
 	private static Context mContext;
-	
+
 	private RequestQueue mRequestQueue;
-    private ImageLoader mImageLoader;
+	private ImageLoader mImageLoader;
 	private GoogleApiClient mGoogleApiClient;
 	//static Typeface face;
 	static public android.graphics.Typeface face;
@@ -35,7 +35,7 @@ public class Singleton implements
 	 * To initialize the class. It must be called before call the method getInstance()
 	 * @param ctx The Context used
 	 */
-	
+
 	public static void initialize(Context ctx) {
 		mContext = ctx;
 		face = Typeface.createFromAsset(mContext.getAssets(), "plane.ttf");
@@ -173,4 +173,3 @@ public class Singleton implements
 
 
 }
-

@@ -242,7 +242,7 @@ public class FragmentViewQuestion extends Fragment implements
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View v = null;
             if (viewType == TYPE_ITEM) {
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_item_layout_new,parent,false);
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_item_layout,parent,false);
             } else if (viewType == TYPE_MAP) {
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.question_map_item,parent,false);
             }
@@ -313,6 +313,7 @@ public class FragmentViewQuestion extends Fragment implements
         mMapView.onResume();
         mMap.getUiSettings().setScrollGesturesEnabled(false);
 
+        mMap.setMyLocationEnabled(true);
         zoomToMyPosition();
 
     }
@@ -342,8 +343,8 @@ public class FragmentViewQuestion extends Fragment implements
 
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
-                    .zoom(17)                   // Sets the zoom
-                    .bearing(90)                // Sets the orientation of the camera to east
+                    .zoom(13)                   // Sets the zoom
+                    .bearing(0)                // Sets the orientation of the camera to east
                     .tilt(40)                   // Sets the tilt of the camera to 30 degrees
                     .build();                   // Creates a CameraPosition from the builder
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
