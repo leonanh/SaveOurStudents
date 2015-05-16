@@ -11,6 +11,8 @@
     <string name="confirm_password_hint">Confirm password</string>
     <string name="forgot_login">Forgot login?</string>
     <string name="sign_up">Sign Up</string>
+    <string name="first_name_hint">First Name</string>
+    <string name="last_name_hint">Last Name</string>
     <string name="create_username_prompt">8-12 characters, a-z, A-Z, 0-9</string>
     <string name="create_password_prompt">Minimum 8 characters. Must contain X Y Z.</string> <!-- TODO: Validation constraints. -->
     <string name="create_password_confirmation_prompt">Enter your password again.</string>
@@ -20,8 +22,11 @@
     <string name="forgot_credentials_prompt">Forget your login? Enter your email here and we\'ll send you your info.</string>
     <string name="usernameEmpty">Username field is empty!</string>
     <string name="passwordEmpty">Password field is empty!</string>
+    <string name="repeat_password_hint">Repeat Password</string>
     <string name="invalidLogin">Login is invalid!</string>
     <string name="emailEmpty">Email is empty!</string>
+    <string name="incorrect_length">incorrect length</string>
+    <string name="not_the_same_password">Not the same password</string>
 
     <!-- -->
     <string name="openDrawer">drawer open</string>

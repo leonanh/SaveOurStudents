@@ -26,6 +26,7 @@ import org.json.JSONObject;
  * Created by HTPC on 4/26/2015.
  */
 public class SignupActivity extends Activity implements View.OnClickListener {
+
     Validations validations = new Validations();
 
     Button signUpBtn;
@@ -99,7 +100,7 @@ public class SignupActivity extends Activity implements View.OnClickListener {
                                 startActivity(mainActivity);
                                 finish();
                             }else{
-                                prompt = Toast.makeText(appContext, "Invalid login!", Toast.LENGTH_SHORT);//TODO: Use R String
+                                prompt = Toast.makeText(appContext, R.string.invalidLogin, Toast.LENGTH_SHORT);
                                 prompt.show();
                             }
 
@@ -138,7 +139,7 @@ public class SignupActivity extends Activity implements View.OnClickListener {
         }
 
         if (verifyPassword1 == Validations.REPEAT_NOT_SAME){
-            passInput1.setError("Not the same password");
+            passInput1.setError("Not_the_same_password");
             passInput2.setError("Not the same password");
             return false;
         }
