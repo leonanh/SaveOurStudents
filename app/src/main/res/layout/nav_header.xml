@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="178dp"
-    android:background="@mipmap/image1"
+    android:background="@drawable/materialwallpaperdefault"
     android:orientation="vertical"
     android:weightSum="1">
 
@@ -50,4 +51,17 @@
         android:layout_marginTop="38dp"
         android:id="@+id/circleView"
         />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_editImage"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/profile_editProfile"
+        android:layout_margin="16dp"
+        android:src="@drawable/defaultprofile"
+        app:border_color="@color/primary_light"
+        app:border_width="2dp"
+        android:clickable="true"/>
+
 </RelativeLayout>
