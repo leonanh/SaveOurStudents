@@ -628,6 +628,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                 "email=" + email +
                 "&password=" + Singleton.get_SHA_1_SecurePassword(password);
 
+    System.out.println("url: "+url);
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url,
                 (JSONObject) null, new Response.Listener<JSONObject>() {

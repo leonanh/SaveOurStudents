@@ -157,7 +157,7 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
                 if (!questionEditText.getText().toString().equalsIgnoreCase("")) {
                     questionEditText.clearError();
 
-                    //TODO sendQuestionToServer();
+                    sendQuestionToServer();
                 } else {
                     //Question edit text empty
                     questionEditText.setError("Question is empty");
@@ -197,12 +197,12 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
                         editor.putString("image", response.getJSONArray("result").getJSONObject(0).getString("image"));
                         editor.putString("user_id", response.getJSONArray("result").getJSONObject(0).getString("user_id"));
 
-
+32.8810° N, 117.2380
           */
         System.out.println("Im'a send this question to server");
 
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createQuestion?"+
-                "userId="+userId+
+                "userId=mingyuhu"+//userId+
                 "&latitude="+
                 "&longitude="+
                 "&text="+
@@ -211,6 +211,7 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
                 "&studygroup=";
 
 
+        System.out.println("url: "+url);
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
                 url,
                 (JSONObject)null,
