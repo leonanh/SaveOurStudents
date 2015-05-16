@@ -23,9 +23,9 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.sos.saveourstudents.R;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;// Testing infowindow event handle
+import android.widget.Toast; //Testing infowindow event handle
 
-//import java.awt.Image;
 import java.lang.Override;
 import java.lang.String;
 import java.util.ArrayList;
@@ -33,8 +33,8 @@ import java.util.ArrayList;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.JsonArrayRequest;
+//import com.android.volley.VolleyLog;
+//import com.android.volley.toolbox.JsonArrayRequest;
 
 import org.json.JSONObject;
 
@@ -43,18 +43,18 @@ import org.json.JSONObject;
  */
 public class FragmentMap extends Fragment implements
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener{
+        GoogleApiClient.OnConnectionFailedListener, OnInfoWindowClickListener{
 
     static final LatLng UCSD = new LatLng(32.88006, -117.234013);
     static final LatLng GEISEL = new LatLng(32.881151, -117.23744999999997);
     private GoogleMap mMap;
     private MapView mMapView;
     private Bundle mBundle;
-    private Location mLastLocation;
     private Context mContext;
 
     private View rootView;
     private GoogleApiClient mGoogleApiClient;
+    private ArrayList<Question> mPostList;
 
     private LayoutInflater minflater;
     public FragmentMap() {
@@ -93,7 +93,7 @@ public class FragmentMap extends Fragment implements
             e.printStackTrace();
         }
 
-        zoomToMyPosition();
+        //zoomToMyPosition();
         mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
 
             // Use default InfoWindow frame
@@ -113,22 +113,37 @@ public class FragmentMap extends Fragment implements
                 LatLng latLng = arg0.getPosition();
 
                 // Getting reference to the TextView to set latitude
-                TextView tvLat = (TextView) v.findViewById(R.id.tv_lat);
+                TextView tv_lat = (TextView) v.findViewById(R.id.tv_lat);
 
                 // Getting reference to the TextView to set longitude
-                TextView tvLng = (TextView) v.findViewById(R.id.tv_lng);
+                TextView tv_lng = (TextView) v.findViewById(R.id.tv_lng);
 
                 // Setting the latitude
-                tvLat.setText("Latitude:" + latLng.latitude);
+                tv_lat.setText("Latitude:" + latLng.latitude);
 
                 // Setting the longitude
-                tvLng.setText("Longitude:" + latLng.longitude);
+                tv_lng.setText("Longitude:" + latLng.longitude);
+
+                TextView tvTitle = (TextView) v.findViewById(R.id.title);
+                tvTitle.setText(arg0.getTitle());
+                TextView tvSnippet = ((TextView)v.findViewById(R.id.snippet));
+                tvSnippet.setText(arg0.getSnippet());
 
                 // Returning the view containing InfoWindow contents
                 return v;
 
             }
         });
+
+        mMap.setOnInfoWindowClickListener(this); //Testing infowindow event handle
+
+    }
+
+    // testing infowindow event handle
+    public void onInfoWindowClick(Marker marker) {
+        Toast.makeText(this.mContext,
+                "Info Window clicked@" + marker.getId(),
+                Toast.LENGTH_SHORT).show();
 
     }
 
@@ -146,7 +161,8 @@ public class FragmentMap extends Fragment implements
         Image mProfPic;
         double mTime = howMuchTimeAgo(GETSYSTEMTIME);
         double mDist = calculateDistfromLatLng(yourLatLng, theirLatLng);
-        */
+
+
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
                 url,
@@ -169,6 +185,8 @@ public class FragmentMap extends Fragment implements
                     }
                 });
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
+        */
+        createUI();
     }
 
     /**
@@ -179,7 +197,7 @@ public class FragmentMap extends Fragment implements
      */
     private void createUI()
     {
-        ArrayList<Question> mPostList = new ArrayList<Question>();
+        ArrayList<Question> mPostList = new ArrayList<>();
         /*
         for (int i = 0; i < Json Array Length; i++)
         {
@@ -199,14 +217,17 @@ public class FragmentMap extends Fragment implements
                     .title(mTitle)
                     .snippet());*/
             }
-            Marker ucsd = mMap.addMarker(new MarkerOptions().position(UCSD)
-                    .title("UCSD"));
+            Marker ucsd = mMap.addMarker(new MarkerOptions()
+                    .position(UCSD)
+                    .title("UCSD")
+                    .snippet("UCSD Rules"));
             Marker geisel = mMap.addMarker(new MarkerOptions()
                     .position(GEISEL)
                     .title("GEISEL")
                     .snippet("GEISEL is cool"));
 
             mMap.setMyLocationEnabled(true);
+            zoomToMyPosition();
         }
 
     }
@@ -262,11 +283,6 @@ public class FragmentMap extends Fragment implements
 
     }
 
-
-
-    /**
-     * Magic
-     */
     private void zoomToMyPosition(){
 
         LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
@@ -280,15 +296,12 @@ public class FragmentMap extends Fragment implements
 
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
-                    .zoom(17)                   // Sets the zoom
-                    .bearing(90)                // Sets the orientation of the camera to east
+                    .zoom(13)                   // Sets the zoom
+                    .bearing(0)                // Sets the orientation of the camera to east
                     .tilt(40)                   // Sets the tilt of the camera to 30 degrees
                     .build();                   // Creates a CameraPosition from the builder
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
         }
-
-
 
     }
 
