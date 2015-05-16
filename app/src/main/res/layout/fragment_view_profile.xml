@@ -20,8 +20,7 @@
             android:baselineAlignBottom="false"
             android:cropToPadding="false"
             android:scaleType="centerCrop"
-            />
-            <!--TODO: Temp disabled because it was causing me bugs. android:src="@drawable/materialwallpaperdefault" /> -->
+            android:src="@drawable/materialwallpaperdefault" />
 
         <RelativeLayout
             android:id="@+id/u"
@@ -49,7 +48,7 @@
                 android:layout_toEndOf="@+id/profile_image"
                 android:layout_toRightOf="@+id/profile_image"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textColor="@color/primary_text" />
+                android:textColor="@color/primary_text1" />
 
             <TextView
                 android:id="@+id/profile_lastName"
@@ -60,7 +59,7 @@
                 android:layout_toEndOf="@+id/profile_firstName"
                 android:layout_toRightOf="@+id/profile_firstName"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textColor="@color/primary_text" />
+                android:textColor="@color/primary_text1" />
 
             <TextView
                 android:id="@+id/profile_rating"
@@ -71,7 +70,7 @@
                 android:layout_toRightOf="@id/profile_image"
                 android:text="@string/profile_rating"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textColor="@color/primary_text" />
+                android:textColor="@color/primary_text1" />
 
             <TextView
                 android:id="@+id/profile_myRating"
@@ -82,14 +81,25 @@
                 android:layout_marginLeft="5dp"
                 android:layout_toRightOf="@id/profile_rating"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textColor="@color/primary_text" />
+                android:textColor="@color/primary_text1" />
 
         </RelativeLayout>
 
 
     </android.support.v7.widget.CardView>
 
-
+    <com.gc.materialdesign.views.ButtonFloat
+        android:id="@+id/profile_editButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/primary"
+        materialdesign:animate="true"
+        materialdesign:iconDrawable="@drawable/ic_create_white_18dp" />
 
     <android.support.v7.widget.CardView
         android:id="@+id/profile_bottomCardView"

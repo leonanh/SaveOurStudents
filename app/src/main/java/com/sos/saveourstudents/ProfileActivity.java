@@ -1,12 +1,12 @@
 package com.sos.saveourstudents;
 
+import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class ProfileActivity extends ActionBarActivity
+public class ProfileActivity extends Activity
         implements ViewProfileFragment.OnEditButtonListener, EditProfileFragment.OnFragmentInteractionListener {
 
     private Student currStudent;
