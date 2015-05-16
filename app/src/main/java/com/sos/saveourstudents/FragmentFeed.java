@@ -129,10 +129,22 @@ public class FragmentFeed extends Fragment {
         List<String> myList = new ArrayList<String>();
         myList.addAll(filterList);
 
+        String filterListFix = ""; //TODO not good
+        for(int a = 0; a < myList.size(); a++){
+            if(a == 0){
+                filterListFix = ""+myList.get(a);
+            }
+            else{
+                filterListFix = filterListFix+"&tags="+myList.get(a);
+            }
+        }
+
+        //System.out.println("filterListFix: "+filterListFix);
+
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getQuestions"+
                 "?latitude="+1.000000+//32.8800604+ //TODO
-                "&longitude="+0.000000+//-117.2340135+  //TODO
-                "&tags="+myList.toString().replaceAll(" ","")+
+                "&longitude="+2.000000+//-117.2340135+  //TODO
+                "&tags="+filterListFix+
                 "&limit="+50;
 
 
@@ -147,19 +159,23 @@ public class FragmentFeed extends Fragment {
                     public void onResponse(JSONObject response) {
                         try {
 
-                            System.out.println("response: "+response.toString()); //DEBUG
+                            //System.out.println("response: "+response.toString()); //DEBUG
 
-                            JSONObject result = new JSONObject(response.toString());
-                            if(!result.getString("success").equalsIgnoreCase("1")){
+
+                            JSONObject theResponse = new JSONObject(response.toString());
+
+
+                            if(!theResponse.getString("success").equalsIgnoreCase("1")){
                                 //Error getting data
                                 return;
                             }
-                            if(result.getString("expectResults").equalsIgnoreCase("0")){
-                                //No results to show
-                                mQuestionList = result.getJSONObject("result").getJSONArray("myArrayList");
+                            if(theResponse.getString("expectResults").equalsIgnoreCase("0")){
+                                //No results to show (empty array returned)
+                                mQuestionList = theResponse.getJSONObject("result").getJSONArray("myArrayList");
                             }
                             else{
-                                mQuestionList = result.getJSONObject("result").getJSONArray("myArrayList");
+
+                                mQuestionList = theResponse.getJSONObject("result").getJSONArray("myArrayList");
                             }
 
 
@@ -190,15 +206,6 @@ public class FragmentFeed extends Fragment {
         // Access the RequestQueue through your singleton class.
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
 
-
-
-        /*
-        //TODO Move into server call (volley)
-        mQuestionList = new ArrayList<Question>();
-        for(int a = 0;a<15;a++){
-            Question temp = new Question("Question "+a);
-            mQuestionList.add(temp);
-        }*/
 
     }
 
@@ -245,9 +252,10 @@ public class FragmentFeed extends Fragment {
             //viewHolder.questionText.setText(mCardManagerInstance.getCounters().get(i).title+"");
             //viewHolder.venueType.setText(mInstance.getCounters().get(i)+"");
             try {
-                viewHolder.nameText.setText(mQuestionList.getJSONObject(position).getString("user_id"));
+                System.out.println("Question "+position+": "+mQuestionList.getJSONObject(position).getJSONObject("map"));
+                viewHolder.nameText.setText(mQuestionList.getJSONObject(position).getJSONObject("map").getString("user_id"));
 
-                viewHolder.questionText.setText(mQuestionList.getJSONObject(position).getString("text"));
+                viewHolder.questionText.setText(mQuestionList.getJSONObject(position).getJSONObject("map").getString("text"));
 
 
 

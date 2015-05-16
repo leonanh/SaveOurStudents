@@ -202,7 +202,7 @@ public class MainActivity extends ActionBarActivity {
             getWindowManager().getDefaultDisplay().getMetrics(metrics);
             FragmentTransaction ft = getFragmentManager().beginTransaction();
 
-            DialogFragment newFragment = new TagDialogFragment(this, metrics, sharedPref);
+            DialogFragment newFragment = new FilterDialogFragment(this, metrics, sharedPref);
 
             newFragment.setCancelable(true);
 

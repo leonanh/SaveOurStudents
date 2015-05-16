@@ -30,7 +30,7 @@ import java.util.Set;
  * Created by deamon on 5/13/15.
  */
 @SuppressLint("ValidFragment")
-public class TagDialogFragment extends DialogFragment implements View.OnClickListener {
+public class FilterDialogFragment extends DialogFragment implements View.OnClickListener {
 
     DisplayMetrics dispMetrics;
     ViewGroup flowLayout, flowLayout2;
@@ -42,15 +42,19 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
     SharedPreferences sharedPref;
 
 
-    public TagDialogFragment(Context context, DisplayMetrics metrics, SharedPreferences sharedPref) {
+    public FilterDialogFragment(Context context, DisplayMetrics metrics, SharedPreferences sharedPref) {
         mContext = context;
         this.sharedPref = sharedPref;
         dispMetrics = metrics;
 
         //System.out.println(sharedPref.getStringSet("filter_list", null).toString());
-        //TODO Get tags attached to this question, if any exist...
 
-        //Pass in tag list?
+        if (!sharedPref.contains("filter_list")) {
+            SharedPreferences.Editor editor = sharedPref.edit();
+            Set filterList = new HashSet();
+            editor.putStringSet("filter_list", filterList);
+            editor.commit();
+        }
     }
 
     @Override

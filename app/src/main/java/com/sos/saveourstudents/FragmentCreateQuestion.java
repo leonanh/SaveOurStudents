@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -54,47 +53,21 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
 
 
 
+        //If edit, get question info from server
+        //If create, set variables to null
 
         return rootView;
 
 
     }
 
-    private void showTags(){
 
-        View tagView = null;
-            try {
 
-                for(int a = 0; a < popularTags.length(); a++){
-
-                    System.out.println("want to display tag: "+popularTags.getJSONObject(a));
-                    tagView = inflater.inflate(R.layout.tag_item_layout, null, false);
-                    tagView.findViewById(R.id.the_linear).setOnClickListener(this);
-                    TextView tagText = (TextView) tagView.findViewById(R.id.tag_text);
-                    tagText.setText(popularTags.getJSONObject(a).getString("tag"));
-                    flowLayout.addView(tagView);
-                }
+    private void getQuestionData(){
 
 
 
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-
-
-
-    }
-
-
-    private void getTagData(){
-
-
-        /**
-         * JSON Array Example
-         */
-        String tag_json_arry = "json_array_req";
-        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getTags";
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getQuestion";
 
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
