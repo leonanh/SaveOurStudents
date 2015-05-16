@@ -7,59 +7,69 @@
     tools:context=".LoginActivity"
     tools:ignore="MergeRootFrame">
 
+
+    <ImageView
+        android:background="@color/primary"
+        android:id="@+id/imageView"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/login_screen_main_logo"
+        android:src="@drawable/logo_placeholder"
+        android:paddingTop="@dimen/container_padding"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+
+
     <com.rey.material.widget.EditText
         xmlns:app="http://schemas.android.com/apk/res-auto"
         style="@style/Material.Widget.EditText.Light"
         android:id="@+id/signup_first_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="30dp"
         android:textColor="@color/primary_text"
         android:textColorHint="@color/hint_text"
-        android:hint="FIRST NAME"
+        android:hint="First Name"
         android:inputType="textCapSentences"
         app:et_autoCompleteMode="none"
         app:et_dividerColor="@color/primary_light"
         app:et_dividerPadding="4dp"
         app:et_supportTextErrorColor="#FFFF0000"
         app:et_dividerErrorColor="#FFFF0000"
-        app:et_supportMode="helper"
-        />
+        app:et_supportMode="3"
+        app:et_supportMaxChars="20"
+        android:layout_below="@+id/imageView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" />
 
     <com.rey.material.widget.EditText
         xmlns:app="http://schemas.android.com/apk/res-auto"
         style="@style/Material.Widget.EditText.Light"
         android:id="@+id/signup_last_name"
-        android:layout_below="@id/signup_first_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="15dp"
         android:textColor="@color/primary_text"
         android:textColorHint="@color/hint_text"
-        android:hint="LAST NAME"
+        android:hint="Last Name"
         android:inputType="textCapSentences"
         app:et_autoCompleteMode="none"
         app:et_dividerColor="@color/primary_light"
         app:et_dividerPadding="4dp"
         app:et_supportTextErrorColor="#FFFF0000"
         app:et_dividerErrorColor="#FFFF0000"
-        app:et_supportMode="helper"
-        />
+        app:et_supportMode="3"
+        app:et_supportMaxChars="20"
+        android:layout_below="@+id/signup_first_name"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" />
 
     <com.rey.material.widget.EditText
         xmlns:app="http://schemas.android.com/apk/res-auto"
         style="@style/Material.Widget.EditText.Light"
         android:id="@+id/signup_email_textfield"
-        android:layout_below="@id/signup_last_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="15dp"
         android:textColor="@color/primary_text"
         android:textColorHint="@color/hint_text"
         android:hint="@string/email_hint"
@@ -70,7 +80,12 @@
         app:et_supportTextErrorColor="#FFFF0000"
         app:et_dividerErrorColor="#FFFF0000"
         app:et_supportMode="helper"
-        />
+        app:et_helper="Please enter a valid email"
+        android:layout_below="@+id/signup_last_name"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp" />
 
     <com.rey.material.widget.EditText
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -78,21 +93,22 @@
         android:id="@+id/signup_password_textfield"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="15dp"
-        android:layout_below="@id/signup_email_textfield"
         android:textColor="@color/primary_text"
         android:textColorHint="@color/hint_text"
         android:hint="@string/password_hint"
         android:inputType="textPassword"
         app:et_autoCompleteMode="none"
+        app:et_helper="3-16 characters"
         app:et_dividerColor="@color/primary_light"
         app:et_dividerPadding="4dp"
         app:et_supportTextErrorColor="#FFFF0000"
         app:et_dividerErrorColor="#FFFF0000"
         app:et_supportMode="helper"
-        />
+        android:layout_below="@+id/signup_email_textfield"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp" />
 
     <com.rey.material.widget.EditText
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -100,28 +116,31 @@
         android:id="@+id/signup_password_confirm_textfield"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_below="@id/signup_password_textfield"
-        android:layout_marginTop="15dp"
         android:textColor="@color/primary_text"
         android:textColorHint="@color/hint_text"
-        android:hint="@string/create_password_confirmation_prompt"
-        android:inputType="textCapSentences"
+        android:hint="Repeat Password"
+        android:inputType="textPassword"
         app:et_autoCompleteMode="none"
         app:et_dividerColor="@color/primary_light"
         app:et_dividerPadding="4dp"
         app:et_supportTextErrorColor="#FFFF0000"
         app:et_dividerErrorColor="#FFFF0000"
         app:et_supportMode="helper"
-        />
+        app:et_helper="Enter your password again"
+        android:layout_below="@+id/signup_password_textfield"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp" />
 
     <Button
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
         android:text="@string/sign_up"
         android:id="@+id/signup_btn"
-        android:layout_alignParentEnd="false"
-        android:layout_alignParentBottom="true"/>
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+
 
 </RelativeLayout>

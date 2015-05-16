@@ -69,9 +69,10 @@ public class SignupActivity extends Activity implements View.OnClickListener {
 
             boolean email = verifyEmail(emailInput1);
             boolean passCheck = verifyPassword(passwordInput1,passwordInput2);
-
+            boolean firstCheck = verifyFirstLast(firstName);
+            boolean lastCheck = verifyFirstLast(lastName);
             //Perform database signup
-            if (passCheck || email) {
+            if (passCheck && email && firstCheck && lastCheck) {
 
                 //==================================================================================
                 String android_id = Secure.getString(getApplicationContext().getContentResolver(),
@@ -160,6 +161,18 @@ public class SignupActivity extends Activity implements View.OnClickListener {
             return false;
         }
         emailInput.clearError();
+        return true;
+
+    }
+
+
+
+    private boolean verifyFirstLast(String incomingFirstLast) {
+        boolean firstLastIsValid = validations.testEmailSignUp(incomingFirstLast);
+
+        if (firstLastIsValid == false) {
+            return false;
+        }
         return true;
 
     }

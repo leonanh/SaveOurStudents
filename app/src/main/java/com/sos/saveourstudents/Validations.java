@@ -16,6 +16,8 @@ public class Validations  {
     private static final int MIN_LENGTH = 3;
     private static final int MAX_LENGTH = 16;
 
+    private static final int FIRST_LAST_MAX_LENGTH = 20;
+
     public static final int REPEAT_NOT_SAME = 0;
     public static final int INCORRECT_LENGTH_TOP = 1;
     public static final int INCORRECT_LENGTH_BOT = 2;

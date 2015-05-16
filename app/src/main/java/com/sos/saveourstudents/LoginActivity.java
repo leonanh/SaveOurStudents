@@ -450,8 +450,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    @Override    public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -488,6 +487,12 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                 prompt.show();
                 return;
             }
+
+            //TODO Remove this.Do real validation.
+            //Intent mainActivity = new Intent(this, MainActivity.class);
+            //startActivity(mainActivity);
+            //finish();
+
             Log.d("Debug","Logging in");
             doSOSLogin("SOS", usernameField.getText().toString(), passwordField.getText().toString());
             Log.d("Debug","Fiished Logging in");
@@ -506,7 +511,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
     }
 
 
-    public void doFacebookLogin() {
+    public void doFacebookLogin() {//TODO Glitchy, needs work. Duplicate emails present a problem.
         loginManager.logInWithReadPermissions(this, Arrays.asList("public_profile", "email"));
     }
 
@@ -656,6 +661,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                 System.out.println("Error: " + error.toString());
                 isLogging = false;
             }
+
         });
 
 
@@ -681,16 +687,18 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                 try {
 
                     if (response.getString("success").equalsIgnoreCase("1") && response.getString("expectResults").equalsIgnoreCase("1")) {
-                        //System.out.println("Login success Response: " + response.toString());
+                        prompt = Toast.makeText(appContext, "first if!", Toast.LENGTH_SHORT);//TODO: Use R String
+                        prompt.show();
+                        System.out.println("Login success Response: " + response.toString());
                         //TODO we still "success = 1" here even from wrong password. FIX this
                         SharedPreferences sharedPref = getSharedPreferences(
                                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPref.edit();
-                        editor.putString("first_name", response.getJSONArray("result").getJSONObject(0).getString("first_name"));
-                        editor.putString("last_name", response.getJSONArray("result").getJSONObject(0).getString("last_name"));
-                        editor.putString("email", response.getJSONArray("result").getJSONObject(0).getString("email"));
-                        editor.putString("image", response.getJSONArray("result").getJSONObject(0).getString("image"));
-                        editor.putString("user_id", response.getJSONArray("result").getJSONObject(0).getString("user_id"));
+                        editor.putString("first_name", response.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("first_name"));
+                        editor.putString("last_name", response.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("last_name"));
+                        editor.putString("email", response.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("email"));
+                        editor.putString("image", response.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("image"));
+                        editor.putString("user_id", response.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("user_id"));
                         editor.putString("provider", provider);
                         editor.commit();
 
@@ -702,7 +710,8 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                         prompt = Toast.makeText(appContext, "Invalid login!", Toast.LENGTH_SHORT);//TODO: Use R String
                         prompt.show();
                     }else{
-                        //Connection issue?
+                        prompt = Toast.makeText(appContext, "Else statement!", Toast.LENGTH_SHORT);//TODO: Use R String
+                        prompt.show();
                     }
 
 
