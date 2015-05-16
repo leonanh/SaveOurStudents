@@ -242,7 +242,7 @@ public class FragmentViewQuestion extends Fragment implements
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View v = null;
             if (viewType == TYPE_ITEM) {
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_item_layout_new,parent,false);
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_item_layout,parent,false);
             } else if (viewType == TYPE_MAP) {
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.question_map_item,parent,false);
             }

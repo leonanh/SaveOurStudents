@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/the_linear"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="5dp"
+    android:padding="10dp"
     android:background="@drawable/tag_selector">
 
     <TextView
@@ -14,15 +13,12 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="tag1"
-        android:textSize="15sp"
-        android:layout_marginLeft="5dp"
-        android:textColor="@color/primary_text"/>
+        android:textSize="20sp"/>
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginLeft="3dp"
-        android:src="@drawable/ic_check_circle_white_18dp"
-        />
+        android:layout_marginLeft="5dp"
+        android:src="@drawable/ic_cancel_black_18dp"/>
 
 </LinearLayout>

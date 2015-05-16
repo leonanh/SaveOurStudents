@@ -8,20 +8,18 @@
     <string name="login">Log in</string>
     <string name="username_hint">Username</string>
     <string name="password_hint">Password</string>
-    <string name="confirm_password_hint">Confirm password</string>
     <string name="forgot_login">Forgot login?</string>
-    <string name="sign_up">Sign Up</string>
-    <string name="create_username_prompt">8-12 characters, a-z, A-Z, 0-9</string>
-    <string name="create_password_prompt">Minimum 8 characters. Must contain X Y Z.</string> <!-- TODO: Validation constraints. -->
+    <string name="sign_up">SIGN UP</string>
+    <string name="create_username_prompt">Create your username here. User names must contain X to Y characters.</string>
+    <string name="create_password_prompt">Create your password here. Passwords must contain X to Y characters.</string>
     <string name="create_password_confirmation_prompt">Enter your password again.</string>
     <string name="email_hint">E-mail</string>
-    <string name="create_email_prompt">your_email@address.com</string>
+    <string name="create_email_prompt">Enter e-mail here.</string>
     <string name="send_email_prompt">Send e-mail</string>
     <string name="forgot_credentials_prompt">Forget your login? Enter your email here and we\'ll send you your info.</string>
     <string name="usernameEmpty">Username field is empty!</string>
     <string name="passwordEmpty">Password field is empty!</string>
     <string name="invalidLogin">Login is invalid!</string>
-    <string name="emailEmpty">Email is empty!</string>
 
     <!-- -->
     <string name="openDrawer">drawer open</string>
@@ -51,6 +49,5 @@
 
     <!-- Shared Prefs -->
     <string name="preference_file_key">com.sos.saveourstudents</string>
-
 
 </resources>
