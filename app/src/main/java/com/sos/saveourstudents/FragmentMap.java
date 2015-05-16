@@ -23,9 +23,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.sos.saveourstudents.R;
 
-//import java.awt.Image;
 import java.lang.Override;
 import java.lang.String;
 import java.util.ArrayList;
@@ -55,6 +53,7 @@ public class FragmentMap extends Fragment implements
 
     private View rootView;
     private GoogleApiClient mGoogleApiClient;
+    private ArrayList<Question> mPostList;
 
     private LayoutInflater minflater;
     public FragmentMap() {
@@ -147,6 +146,7 @@ public class FragmentMap extends Fragment implements
         double mTime = howMuchTimeAgo(GETSYSTEMTIME);
         double mDist = calculateDistfromLatLng(yourLatLng, theirLatLng);
         */
+
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
                 url,

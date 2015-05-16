@@ -4,14 +4,14 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.gc.materialdesign.views.Button;
-import com.gc.materialdesign.views.ButtonFloat;
+import com.rey.material.widget.FloatingActionButton;
 
 import org.solovyev.android.views.llm.DividerItemDecoration;
 import org.solovyev.android.views.llm.LinearLayoutManager;
@@ -29,11 +29,12 @@ import java.util.ArrayList;
  */
 public class ViewProfileFragment extends Fragment {
     private static final String ARG_PARAM1 = "student";
-    private Button editButton;
+    private FloatingActionButton editButton;
 
     private Student currStudent;
 
     private OnEditButtonListener mListener;
+    private RecyclerView aboutMeContents;
 
     /**
      * Use this factory method to create a new instance of
@@ -65,7 +66,6 @@ public class ViewProfileFragment extends Fragment {
         else currStudent = new Student("Brady", "Shi", 0, "UCSD", "Computer Engineering", "Coffee Addict",
                 null); // Unnecessary with FragmentTransaction
 
-
     }
 
     @Override
@@ -80,8 +80,17 @@ public class ViewProfileFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
+        ((TextView) getActivity().findViewById(R.id.profile_firstName))
+                .setText(currStudent.getFirstName());
+
+        ((TextView) getActivity().findViewById(R.id.profile_lastName))
+                .setText(currStudent.getLastName());
+
+        ((TextView) getActivity().findViewById(R.id.profile_myRating))
+                .setText(((Integer) currStudent.getRating()).toString());
+
         // Begin inserting data into the About Me of the Student
-        RecyclerView aboutMeContents = (RecyclerView) getActivity().
+        aboutMeContents = (RecyclerView) getActivity().
                 findViewById(R.id.profile_aboutMeContents);
 
         // About Me will ALWAYS have a School, Major, and Description
@@ -95,7 +104,7 @@ public class ViewProfileFragment extends Fragment {
         aboutMeContents.setAdapter(new RVAdapter(initializeData()));
 
         // Set the OnClickListener for the edit floating action button
-        editButton = (ButtonFloat) getActivity().findViewById(R.id.profile_editButton);
+        editButton = (FloatingActionButton) getActivity().findViewById(R.id.profile_editButton);
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -106,6 +115,20 @@ public class ViewProfileFragment extends Fragment {
         });
 
 
+    }
+
+    /**
+     * Update the View with the student's current values
+     * Usually used after an onDoneButton() call in ProfileActivity
+     */
+    public void updateCurrentStudentView(Student currStudent) {
+        ((TextView) getActivity().findViewById(R.id.profile_firstName))
+                .setText(currStudent.getFirstName());
+
+        ((TextView) getActivity().findViewById(R.id.profile_lastName))
+                .setText(currStudent.getLastName());
+
+        aboutMeContents.setAdapter(new RVAdapter(initializeData()));
     }
 
     /**
