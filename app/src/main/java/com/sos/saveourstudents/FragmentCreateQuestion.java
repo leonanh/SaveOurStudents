@@ -3,7 +3,9 @@ package com.sos.saveourstudents;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -200,6 +202,15 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
         else if(v == addTagsButton){
 
             //TODO show tags dialog
+            DisplayMetrics metrics = new DisplayMetrics();
+
+            this.getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+            DialogFragment newFragment = new TagDialogFragment(mContext, metrics, 1);
+
+            newFragment.setCancelable(true);
+
+            newFragment.show(this.getActivity().getSupportFragmentManager(), "");
 
         }
 

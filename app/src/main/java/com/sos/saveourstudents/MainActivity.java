@@ -195,14 +195,15 @@ public class MainActivity extends ActionBarActivity {
         else if (id == R.id.action_filter) {
 
             DisplayMetrics metrics = new DisplayMetrics();
+            /*
             SharedPreferences sharedPref = getSharedPreferences(
                     getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-
+*/
 
             getWindowManager().getDefaultDisplay().getMetrics(metrics);
             FragmentTransaction ft = getFragmentManager().beginTransaction();
 
-            DialogFragment newFragment = new TagDialogFragment(this, metrics, sharedPref);
+            DialogFragment newFragment = new TagDialogFragment(this, metrics, 0);
 
             newFragment.setCancelable(true);
 
