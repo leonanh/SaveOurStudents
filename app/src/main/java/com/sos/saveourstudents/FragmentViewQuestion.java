@@ -1,6 +1,8 @@
 package com.sos.saveourstudents;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -25,7 +27,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.sos.saveourstudents.supportclasses.FlowLayout;
+import com.rey.material.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +37,8 @@ import java.util.List;
  */
 public class FragmentViewQuestion extends Fragment implements
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener{
+        GoogleApiClient.OnConnectionFailedListener,
+        View.OnClickListener{
 
     RecycleViewAdapter mAdapter;
     RecyclerView mRecyclerView;
@@ -64,16 +67,37 @@ public class FragmentViewQuestion extends Fragment implements
 
         View taglist = rootView.findViewById(R.id.tag_list_layout);
 
-        for(int i = 0; i < 10; i++) {
+        for(int i = 0; i < 3; i++) {
             TextView tag = new TextView(taglist.getContext());
-            tag.setText("#dummyTag");
+            tag.setText(" #dummyTag ");
+            tag.setTextColor(getResources().getColor(R.color.primary_dark));
             ((LinearLayout)taglist).addView(tag);
         }
 
+        Button tutorOrMember = (Button) rootView.findViewById(R.id.join_button);
+        tutorOrMember.setOnClickListener(this);
+
         return rootView;
+    }
 
+    @Override
+    public void onClick(View v) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage("Would you like to join as a tutor or a group member?");
 
+        builder.setPositiveButton("Member", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked the tutor button
+            }
+        });
+        builder.setNegativeButton("Tutor", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked the member button
+            }
+        });
 
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
 
@@ -90,16 +114,12 @@ public class FragmentViewQuestion extends Fragment implements
             mQuestionList.add(temp);
         }
 
-
-
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.my_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         mAdapter = new RecycleViewAdapter(mQuestionList, R.layout.fragment_question_comment, this.getActivity());
         mRecyclerView.setAdapter(mAdapter);
-
-
 
     }
 
@@ -186,8 +206,6 @@ public class FragmentViewQuestion extends Fragment implements
             TextView userName;
             TextView email;
 
-
-
             public ViewHolder(View itemView, int viewType) {
                 super(itemView);
 
@@ -201,16 +219,11 @@ public class FragmentViewQuestion extends Fragment implements
                 else if(viewType == TYPE_MEMBER){
                     memberRecyclerView = (RecyclerView) itemView.findViewById(R.id.my_recycler_view);
                     buildMemberRecyclerView();
-
-
-
                     Holderid = TYPE_MEMBER;
                 }
                 else{
                     mMapView = (MapView) itemView.findViewById(R.id.map);
                     initializeMap();
-
-
                     Holderid = TYPE_MAP;
                 }
             }
@@ -218,9 +231,6 @@ public class FragmentViewQuestion extends Fragment implements
         }
 
         private void buildMemberRecyclerView(){
-
-
-
 
             memberRecyclerView.setLayoutManager(new LinearLayoutManager(context));
             memberRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -232,8 +242,6 @@ public class FragmentViewQuestion extends Fragment implements
             dataset[3] = "gfdgdfg";
             MemberListAdapter adapter = new MemberListAdapter(dataset);
             memberRecyclerView.setAdapter(adapter);
-
-
 
         }
 
@@ -295,11 +303,7 @@ public class FragmentViewQuestion extends Fragment implements
             return TYPE_ITEM;
         }
 
-
     }
-
-
-
 
 
     private void initializeMap(){
@@ -355,10 +359,7 @@ public class FragmentViewQuestion extends Fragment implements
 
         }
 
-
-
     }
-
 
 }
 

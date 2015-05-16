@@ -35,16 +35,6 @@
             android:textIsSelectable="false" />
 
         <TextView
-            android:id="@+id/question_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/black"
-            android:layout_below="@+id/question_image"
-            android:layout_margin="5dp"
-            android:text="Anyone wanna code? I'l be sitting over in the dungeon in B240 working on Rick's PA3"
-            android:ellipsize="end" />
-
-        <TextView
             android:id="@+id/question_timestamp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -54,7 +44,6 @@
             android:textSize="12sp"
             android:text="3 hours ago"
             android:layout_toRightOf="@+id/question_image"/>
-
 
         <TextView
             android:layout_width="wrap_content"
@@ -67,6 +56,19 @@
             android:layout_alignBottom="@+id/question_timestamp"
             />
 
+        <TextView
+            android:id="@+id/question_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:layout_below="@+id/question_image"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="1dp"
+            android:text="Anyone wanna code? I'l be sitting over in the dungeon in B240 working on Rick's PA3"
+            android:ellipsize="end" />
+
         <com.rey.material.widget.Button
             style="@style/Material.Drawable.Ripple.Touch"
             android:id="@+id/join_button"
@@ -76,15 +78,6 @@
             android:layout_below="@+id/tag_list"
             app:rd_enable="true"/>
 
-        <!--<com.sos.saveourstudents.supportclasses.FlowLayout-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:id="@+id/tag_list"-->
-            <!--android:layout_below="@+id/question_text"-->
-            <!--android:layout_marginLeft="5dp"-->
-            <!--android:layout_marginRight="5dp"-->
-            <!--android:layout_marginBottom="3dp">-->
-    <!--</com.sos.saveourstudents.supportclasses.FlowLayout>-->
 
         <HorizontalScrollView
             android:layout_width="fill_parent"
@@ -93,14 +86,15 @@
             android:scrollbars="none"
             android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tag_list_layout">
-
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tag_list_layout">
             </LinearLayout>
+
         </HorizontalScrollView>
+
     </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
