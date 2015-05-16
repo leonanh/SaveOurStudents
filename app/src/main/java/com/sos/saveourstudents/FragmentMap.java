@@ -24,7 +24,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;// Testing infowindow event handle
-import android.widget.Toast; //ditto
+import android.widget.Toast; //Testing infowindow event handle
 
 //import java.awt.Image;
 import java.lang.Override;
@@ -93,7 +93,7 @@ public class FragmentMap extends Fragment implements
             e.printStackTrace();
         }
 
-        zoomToMyPosition();
+        //zoomToMyPosition();
         mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
 
             // Use default InfoWindow frame
@@ -161,7 +161,7 @@ public class FragmentMap extends Fragment implements
         Image mProfPic;
         double mTime = howMuchTimeAgo(GETSYSTEMTIME);
         double mDist = calculateDistfromLatLng(yourLatLng, theirLatLng);
-        */
+
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
                 url,
@@ -184,6 +184,7 @@ public class FragmentMap extends Fragment implements
                     }
                 });
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
+        */
         createUI();
     }
 
@@ -225,6 +226,7 @@ public class FragmentMap extends Fragment implements
                     .snippet("GEISEL is cool"));
 
             mMap.setMyLocationEnabled(true);
+            zoomToMyPosition();
         }
 
     }
