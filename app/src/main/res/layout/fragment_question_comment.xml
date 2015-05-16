@@ -49,7 +49,7 @@
                 android:layout_below="@+id/question_name_text"
                 android:layout_toRightOf="@+id/question_image"
                 android:layout_margin="1dp"
-                android:text="If ghosts can walk through walls and glide down stairs, why don't they fall through the floor?"
+                android:text="Let's have an all nighter in the dungeon! I'll grab my laptop and we pair program"
                 android:textSize="13sp"
                 android:ellipsize="end" />
 
@@ -61,7 +61,8 @@
                 android:textColor="@color/time_dist_hint"
                 android:textSize="12sp"
                 android:layout_marginLeft="5dp"
-                android:layout_toRightOf="@+id/question_name_text"
+                android:layout_marginRight="5dp"
+                android:layout_alignParentRight="true"
                 android:text="3h"
                 android:layout_alignBottom="@+id/question_name_text" />
 
