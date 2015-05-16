@@ -8,20 +8,19 @@ import android.app.Fragment;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import com.rey.material.widget.EditText;
+import com.rey.material.widget.FloatingActionButton;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link EditProfileFragment.OnFragmentInteractionListener} interface
+ * {@link OnDoneButtonListener} interface
  * to handle interaction events.
  * Use the {@link EditProfileFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -32,8 +31,8 @@ public class EditProfileFragment extends Fragment {
     private static final String ARG_PARAM1 = "student";
 
     private Student currStudent;
-    private OnFragmentInteractionListener mListener;
-    
+    private OnDoneButtonListener mListener;
+
     private EditText mEditFirstName;
     private android.widget.EditText mEditFirstNameInput;
     private EditText mEditLastName;
@@ -44,7 +43,9 @@ public class EditProfileFragment extends Fragment {
     private android.widget.EditText mEditMajorInput;
     private EditText mEditDescription;
     private android.widget.EditText mEditDescriptionInput;
-    
+
+    private FloatingActionButton doneButton;
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -70,8 +71,7 @@ public class EditProfileFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             currStudent = getArguments().getParcelable(ARG_PARAM1);
-        }
-        else {
+        } else {
             Log.e("EditProfile Error", "Must be given a student argument!");
         }
     }
@@ -86,7 +86,7 @@ public class EditProfileFragment extends Fragment {
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onDoneButton();
         }
     }
 
@@ -94,7 +94,7 @@ public class EditProfileFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnFragmentInteractionListener) activity;
+            mListener = (OnDoneButtonListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -117,7 +117,19 @@ public class EditProfileFragment extends Fragment {
         initializeEditTextWithEnterExit(mEditLastName, mEditLastNameInput);
         initializeEditTextWithEnterExit(mEditSchool, mEditSchoolInput);
         initializeEditTextWithEnterExit(mEditMajor, mEditMajorInput);
+
+        doneButton = (FloatingActionButton) getActivity().findViewById(R.id.profile_doneButton);
+        doneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mListener != null) {
+                    mListener.onDoneButton();
+                }
+            }
+        });
     }
+
+
 
     /**
      * This interface must be implemented by activities that contain this
@@ -129,9 +141,9 @@ public class EditProfileFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    public interface OnDoneButtonListener {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+        public void onDoneButton();
     }
 
     private void initializeMemberVariables() {
@@ -145,13 +157,30 @@ public class EditProfileFragment extends Fragment {
         mEditMajorInput = (android.widget.EditText) getActivity().findViewById(R.id.profile_editMajor_inputId);
         mEditDescription = (EditText) getActivity().findViewById(R.id.profile_editDescription);
         mEditDescriptionInput = (android.widget.EditText) getActivity().findViewById(R.id.profile_editDescription_inputId);
-        
+
         mEditFirstNameInput.setText(currStudent.getFirstName());
         mEditLastNameInput.setText(currStudent.getLastName());
         mEditSchoolInput.setText(currStudent.getSchool());
         mEditMajorInput.setText(currStudent.getMajor());
         mEditDescriptionInput.setText(currStudent.getDescription());
     }
+
+    /**
+     * To be used after onDoneButton() call in ProfileActivity
+     *
+     * @return Newly updated student
+     */
+
+    public Student updateStudent() {
+        currStudent.setFirstName(mEditFirstNameInput.getText().toString());
+        currStudent.setLastName(mEditLastNameInput.getText().toString());
+        currStudent.setSchool(mEditSchoolInput.getText().toString());
+        currStudent.setMajor(mEditMajorInput.getText().toString());
+        currStudent.setDescription(mEditDescriptionInput.getText().toString());
+
+        return currStudent;
+    }
+
     private void initializeEditTextWithEnterExit(final EditText editTextWrapper,
                                                  android.widget.EditText editTextInput) {
         editTextInput.setOnClickListener(new View.OnClickListener() {
@@ -181,5 +210,8 @@ public class EditProfileFragment extends Fragment {
             }
         });
     }
+
+
+
 
 }
