@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <solid android:color="@android:color/transparent" />
+<<<<<<< HEAD:app/src/main/res/drawable-mdpi/active_tag_bg.xml
     <corners android:radius="5dp" />
     <padding
         android:bottom="1dp"
         android:left="9dp"
         android:right="9dp"
         android:top="1dp" />
+=======
+    <corners android:radius="3dp" />
+    <padding
+        android:bottom="5dp"
+        android:left="10dp"
+        android:right="10dp"
+        android:top="5dp" />
+>>>>>>> origin/master:app/src/main/res/drawable/active_tag_bg.xml
     <stroke
         android:width="1dp"
         android:color="@color/accent" />

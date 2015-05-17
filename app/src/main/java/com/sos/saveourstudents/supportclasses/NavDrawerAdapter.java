@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.andexert.library.RippleView;
 import com.sos.saveourstudents.R;
 
 public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.ViewHolder> {
@@ -31,7 +30,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
     public class ViewHolder extends RecyclerView.ViewHolder {
         int holderid;
 
-        RippleView itemLayout;
+        //RippleView itemLayout;
         TextView textView;
         ImageView imageView;
         ImageView profile;
@@ -51,7 +50,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
             } else {
                 name = (TextView) itemView.findViewById(R.id.name);         // Creating Text View object from header.xml for name
                 email = (TextView) itemView.findViewById(R.id.email);       // Creating Text View object from header.xml for email
-                profile = (ImageView) itemView.findViewById(R.id.circleView);// Creating Image view object from header.xml for profile pic
+                profile = (ImageView) itemView.findViewById(R.id.user_image);// Creating Image view object from header.xml for profile pic
                 holderid = 0;                                                // Setting holder id = 0 as the object being populated are of type header view
             }
 
@@ -81,7 +80,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
         if (viewType == TYPE_ITEM) {
             theView = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_nav_drawer_item, parent, false);
             text = (TextView) theView.findViewById(R.id.textview);
-            //text.setTypeface(Typeface.createFromAsset(parent.getContext().getAssets(), "fonts/plane.ttf"));
+
 
         } else if (viewType == TYPE_HEADER) {
             theView = LayoutInflater.from(parent.getContext()).inflate(R.layout.nav_header, parent, false);
