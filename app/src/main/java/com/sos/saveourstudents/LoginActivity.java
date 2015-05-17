@@ -591,7 +591,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
 
 
-    System.out.println("url: "+url);
+    //System.out.println("url: "+url);
 
 
 
