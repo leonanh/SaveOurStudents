@@ -17,7 +17,6 @@ public class CustomTextView extends TextView {
         if(!Singleton.hasBeenInitialized()){
             Singleton.initialize(context);
         }
-        //face = Typeface.createFromAsset(context.getAssets(), "plane.ttf");
         this.setTypeface(Singleton.getInstance().face);
     }
 

@@ -18,7 +18,8 @@
 */
 style="?android:attr/dropDownItemStyle"
 -->
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.sos.saveourstudents.supportclasses.CustomTextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/text1"
     android:background="@color/primary_light"
     android:textAppearance="?android:attr/textAppearanceLargePopupMenu"

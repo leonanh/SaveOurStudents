@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.andexert.library.RippleView;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -116,8 +115,7 @@ public class FragmentFeed extends Fragment {
     private void getQuestionData() {
 
 
-        //double latitude, double longitude,  List<String> tags, double limit
-        //String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getQuestions";
+
         SharedPreferences sharedPref = mContext.getSharedPreferences(
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         Set<String> filterList = new HashSet<String>(sharedPref.getStringSet("filter_list", new HashSet<String>()));
@@ -126,21 +124,20 @@ public class FragmentFeed extends Fragment {
         myList.addAll(filterList);
 
         String filterListFix = ""; //TODO not good
-        for(int a = 0; a < myList.size(); a++){
-            if(a == 0){
-                filterListFix = ""+myList.get(a);
-            }
-            else{
-                filterListFix = filterListFix+"&tags="+myList.get(a);
+
+        if(myList.size() == 0){
+            //Dont use any filters. Just return all questions in range
+        } else {//Use filters
+            for (int a = 0; a < myList.size(); a++) {
+                filterListFix = filterListFix + "&tags=" + myList.get(a);
             }
         }
 
-        //System.out.println("filterListFix: "+filterListFix);
 
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getQuestions"+
                 "?latitude="+1.000000+//32.8800604+ //TODO
                 "&longitude="+2.000000+//-117.2340135+  //TODO
-                "&tags="+filterListFix+
+                filterListFix+
                 "&limit="+50;
 
 
@@ -207,9 +204,6 @@ public class FragmentFeed extends Fragment {
 
 
     private void showQuestions(){
-
-
-
 
         mAdapter = new RecycleViewAdapter(R.layout.feed_item_layout);
         mRecyclerView.setAdapter(mAdapter);
@@ -289,7 +283,7 @@ public class FragmentFeed extends Fragment {
             public TextView nameText;
             public TextView dateText;
             public TextView distanceText;
-            private RippleView rippleView;
+            //private RippleView rippleView;
 
 
             //Declare views here, dont fill them
@@ -300,8 +294,8 @@ public class FragmentFeed extends Fragment {
                 dateText = (TextView) itemView.findViewById(R.id.timestamp_text);
                 //distanceText = (TextView) itemView.findViewById(R.id.question_text);
                 //userImage = (ImageView) itemView.findViewById(R.id.question_text);
-                rippleView = (RippleView) itemView.findViewById(R.id.more);
-                rippleView.setOnTouchListener(this);
+                //rippleView = (RippleView) itemView.findViewById(R.id.more);
+                //rippleView.setOnTouchListener(this);
 
 
             }
@@ -309,11 +303,12 @@ public class FragmentFeed extends Fragment {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
+                /*
                 if(v ==  rippleView && event.getAction() == MotionEvent.ACTION_UP){
                     System.out.println("Clicked Question");
 
                 }
-
+*/
 
 
                 return false;

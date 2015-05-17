@@ -44,7 +44,7 @@ public class MainActivity extends ActionBarActivity {
 
     int ICONS[] = {R.drawable.ic_settings_black_24dp,R.drawable.ic_exit_to_app_black_24dp, R.drawable.ic_help_black_24dp};
     String TITLES[] = {"Profile","Logout","Help"};
-    int PROFILEIMAGE = R.drawable.ic_launcher;
+    int PROFILEIMAGE = R.drawable.defaultprofile;
 
 
     SharedPreferences sharedPref;

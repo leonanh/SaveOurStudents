@@ -1,27 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <android.support.v7.widget.CardView
+<!--
+<android.support.v7.widget.CardView
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:background="@android:color/white"
         android:layout_marginTop="5dp"
         card_view:cardCornerRadius="0dp"
         card_view:cardElevation="0dp"
         card_view:cardUseCompatPadding="false">
+-->
+    <com.balysv.materialripple.MaterialRippleLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/ripple"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:mrl_rippleAlpha="0.5"
+        app:mrl_rippleColor="@color/primary_dark"
+        app:mrl_rippleDelayClick="true"
+        app:mrl_rippleDimension="10dp"
+        app:mrl_rippleDuration="300"
+        app:mrl_rippleHover="false"
+        app:mrl_rippleOverlay="true"
+        app:mrl_ripplePersistent="false"
+    android:layout_marginTop="5dp"
+    android:background="@android:color/white">
 
-        <com.andexert.library.RippleView
-            xmlns:ripple="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/more"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            ripple:rv_color="@color/primary"
-            ripple:rv_rippleDuration="150">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -63,7 +75,7 @@
 
 
 
-            <TextView
+        <com.sos.saveourstudents.supportclasses.CustomTextView
                 android:id="@+id/question_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -140,10 +152,12 @@
                             android:layout_alignBottom="@+id/name_text"
                             android:layout_toRightOf="@+id/user_image"
                             />
-            -->
+
 
 
         </com.andexert.library.RippleView>
-    </android.support.v7.widget.CardView>
+        -->
+    </RelativeLayout>
 
-</RelativeLayout>
+    </com.balysv.materialripple.MaterialRippleLayout>
+
