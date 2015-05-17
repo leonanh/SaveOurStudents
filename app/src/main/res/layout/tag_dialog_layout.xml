@@ -36,6 +36,7 @@
         android:completionThreshold="1"
         android:layout_toLeftOf="@+id/add_button"
         android:layout_below="@+id/title"
+        android:textCursorDrawable="@null"
         />
 
 
