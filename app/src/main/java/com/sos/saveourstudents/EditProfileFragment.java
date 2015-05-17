@@ -182,11 +182,13 @@ public class EditProfileFragment extends Fragment {
     }
 
     private void initializeEditTextWithEnterExit(final EditText editTextWrapper,
-                                                 android.widget.EditText editTextInput) {
+                                                 final android.widget.EditText editTextInput) {
         editTextInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 editTextWrapper.setCursorVisible(true);
+                editTextInput.requestFocus();
+                getActivity().findViewById(R.id.profile_editProfile_overall).clearFocus();
             }
         });
         editTextWrapper.setOnEditorActionListener(new TextView.OnEditorActionListener() {
