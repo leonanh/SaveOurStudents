@@ -25,5 +25,10 @@
         android:icon="@drawable/ic_sort_white_24dp"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/add_member"
+        android:title="Add Member"
+        app:showAsAction="never" />
+
 
 </menu>

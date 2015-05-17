@@ -229,6 +229,14 @@ public class MainActivity extends ActionBarActivity {
             return true;
         }
 
+        if (id == R.id.add_member) {
+
+            Intent mIntent = new Intent(this, MemberJoinActivity.class);
+            startActivity(mIntent);
+
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
