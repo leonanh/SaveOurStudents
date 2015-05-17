@@ -1,151 +1,213 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/profile_toolbar"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:layout_below="@id/profile_toolbar"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context="com.sos.saveourstudents.ViewProfileFragment">
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/profile_topCardView"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="235dp"
-        android:padding="5dp">
+        android:layout_height="wrap_content">
 
-        <ImageView
+        <android.support.v7.widget.CardView
+            android:id="@+id/profile_topCardView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:adjustViewBounds="false"
-            android:baselineAlignBottom="false"
-            android:cropToPadding="false"
-            android:scaleType="centerCrop"
-            android:src="@drawable/materialwallpaperdefault" />
+            android:layout_height="235dp"
+            android:padding="5dp">
 
-        <RelativeLayout
-            android:id="@+id/u"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="false"
+                android:baselineAlignBottom="false"
+                android:cropToPadding="false"
+                android:scaleType="centerCrop"
+                android:src="@drawable/materialwallpaperdefault" />
 
+            <RelativeLayout
+                android:id="@+id/u"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/profile_image"
-                android:layout_width="96dp"
-                android:layout_height="96dp"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentLeft="true"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:src="@drawable/defaultprofile"
-                app:border_color="@color/primary_light"
-                app:border_width="2dp" />
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profile_image"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:src="@drawable/defaultprofile"
+                    app:border_color="@color/primary_light"
+                    app:border_width="2dp" />
 
-            <TextView
-                android:id="@+id/profile_firstName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/profile_rating"
-                android:layout_toEndOf="@+id/profile_image"
-                android:layout_toRightOf="@+id/profile_image"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textColor="@color/primary_text1" />
+                <TextView
+                    android:id="@+id/profile_firstName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/profile_rating"
+                    android:layout_toEndOf="@+id/profile_image"
+                    android:layout_toRightOf="@+id/profile_image"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="@color/primary_text1" />
 
-            <TextView
-                android:id="@+id/profile_lastName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/profile_rating"
-                android:layout_marginLeft="5dp"
-                android:layout_toEndOf="@+id/profile_firstName"
-                android:layout_toRightOf="@+id/profile_firstName"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textColor="@color/primary_text1" />
+                <TextView
+                    android:id="@+id/profile_lastName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/profile_rating"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toEndOf="@+id/profile_firstName"
+                    android:layout_toRightOf="@+id/profile_firstName"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="@color/primary_text1" />
 
-            <TextView
-                android:id="@+id/profile_rating"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="5dp"
-                android:layout_toRightOf="@id/profile_image"
-                android:text="@string/profile_rating"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textColor="@color/primary_text1" />
+                <TextView
+                    android:id="@+id/profile_rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="5dp"
+                    android:layout_toRightOf="@id/profile_image"
+                    android:text="@string/profile_rating"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="@color/primary_text1" />
 
-            <TextView
-                android:id="@+id/profile_myRating"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="5dp"
-                android:layout_toRightOf="@id/profile_rating"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textColor="@color/primary_text1" />
+                <TextView
+                    android:id="@+id/profile_myRating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toRightOf="@id/profile_rating"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="@color/primary_text1" />
 
-        </RelativeLayout>
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
 
-
-    </android.support.v7.widget.CardView>
-
-    <com.rey.material.widget.FloatingActionButton
-        android:id="@+id/profile_editButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
-        app:fab_backgroundColor="@color/accent"
-        app:fab_iconSrc="@drawable/ic_create_white_18dp"
-        app:rd_enable="true"
-        app:rd_style="@style/Material.Drawable.Ripple.Wave"
-        android:elevation="2dp"
-        />
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/profile_bottomCardView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/profile_topCardView"
-        android:layout_marginTop="20dp"
-        android:padding="5dp">
-
-        <LinearLayout
+        <android.support.v7.widget.CardView
+            android:id="@+id/profile_bottomCardView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/profile_topCardView"
+            android:padding="5dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="9dp"
-                android:layout_marginTop="7dp"
-                android:text="@string/profile_aboutMe"
-                android:textColor="@color/primary"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/profile_aboutMeContents"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="3dp">
-
-            </android.support.v7.widget.RecyclerView>
-        </LinearLayout>
+                android:layout_height="wrap_content">
 
 
-    </android.support.v7.widget.CardView>
+                <LinearLayout
+                    android:id="@+id/profile_aboutMeContents"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="16dp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:paddingTop="24dp"
+                        android:text="@string/profile_aboutMe"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                        android:textColor="@color/primary" />
+
+                    <View style="@style/LinearLayoutDivider" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="6dp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:paddingTop="24dp"
+                        android:text="@string/profile_school"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
+                    <TextView
+                        android:id="@+id/profile_mySchool"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="6dp"
+                        android:paddingBottom="16dp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="6dp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:text="@string/profile_major"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
+                    <TextView
+                        android:id="@+id/profile_myMajor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="6dp"
+                        android:paddingBottom="16dp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="6dp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:text="@string/profile_description"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
+                    <TextView
+                        android:id="@+id/profile_myDescription"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="6dp"
+                        android:paddingBottom="16dp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+
+                </LinearLayout>
 
 
-</RelativeLayout>
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+
+        <com.rey.material.widget.FloatingActionButton
+            android:id="@+id/profile_editButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/profile_topCardView"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="-32dp"
+            android:elevation="2dp"
+            app:fab_backgroundColor="@color/accent"
+            app:fab_iconSrc="@drawable/ic_create_white_18dp"
+            app:rd_enable="true"
+            app:rd_style="@style/Material.Drawable.Ripple.Wave" />
+
+
+    </RelativeLayout>
+
+
+</ScrollView>
