@@ -38,7 +38,7 @@ public class Singleton implements
 
 	public static void initialize(Context ctx) {
 		mContext = ctx;
-		face = Typeface.createFromAsset(mContext.getAssets(), "plane.ttf");
+		face = Typeface.createFromAsset(mContext.getAssets(), "CODE Bold.otf");
 	}
 
 
