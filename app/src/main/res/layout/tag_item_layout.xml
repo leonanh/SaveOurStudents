@@ -8,7 +8,7 @@
     android:padding="5dp"
     android:background="@drawable/tag_selector">
 
-    <TextView
+    <com.sos.saveourstudents.supportclasses.CustomTextView
         android:id="@+id/tag_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

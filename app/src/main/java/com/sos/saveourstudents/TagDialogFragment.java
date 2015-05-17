@@ -151,6 +151,7 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
                     public void onResponse(JSONObject response) {
                         try {
 
+                            System.out.println("Response: "+response.toString());
                             JSONObject result = new JSONObject(response.toString());
                             if (!result.getString("success").equalsIgnoreCase("1")) {
                                 //Error getting data
@@ -166,7 +167,8 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
                                 String[] autoCompleteArray = new String[popularTags.length()];
                                 for(int a = 0; a < popularTags.length(); a++){
                                     String text = popularTags.getJSONObject(a).getJSONObject("map").getString("tag");
-                                    autoCompleteArray[a] = text;
+                                    if(!text.equalsIgnoreCase(""))
+                                        autoCompleteArray[a] = text;
 
                                 }
 
@@ -229,6 +231,7 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
 
                 for (int a = 0; a < popularTags.length(); a++) {
 
+
                     tagView = mInflater.inflate(R.layout.tag_item_layout, null, false);
                     tagView.findViewById(R.id.the_linear).setOnClickListener(this);
                     TextView tagText = (TextView) tagView.findViewById(R.id.tag_text);
@@ -239,7 +242,8 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
                         tagView.setSelected(true);
 
                     //Add tag item view to flowlayout
-                    flowLayout.addView(tagView);
+                    if(!text.equalsIgnoreCase(""))
+                        flowLayout.addView(tagView);
 
                 }
 
