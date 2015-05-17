@@ -22,7 +22,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.gc.materialdesign.views.ButtonFloat;
 import com.sos.saveourstudents.supportclasses.NavDrawerAdapter;
 import com.sos.saveourstudents.supportclasses.RecyclerItemClickListener;
 import com.sos.saveourstudents.supportclasses.SlidingTabLayout;
@@ -41,9 +40,9 @@ public class MainActivity extends ActionBarActivity {
 
     ActionBarDrawerToggle mDrawerToggle;
 
-    ButtonFloat fab;
+    //ButtonFloat fab;
 
-    int ICONS[] = {R.drawable.ic_settings_black_36dp,R.drawable.ic_exit_to_app_black_36dp, R.drawable.ic_help_black_36dp};
+    int ICONS[] = {R.drawable.ic_settings_black_24dp,R.drawable.ic_exit_to_app_black_24dp, R.drawable.ic_help_black_24dp};
     String TITLES[] = {"Profile","Logout","Help"};
     int PROFILEIMAGE = R.drawable.ic_launcher;
 
@@ -225,6 +224,14 @@ public class MainActivity extends ActionBarActivity {
 
             Intent mIntent = new Intent(this, QuestionActivity.class);
             mIntent.putExtra("type", 1);
+            startActivity(mIntent);
+
+            return true;
+        }
+
+        if (id == R.id.add_member) {
+
+            Intent mIntent = new Intent(this, MemberJoinActivity.class);
             startActivity(mIntent);
 
             return true;

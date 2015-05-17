@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -56,47 +55,21 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
 
 
 
+        //If edit, get question info from server
+        //If create, set variables to null
 
         return rootView;
 
 
     }
 
-    private void showTags(){
 
-        View tagView = null;
-            try {
 
-                for(int a = 0; a < popularTags.length(); a++){
-
-                    System.out.println("want to display tag: "+popularTags.getJSONObject(a));
-                    tagView = inflater.inflate(R.layout.tag_item_layout, null, false);
-                    tagView.findViewById(R.id.the_linear).setOnClickListener(this);
-                    TextView tagText = (TextView) tagView.findViewById(R.id.tag_text);
-                    tagText.setText(popularTags.getJSONObject(a).getString("tag"));
-                    flowLayout.addView(tagView);
-                }
+    private void getQuestionData(){
 
 
 
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-
-
-
-    }
-
-
-    private void getTagData(){
-
-
-        /**
-         * JSON Array Example
-         */
-        String tag_json_arry = "json_array_req";
-        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getTags";
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getQuestion";
 
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
@@ -186,7 +159,7 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
                 if (!questionEditText.getText().toString().equalsIgnoreCase("")) {
                     questionEditText.clearError();
 
-                    //TODO sendQuestionToServer();
+                    sendQuestionToServer();
                 } else {
                     //Question edit text empty
                     questionEditText.setError("Question is empty");
@@ -212,6 +185,7 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
 
             newFragment.show(this.getActivity().getSupportFragmentManager(), "");
 
+
         }
 
 
@@ -228,19 +202,17 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
 
 
          /*
-
          editor.putString("first_name", response.getJSONArray("result").getJSONObject(0).getString("first_name"));
                         editor.putString("last_name", response.getJSONArray("result").getJSONObject(0).getString("last_name"));
                         editor.putString("email", response.getJSONArray("result").getJSONObject(0).getString("email"));
                         editor.putString("image", response.getJSONArray("result").getJSONObject(0).getString("image"));
                         editor.putString("user_id", response.getJSONArray("result").getJSONObject(0).getString("user_id"));
-
-
+32.8810° N, 117.2380
           */
         System.out.println("Im'a send this question to server");
 
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createQuestion?"+
-                "userId="+userId+
+                "userId=mingyuhu"+//userId+
                 "&latitude="+
                 "&longitude="+
                 "&text="+
@@ -249,6 +221,7 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
                 "&studygroup=";
 
 
+        System.out.println("url: "+url);
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
                 url,
                 (JSONObject)null,
@@ -301,13 +274,6 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
 
 
 
-
-
-
-
     }
-
-
-
 
 }

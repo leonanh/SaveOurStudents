@@ -63,7 +63,6 @@ public class FragmentViewQuestion extends Fragment implements
         getQuestionData();
 
         View taglist = rootView.findViewById(R.id.tag_list_layout);
-
         for(int i = 0; i < 10; i++) {
             TextView tag = new TextView(taglist.getContext());
             tag.setText("#dummyTag");

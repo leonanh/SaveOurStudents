@@ -1,45 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout
-
+<RelativeLayout 
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="48dp"
     android:background="@android:color/white"
     >
-    <!--
+    
     <com.andexert.library.RippleView
-        android:id="@+id/ripple"
         xmlns:ripple="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/more"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        ripple:rv_color="@color/primary"
-        ripple:rv_rippleDuration="180">
-    -->
+        ripple:rv_color="@color/primary">
+        
     <ImageView 
         android:id="@+id/imageview"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:padding="10dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
         android:src="@drawable/ic_launcher"
         />
-
-
-    <com.sos.saveourstudents.supportclasses.CustomTextView
+    
+    <TextView
         android:id="@+id/textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/imageview"
         android:layout_alignTop="@+id/imageview"
         android:layout_toRightOf="@+id/imageview"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="16dp"
         android:gravity="center"
         android:textColor="@android:color/black"
-        android:text="TESTSTES"
-        />
-
-
-    <!--
+        android:text="TESTSTES" />
 </com.andexert.library.RippleView>
--->
 </RelativeLayout>

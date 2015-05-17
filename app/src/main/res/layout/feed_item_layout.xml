@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@android:color/white"
+        android:layout_marginTop="5dp"
+        card_view:cardCornerRadius="0dp"
+        card_view:cardElevation="0dp"
+        card_view:cardUseCompatPadding="false">
+
+        <com.andexert.library.RippleView
+            xmlns:ripple="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/more"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            ripple:rv_color="@color/primary"
+            ripple:rv_rippleDuration="150">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/user_image"
+                app:border_color="@color/primary_light"
+                app:border_width="2dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/defaultprofile" />
+
+            <com.sos.saveourstudents.supportclasses.CustomTextView
+                android:id="@+id/name_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_toRightOf="@+id/user_image"
+                android:text="Elon Musk"
+                android:textColor="@color/primary_text"
+                android:textIsSelectable="false"
+                android:textSize="18sp"
+                android:layout_alignTop="@+id/user_image"
+                android:layout_alignBottom="@+id/user_image"
+                android:gravity="center_vertical"
+                android:layout_toLeftOf="@+id/timestamp_text"
+                />
+
+            <View
+                android:id="@+id/divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/tag_container"
+                android:background="@color/divider_color"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                />
+
+
+
+            <TextView
+                android:id="@+id/question_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/divider"
+                android:layout_margin="15dp"
+                android:ellipsize="end"
+                android:text="Max acceleration was 6X gravity, altitude 1187m, lateral distance 1202m and velocity 155 m/s. Main chutes deployed 970m."
+                android:textColor="@color/primary_text" />
+
+
+
+            <com.sos.saveourstudents.supportclasses.CustomTextView
+                android:id="@+id/timestamp_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="3h"
+                android:textColor="@color/secondary_text"
+                android:textSize="12sp"
+                android:layout_alignTop="@+id/name_text"
+                android:layout_alignBottom="@+id/name_text"
+                android:gravity="center"
+                android:layout_marginRight="15dp"
+                />
+
+
+            <LinearLayout
+                android:id="@+id/tag_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@+id/user_image"
+                android:layout_marginLeft="15dp"
+                android:layout_marginBottom="5dp"
+                android:gravity="right">
+
+
+                <com.sos.saveourstudents.supportclasses.CustomTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="#UCSD"
+                    android:textColor="@color/primary_dark"
+                    android:textSize="12sp"
+                    android:layout_alignTop="@+id/name_text"
+                    android:layout_alignBottom="@+id/name_text"
+                    android:gravity="center"
+                    android:layout_marginRight="15dp"
+                    />
+
+                <com.sos.saveourstudents.supportclasses.CustomTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="#cse110"
+                    android:textColor="@color/primary_dark"
+                    android:textSize="12sp"
+                    android:layout_alignTop="@+id/name_text"
+                    android:layout_alignBottom="@+id/name_text"
+                    android:gravity="center"
+                    android:layout_marginRight="15dp"
+                    />
+
+            </LinearLayout>
+
+            <!--    MOVE somewhere else
+                        <com.sos.saveourstudents.supportclasses.CustomTextView
+                            android:id="@+id/distance_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="150m"
+                            android:textColor="@color/secondary_text"
+                            android:textSize="12sp"
+                            android:layout_alignBottom="@+id/name_text"
+                            android:layout_toRightOf="@+id/user_image"
+                            />
+            -->
+
+
+        </com.andexert.library.RippleView>
+    </android.support.v7.widget.CardView>
+
+</RelativeLayout>
