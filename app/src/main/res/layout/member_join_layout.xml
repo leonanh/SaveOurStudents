@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_gravity="center"
+    android:background="#29000000">
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_centerInParent="true"
+        android:id="@+id/anchor"
+        android:layout_marginTop="-27dp"/>
+
+    <RelativeLayout
+        android:layout_marginTop="10dp"
+        android:id="@+id/joining_member_info"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/cardview_light_background"
+        android:layout_above="@id/anchor">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/joining_member_image"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/defaultprofile"
+            app:border_color="@color/primary_light"
+            app:border_width="4dp" />
+
+        <TextView
+            android:id="@+id/joining_member_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="My Name"
+            android:textSize="21sp"
+            android:textColor="@android:color/black"
+            android:layout_toRightOf="@id/joining_member_image"
+            android:textIsSelectable="false" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:text="Computer Science"
+            android:textIsSelectable="false"
+            android:textSize="18sp"
+            android:id="@+id/joining_member_major"
+            android:textColor="@android:color/black"
+            android:layout_toRightOf="@id/joining_member_image"
+            android:layout_below="@id/joining_member_name"
+             />
+
+
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="would like to join your group!"
+        android:id="@+id/join_text"
+        android:layout_above="@id/joining_member_info"
+        android:layout_centerInParent="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="User"
+        android:id="@+id/member_name"
+        android:layout_above="@id/join_text"
+        android:layout_centerHorizontal="true"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/member_join_button_layout"
+        android:layout_below="@id/joining_member_info">
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:id="@+id/decline_button_layout"
+            android:orientation="vertical">
+
+            <com.rey.material.widget.Button
+                style="@style/Material.Drawable.Ripple.Touch"
+                android:id="@+id/member_decline_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Decline"
+                app:rd_enable="true"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:id="@+id/accept_button_layout"
+            android:orientation="vertical">
+
+            <com.rey.material.widget.Button
+                style="@style/Material.Drawable.Ripple.Touch"
+                android:id="@+id/member_accept_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Accept"
+                app:rd_enable="true"/>
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

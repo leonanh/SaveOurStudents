@@ -30,12 +30,7 @@ import java.util.Set;
  * Created by deamon on 5/13/15.
  */
 @SuppressLint("ValidFragment")
-public class TagDialogFragment extends DialogFragment implements View.OnClickListener {
-
-    final int SEARCH_FILTERS = 0;
-    final int QUESTION_FILTERS = 1;
-    int dialogType;
-
+public class FilterDialogFragment extends DialogFragment implements View.OnClickListener {
 
     DisplayMetrics dispMetrics;
     ViewGroup flowLayout, flowLayout2;
@@ -44,48 +39,29 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
     LayoutInflater mInflater;
     EditText editText;
     ImageView addButton;
-
-    Set<String> activeFilters;
-
+    SharedPreferences sharedPref;
 
 
-    public TagDialogFragment(Context context, DisplayMetrics metrics, int dialogType) {
+    public FilterDialogFragment(Context context, DisplayMetrics metrics, SharedPreferences sharedPref) {
         mContext = context;
+        this.sharedPref = sharedPref;
         dispMetrics = metrics;
-        this.dialogType = dialogType;
 
+        //System.out.println(sharedPref.getStringSet("filter_list", null).toString());
 
-
-        if(dialogType == SEARCH_FILTERS){
-            SharedPreferences sharedPref = mContext.getSharedPreferences(
-                    mContext.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-
-
-            if (!sharedPref.contains("filter_list")) {
-                SharedPreferences.Editor editor = sharedPref.edit();
-                activeFilters = new HashSet();
-                editor.putStringSet("filter_list", activeFilters);
-                editor.commit();
-            }
-            else{
-                activeFilters = new HashSet<String>(sharedPref.getStringSet("filter_list", new HashSet<String>()));
-
-            }
-
+        if (!sharedPref.contains("filter_list")) {
+            SharedPreferences.Editor editor = sharedPref.edit();
+            Set filterList = new HashSet();
+            editor.putStringSet("filter_list", filterList);
+            editor.commit();
         }
-        else if(dialogType == QUESTION_FILTERS){
-            activeFilters = new HashSet();
-
-        }
-
-
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setStyle(DialogFragment.STYLE_NO_TITLE, 1);
+        setStyle(DialogFragment.STYLE_NO_FRAME, 0);
 
 
 
@@ -94,18 +70,14 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
     @Override
     public void onResume() {
 
-        DisplayMetrics metrics = new DisplayMetrics();
-        this.getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
-
         //Set dimensions of Dialog box
         ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
 
 
         //System.out.println(dispMetrics.widthPixels +" , "+dispMetrics.heightPixels);
-        params.width = (int) (metrics.widthPixels * (.8));//ViewGroup.LayoutParams.MATCH_PARENT;
-        params.height = (int) (metrics.heightPixels * .7);
+        params.width = (int) (dispMetrics.widthPixels * (.8));//ViewGroup.LayoutParams.MATCH_PARENT;
+        params.height = (int) (dispMetrics.heightPixels * .7);
         getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
-
 
         getDialog().setCancelable(true);
         getDialog().setCanceledOnTouchOutside(true);
@@ -130,7 +102,6 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
         addButton.setOnClickListener(this);
         //System.out.println("editText.getThreshold(): " + editText.getThreshold());
 
-        updateActiveTagsUI();
         getTagData();
 
         return view;
@@ -157,30 +128,27 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
                                 return;
                             }
                             if (result.getString("expectResults").equalsIgnoreCase("0")) {
-                                //empty list
-                                popularTags = result.getJSONObject("result").getJSONArray("myArrayList");
+                                //No results to show
                                 return;
                             } else {
 
+                                //JSONObject temp = result.getJSONObject("result");
+                                //System.out.println("temp: "+temp.getJSONArray("myArrayList"));
+
                                 popularTags = result.getJSONObject("result").getJSONArray("myArrayList");
-                                String[] autoCompleteArray = new String[popularTags.length()];
-                                for(int a = 0; a < popularTags.length(); a++){
-                                    String text = popularTags.getJSONObject(a).getJSONObject("map").getString("tag");
-                                    autoCompleteArray[a] = text;
-
-                                }
-
-                                ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext, R.layout.my_simple_dropdown_item_1line, autoCompleteArray);
-                                editText.setAdapter(adapter);
-
-                                updatePopularTagsUI();
                             }
 
 
+                            //System.out.println("popularTags " + popularTags.toString());
+
+                            showTags();
+
                         } catch (JSONException e) {
                             e.printStackTrace();
-
+                            updateActiveTagsUI();
                         }
+
+
 
                     }
                 }, new Response.ErrorListener() {
@@ -190,6 +158,8 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
 
                 System.out.println("Error: " + error.toString());
 
+
+                updateActiveTagsUI();
             }
         });
 
@@ -202,11 +172,13 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
 
 
         TextView activeTagView = null;
-        //Set activeFilters = sharedPref.getStringSet("filter_list", null);
+        Set activeFilters = sharedPref.getStringSet("filter_list", null);
         Object[] activeFiltersArray = activeFilters.toArray();
 
         flowLayout2.removeAllViews();
-
+        //if(flowLayout2.getChildCount() > 1)
+        //flowLayout2.removeViews(1, flowLayout2.getChildCount()-1 );
+        //else
 
 
         for(int a = 0; a < activeFiltersArray.length; a++){
@@ -223,6 +195,8 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
         flowLayout.removeAllViews();
 
         View tagView = null;
+        Set activeFilters = sharedPref.getStringSet("filter_list", null);
+
 
         if(popularTags != null && popularTags.length() > 0) {
             try {
@@ -241,6 +215,7 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
                     //Add tag item view to flowlayout
                     flowLayout.addView(tagView);
 
+
                 }
 
 
@@ -248,9 +223,58 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
                 e.printStackTrace();
             }
         }
+        else if(activeFilters != null){
+            //for (int a = 0; a < activeFilters.size(); a++) {
+            updateActiveTagsUI();
+            //}
+
+        }
 
     }
 
+
+    private void showTags() {
+
+
+        updateActiveTagsUI();
+
+
+        Set activeFilters = sharedPref.getStringSet("filter_list", null);
+        String[] tagsArray = new String[popularTags.length()];
+        View tagView = null;
+        try {
+
+            for (int a = 0; a < popularTags.length(); a++) {
+
+                //System.out.println("want to display tag: " + popularTags.getJSONObject(a));
+                tagView = mInflater.inflate(R.layout.tag_item_layout, null, false);
+                tagView.findViewById(R.id.the_linear).setOnClickListener(this);
+                TextView tagText = (TextView) tagView.findViewById(R.id.tag_text);
+                String text = popularTags.getJSONObject(a).getJSONObject("map").getString("tag");
+                tagText.setText(text);
+
+                if(activeFilters.contains(text))
+                    tagView.setSelected(true);
+
+                //Add tag item view to flowlayout
+                flowLayout.addView(tagView);
+
+
+                //Add to autocomplete list
+                tagsArray[a] = text;
+
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext, R.layout.my_simple_dropdown_item_1line, tagsArray);
+
+        editText.setAdapter(adapter);
+    }
 
     @Override
     public void onClick(View v) {
@@ -265,66 +289,55 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
                 removeTagFromList(text.getText().toString());
             }else{
                 v.setSelected(true);
-                addTagToActiveList(text.getText().toString());
+                addTagToList(text.getText().toString());
             }
 
 
         } else if (v.getId() == R.id.add_button) {
             //System.out.println("v is selected: " + v.isSelected());
             //Add tag to selected list
-            addTagToActiveList(editText.getText().toString());
+            addTagToList(editText.getText().toString());
         }
         else if(v.getId() == R.id.active_tag_text){
             TextView temp = (TextView) v;
             removeTagFromList(temp.getText().toString());
         }
 
+
     }
 
 
-    private void addTagToActiveList(String tag) {
+    private void addTagToList(String tag) {
+/*
+        SharedPreferences sharedPref = mContext.getSharedPreferences(
+                mContext.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        */
+        SharedPreferences.Editor editor = sharedPref.edit();
 
         if (tag.equalsIgnoreCase("") || tag.toString() == null)
             return;
 
-        if(dialogType == SEARCH_FILTERS){
-
-            SharedPreferences sharedPref = mContext.getSharedPreferences(
-                    mContext.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-
-            SharedPreferences.Editor editor = sharedPref.edit();
-            Set<String> filterList;
-            //user has no filter list, create one and add tag
-            if (!sharedPref.contains("filter_list")) {
-                filterList = new HashSet();
+        //user has no filter list, create one and add tag
+        if (!sharedPref.contains("filter_list")) {
+            Set filterList = new HashSet();
+            filterList.add(tag);
+            editor.putStringSet("filter_list", filterList);
+            editor.commit();
+        } else {  //User has a filter list, does this tag exist in it?
+            //Set filterList = sharedPref.getStringSet("filter_list", null);
+            Set<String> filterList = new HashSet<String>(sharedPref.getStringSet("filter_list", new HashSet<String>()));
+            if (!filterList.contains(tag)) {
                 filterList.add(tag);
+
                 editor.putStringSet("filter_list", filterList);
                 editor.commit();
-            } else {  //User has a filter list, does this tag exist in it?
-                //Set filterList = sharedPref.getStringSet("filter_list", null);
-                filterList = new HashSet<String>(sharedPref.getStringSet("filter_list", new HashSet<String>()));
-                if (!filterList.contains(tag)) {
-                    filterList.add(tag);
-                    editor.putStringSet("filter_list", filterList);
-                    editor.commit();
-
-                } else {
-                    //Tag exists, ignore it?
-                }
-
+            } else {
+                //Tag exists, ignore it?
             }
-            activeFilters = filterList;
-            System.out.println(filterList.toString());
-
-        }
-        else if(dialogType == QUESTION_FILTERS){
-
-            //Dont update sharedPref, just update local data
-            activeFilters.add(tag);
 
         }
 
-
+        //System.out.println(sharedPref.getStringSet("filter_list", new HashSet<String>()).toString());
 
         updateActiveTagsUI();
 
@@ -332,39 +345,24 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
     }
 
     private void removeTagFromList(String tag) {
-
+/*
+        SharedPreferences sharedPref = mContext.getSharedPreferences(
+                mContext.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        */
+        SharedPreferences.Editor editor = sharedPref.edit();
         if (tag.equalsIgnoreCase("") || tag.toString() == null)
             return;
 
+        Set<String> filterList = new HashSet<String>(sharedPref.getStringSet("filter_list", new HashSet<String>()));
 
-        if(dialogType == SEARCH_FILTERS){
-
-            SharedPreferences sharedPref = mContext.getSharedPreferences(
-                    mContext.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-
-            SharedPreferences.Editor editor = sharedPref.edit();
-
-
-            Set<String> filterList = new HashSet<String>(sharedPref.getStringSet("filter_list", new HashSet<String>()));
-
-            if (filterList.contains(tag)) {
-                filterList.remove(tag);
-                editor.putStringSet("filter_list", filterList);
-                editor.commit();
-                activeFilters = filterList;
-            }
-
-
-        }
-        else if(dialogType == QUESTION_FILTERS){
-
-            //Dont update sharedPref, just update local data
-            activeFilters.remove(tag);
-
+        if (filterList.contains(tag)) {
+            filterList.remove(tag);
+            editor.putStringSet("filter_list", filterList);
+            editor.commit();
         }
 
 
-        System.out.println(activeFilters.toString());
+        //System.out.println(sharedPref.getStringSet("filter_list", new HashSet<String>()).toString());
 
         updateActiveTagsUI();
         updatePopularTagsUI();
