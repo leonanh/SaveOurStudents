@@ -4,6 +4,7 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
@@ -232,18 +234,23 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
         */
 
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createQuestion";
-             /*   +
-                "?userId=2bmbplf1fvcat2rhd5ml9pnnf7"+ //TODO -debug
-                "&latitude="+mCurrentLocation.getLatitude()+
-                "&longitude="+mCurrentLocation.getLongitude()+
-                "&text="+questionEditText.getText().toString()+
-                "&tags=UCSD"+ //TODO
-                "&tutor="+0+
-                "&studygroup="+1+
-                "&topic="+topicEditText.getText().toString();
-*/
 
 
+        String uri = Uri.parse("http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createQuestion")
+                .buildUpon()
+                .appendQueryParameter("userId", "39uo830mgaqfbmctt6j9tkt8ab")
+                .appendQueryParameter("latitude", mCurrentLocation.getLatitude()+"")
+                .appendQueryParameter("longitude", mCurrentLocation.getLongitude()+"")
+                .appendQueryParameter("text", questionEditText.getText().toString())
+                .appendQueryParameter("tags", "UCSD")
+                .appendQueryParameter("tutor", "0")
+                .appendQueryParameter("studygroup", "1")
+                .appendQueryParameter("topic", topicEditText.getText().toString())
+
+                .build().toString();
+        System.out.println("URI: "+uri);
+
+/*
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("userId", "4emgn0b19gsl0j8s2obfsa95hf");
         params.put("latitude", mCurrentLocation.getLatitude() + "");
@@ -271,12 +278,12 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
 */
 
 
-        System.out.println("url: "+url);
+        //System.out.println("url: "+url);
         //System.out.println("obj: "+obj);
 
-        /*
 
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, url,
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, uri,
                 (JSONObject)null,
                 new Response.Listener<JSONObject>(){
 
@@ -290,19 +297,11 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
                                 //Error getting data
                                 return;
                             }
-                            if(result.getString("expectResults").equalsIgnoreCase("0")){
-                                //No results to show
-                                return;
-                            }
                             else{
-                                System.out.println("popularTags "+popularTags.toString());
-                                //popularTags = result.getJSONArray("result");
+
                             }
 
 
-
-
-                            //showTags();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -317,7 +316,7 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
                 System.out.println("Error: " + error.toString());
             }
 
-        });*/
+        });
 
         /*
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Method.GET,
@@ -364,10 +363,10 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
             };
         };
 
-
-        // Access the RequestQueue through your singleton class.
-        Singleton.getInstance().addToRequestQueue(myReq);
 */
+        // Access the RequestQueue through your singleton class.
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+
 
 
 
