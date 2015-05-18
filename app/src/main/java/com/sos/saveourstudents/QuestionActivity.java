@@ -42,10 +42,6 @@ public class QuestionActivity extends ActionBarActivity {
 
             }
 
-
-
-
-
             // Add the fragment to the 'fragment_container' FrameLayout
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, theFragToShow).commit();
