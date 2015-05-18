@@ -37,12 +37,11 @@ import java.util.List;
  */
 public class FragmentViewQuestion extends Fragment implements
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener{
+        GoogleApiClient.OnConnectionFailedListener,
+        View.OnClickListener {
 
     RecycleViewAdapter mAdapter;
     RecyclerView mRecyclerView;
-
-
 
     private GoogleMap mMap;
     private MapView mMapView;
@@ -108,6 +107,7 @@ public class FragmentViewQuestion extends Fragment implements
 
         //TODO turn into server call (volley)
         mQuestionList = new ArrayList<Question>();
+        //TODO change a = 1 back to a = 0
         for(int a = 0; a < 5; a++){
             Question temp = new Question("Question "+a);
             mQuestionList.add(temp);
@@ -130,13 +130,15 @@ public class FragmentViewQuestion extends Fragment implements
 
     @Override
     public void onPause() {
-        mMapView.onPause();
+        //TODO temp disable to prevent crash
+        //mMapView.onPause();
         super.onPause();
     }
 
     @Override
     public void onDestroy() {
-        mMapView.onDestroy();
+        //TODO temp disable to prevent crash
+        //mMapView.onDestroy();
         super.onDestroy();
     }
 
@@ -221,9 +223,10 @@ public class FragmentViewQuestion extends Fragment implements
                     Holderid = TYPE_MEMBER;
                 }
                 else{
-                    mMapView = (MapView) itemView.findViewById(R.id.map);
-                    initializeMap();
-                    Holderid = TYPE_MAP;
+                    //TODO disabled temporarily to prevent crash
+//                    mMapView = (MapView) itemView.findViewById(R.id.map);
+//                    initializeMap();
+//                    Holderid = TYPE_MAP;
                 }
             }
 
@@ -256,7 +259,9 @@ public class FragmentViewQuestion extends Fragment implements
             if (viewType == TYPE_ITEM) {
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_question_comment,parent,false);
             } else if (viewType == TYPE_MAP) {
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.question_map_item,parent,false);
+                //TODO disabled temporarily to prevent crash -- TEMP: replaced with another comment
+                //v = LayoutInflater.from(parent.getContext()).inflate(R.layout.question_map_item,parent,false);
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_question_comment,parent,false);
             }
             if (viewType == TYPE_MEMBER) {
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.question_group_item,parent,false);
