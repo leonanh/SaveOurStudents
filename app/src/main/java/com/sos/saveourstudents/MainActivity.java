@@ -1,11 +1,12 @@
 package com.sos.saveourstudents;
 
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -20,6 +21,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.sos.saveourstudents.supportclasses.NavDrawerAdapter;
+import com.sos.saveourstudents.supportclasses.RecyclerItemClickListener;
 import com.sos.saveourstudents.supportclasses.SlidingTabLayout;
 
 public class MainActivity extends ActionBarActivity {
@@ -32,20 +35,28 @@ public class MainActivity extends ActionBarActivity {
     RecyclerView mRecyclerView;                           // Declaring RecyclerView
     RecyclerView.Adapter mAdapter;                        // Declaring Adapter For Recycler View
     RecyclerView.LayoutManager mLayoutManager;            // Declaring Layout Manager as a linear layout manager
-    DrawerLayout Drawer;                                  // Declaring DrawerLayout
+    DrawerLayout mDrawer;                                 // Declaring DrawerLayout
 
     ActionBarDrawerToggle mDrawerToggle;
 
+    //ButtonFloat fab;
 
-    int ICONS[] = {R.drawable.ic_launcher,R.drawable.ic_launcher,R.drawable.ic_launcher,R.drawable.ic_launcher,R.drawable.ic_launcher};
-    String TITLES[] = {"Home","Events","Mail","Shop","Travel"};
-    int PROFILEIMAGE = R.drawable.ic_launcher;
+    int ICONS[] = {R.drawable.ic_settings_black_24dp,R.drawable.ic_exit_to_app_black_24dp, R.drawable.ic_help_black_24dp};
+    String TITLES[] = {"Profile","Logout","Help"};
+    int PROFILEIMAGE = R.drawable.defaultprofile;
+
 
     SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_main);
+
+        if(!Singleton.hasBeenInitialized()){
+            Singleton.initialize(this);
+        }
 
         sharedPref = getSharedPreferences(
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
@@ -55,17 +66,14 @@ public class MainActivity extends ActionBarActivity {
             finish();
         }
 
-        setContentView(R.layout.activity_main);
-
         //Our AppCompat Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.the_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("SOS");
-
 
 
         FragmentManager manager = getSupportFragmentManager();
         android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
+
 
 
         mViewPager = (ViewPager) this.findViewById(R.id.pager);
@@ -74,10 +82,12 @@ public class MainActivity extends ActionBarActivity {
         mTabs.setDistributeEvenly(true);
 
         mTabs.setViewPager(mViewPager);
+
         mTabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
-                return Color.WHITE;
+                //eturn Color.WHITE;
+                return MainActivity.this.getResources().getColor(R.color.primary_dark);
             }
         });
 
@@ -85,80 +95,69 @@ public class MainActivity extends ActionBarActivity {
 
         mRecyclerView = (RecyclerView) findViewById(R.id.RecyclerView); // Assigning the RecyclerView Object to the xml View
 
-        mRecyclerView.setHasFixedSize(true);                            // Letting the system know that the list objects are of fixed size
+        mRecyclerView.setHasFixedSize(true);                            // Letting the system know we wont change the size of the list
+        mAdapter = new NavDrawerAdapter(TITLES, ICONS, "Name","Email", PROFILEIMAGE);
 
-        mAdapter = new MyAdapter(TITLES,ICONS,"Name","Email",PROFILEIMAGE);       // Creating the Adapter of MyAdapter class(which we are going to see in a bit)
-        // And passing the titles,icons,header view name, header view email,
-        // and header view profile picture
 
         mRecyclerView.setAdapter(mAdapter);                              // Setting the adapter to RecyclerView
 
+
         mLayoutManager = new LinearLayoutManager(this);                 // Creating a layout Manager
-
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
+                    //Nav drawer listener
+                    @Override public void onItemClick(View view, int position) {
+                        System.out.println("clicked " + position);
 
+                        if(position == 1){
+                            startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+                        }
+                        else if(position == 2){
+                            Intent mainActivity = new Intent(MainActivity.this, LoginActivity.class);
+                            startActivity(mainActivity);
+                            finish();
+                        }
 
-        Drawer = (DrawerLayout) findViewById(R.id.drawer_layout);        // Drawer object Assigned to the view
-        mDrawerToggle = new ActionBarDrawerToggle(this,Drawer,toolbar,R.string.openDrawer,R.string.closeDrawer){
+                    }
+                })
+        );
+
+        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);        // Drawer object Assigned to the view
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer, toolbar,R.string.openDrawer,R.string.closeDrawer){
 
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                // code here will execute once the drawer is opened( As I dont want anything happened whe drawer is
-                // open I am not going to put anything here)
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                // Code here will execute once drawer is closed
             }
 
 
 
         }; // Drawer Toggle Object Made
-        Drawer.setDrawerListener(mDrawerToggle); // Drawer Listener set to the Drawer toggle
+        mDrawer.setDrawerListener(mDrawerToggle); // Drawer Listener set to the Drawer toggle
         mDrawerToggle.syncState();               // Finally we set the drawer toggle sync State
-
-/*
-
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerToggle = new ActionBarDrawerToggle(
-                this,                  // host Activity
-                mDrawerLayout,         // DrawerLayout object
-                R.drawable.ic_navigation_drawer,  // nav drawer icon to replace 'Up' caret
-                R.string.drawer_open,  // "open drawer" description
-                R.string.drawer_close  // "close drawer" description
-        ) {
-
-            // Called when a drawer has settled in a completely closed state.
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-                //getActionBar().setTitle(mTitle);
-            }
-
-            // Called when a drawer has settled in a completely open state.
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                //getActionBar().setTitle(mDrawerTitle);
-            }
-        };
-
-        // Set the drawer toggle as the DrawerListener
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-*/
-
-
-
 
 
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(mDrawer != null)
+            mDrawer.closeDrawers();
+
+    }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -189,59 +188,88 @@ public class MainActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+            ///return true;
+        }
+        else if (id == R.id.action_filter) {
+
+
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+
+            DialogFragment newFragment = new TagDialogFragment(this, 0);
+
+            newFragment.show(getSupportFragmentManager(), "");
+
+
         }
 
-        if (id == R.id.view_profile) {
-            startActivity(new Intent(this, ProfileActivity.class));
-            return true;
-        }
 
         if (id == R.id.view_question) {
-            startActivity(new Intent(this, QuestionActivity.class));
+
+            Intent mIntent = new Intent(this, QuestionActivity.class);
+            mIntent.putExtra("type", 0);
+            startActivity(mIntent);
             return true;
         }
 
-        if (id == R.id.logout) {
-            Intent mainActivity = new Intent(this, LoginActivity.class);
-            startActivity(mainActivity);
-            finish();
+        if (id == R.id.edit_question) {
+
+            Intent mIntent = new Intent(this, QuestionActivity.class);
+            mIntent.putExtra("type", 1);
+            startActivity(mIntent);
+
+            return true;
+        }
+
+        if (id == R.id.add_member) {
+
+            Intent mIntent = new Intent(this, MemberJoinActivity.class);
+            startActivity(mIntent);
+
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }
 
 
-    class MyPagerAdapter extends FragmentPagerAdapter {
 
-        FragmentFeed feed = new FragmentFeed();
-        FragmentMap map = new FragmentMap();
-        String[] tabNames = {"Feed", "Map"};
 
-        public MyPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
 
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return tabNames[position];
-        }
 
-        @Override
+
+/**
+ * Handles all work that pertains to the 2 main fragments
+ */
+class MyPagerAdapter extends FragmentPagerAdapter {
+
+    FragmentFeed feed = new FragmentFeed();
+    FragmentMap map = new FragmentMap();
+    String[] tabNames = {"Feed", "Map"};
+
+    public MyPagerAdapter(FragmentManager fm) {
+        super(fm);
+    }
+
+    @Override
+    public CharSequence getPageTitle(int position) {
+        return tabNames[position];
+    }
+
+    @Override
     public Fragment getItem(int position) {
-            if(position == 0){
-                return feed;
-            }
-            else
-                return map;
+        if(position == 0){
+            return feed;
+        }
+        else
+            return map;
     }
 
     @Override
     public int getCount() {
-        return 2;
+        return tabNames.length;
     }
 }

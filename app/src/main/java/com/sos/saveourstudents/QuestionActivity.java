@@ -5,17 +5,23 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.LinearLayout.LayoutParams;
+
+import com.sos.saveourstudents.supportclasses.FlowLayout;
 
 
 public class QuestionActivity extends ActionBarActivity {
 
-    int a = 0;
-    FragmentViewQuestion theFragToShow;
+    //int a = 0;
+    Fragment theFragToShow;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question);
-
 
 
 
@@ -26,24 +32,24 @@ public class QuestionActivity extends ActionBarActivity {
                 return;
             }
 
+            if(getIntent().hasExtra("type")){
+                if(getIntent().getExtras().getInt("type") == 0){
+                    theFragToShow = new FragmentViewQuestion();
+                }
+                else{
+                    theFragToShow = new FragmentCreateQuestion();
+                }
 
-            if(a == 0){
-                theFragToShow = new FragmentViewQuestion();
             }
 
 
 
-            //If we want to pass some information to the fragment, probably not
-            //firstFragment.setArguments(getIntent().getExtras());
+
 
             // Add the fragment to the 'fragment_container' FrameLayout
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, theFragToShow).commit();
         }
-
-
-
-
 
 
 

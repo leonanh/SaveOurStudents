@@ -53,6 +53,7 @@ public class Validations  {
 
 
         if (incomingPass1.length() > MAX_LENGTH || incomingPass1.length() < MIN_LENGTH) {
+            //passBottom.setText(R.string.create_password_promp_err);
             return INCORRECT_LENGTH_TOP;
         }
 

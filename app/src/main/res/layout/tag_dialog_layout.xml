@@ -1,0 +1,126 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:background="@android:color/white"
+    >
+
+
+    <com.sos.saveourstudents.supportclasses.CustomTextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Question Filter"
+        android:background="@color/divider_color"
+        android:textSize="25dp"
+        android:padding="10dp"
+        android:textColor="@android:color/white"/>
+
+    <com.rey.material.widget.EditText
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        style="@style/Material.Widget.EditText.Light"
+        android:id="@+id/edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/primary_text"
+        android:textColorHint="@color/hint_text"
+        android:hint="Enter tags here"
+        android:inputType="text"
+        app:et_autoCompleteMode="single"
+        app:et_dividerColor="@color/primary"
+        app:et_inputId="@+id/textfield_auto"
+        app:et_dividerPadding="4dp"
+        android:completionThreshold="1"
+        android:layout_toLeftOf="@+id/add_button"
+        android:layout_below="@+id/title"
+        android:textCursorDrawable="@null"
+        />
+
+    <!---->
+
+<!--
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/primary"
+        android:layout_below="@+id/flow_container_active_tags"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        />
+
+-->
+    <ImageView
+        android:id="@+id/add_button"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/ic_add_white_24dp"
+        android:background="@drawable/add_button_bg"
+        android:layout_alignParentRight="true"
+        android:layout_alignBottom="@+id/edit_text"
+        android:layout_marginRight="10dp" />
+
+
+
+
+
+    <ScrollView
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:layout_below="@+id/edit_text"
+        android:layout_above="@+id/popular_text">
+
+        <com.sos.saveourstudents.supportclasses.FlowLayout
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/flow_container_active_tags"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:maxLines="50"
+            android:padding="5dp"
+            app:elementSpacing="6dp"
+            app:flowDirection="leftToRight"
+            app:lineSpacing="10dp"
+            >
+
+
+
+        </com.sos.saveourstudents.supportclasses.FlowLayout>
+
+
+    </ScrollView>
+
+
+
+    <com.sos.saveourstudents.supportclasses.CustomTextView
+        android:id="@+id/popular_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Recent Popular Tags"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/flow_container"/>
+
+
+
+    <com.sos.saveourstudents.supportclasses.FlowLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/flow_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:maxLines="2"
+        android:padding="10dp"
+        app:elementSpacing="4dp"
+        app:flowDirection="leftToRight"
+        app:lineSpacing="16dp"
+        android:layout_alignParentBottom="true"/>
+
+
+
+</RelativeLayout>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/the_linear"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="5dp"
+    android:background="@drawable/tag_selector">
+
+    <com.sos.saveourstudents.supportclasses.CustomTextView
+        android:id="@+id/tag_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="tag1"
+        android:textSize="15sp"
+        android:layout_marginLeft="5dp"
+        android:textColor="@color/primary_text"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="3dp"
+        android:src="@drawable/ic_check_circle_white_18dp"
+        />
+
+</LinearLayout>

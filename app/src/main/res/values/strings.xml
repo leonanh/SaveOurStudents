@@ -25,8 +25,7 @@
     <string name="repeat_password_hint">Repeat Password</string>
     <string name="invalidLogin">Login is invalid!</string>
     <string name="emailEmpty">Email is empty!</string>
-    <string name="incorrect_length">incorrect length</string>
-    <string name="not_the_same_password">Not the same password</string>
+
 
     <!-- -->
     <string name="openDrawer">drawer open</string>

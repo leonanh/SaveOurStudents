@@ -1,3 +1,4 @@
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/container"
     android:layout_width="fill_parent"
@@ -100,7 +101,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="@dimen/container_padding"
         android:layout_marginBottom="@dimen/container_padding"
-        android:textColor="@color/white" />
+        android:textColor="@color/primary_text1" />
 
     <TextView
         android:id="@+id/forgot_login_btn"
@@ -114,6 +115,6 @@
         android:layout_alignParentBottom="true"
         android:layout_marginRight="@dimen/container_padding"
         android:layout_marginBottom="@dimen/container_padding"
-        android:textColor="@color/white" />
+        android:textColor="@color/primary_text1" />
 
 </RelativeLayout>

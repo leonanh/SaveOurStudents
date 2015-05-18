@@ -111,7 +111,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         forgotLoginBtn.setOnClickListener(this);
         signupBtn = (TextView) findViewById(R.id.signup_btn);
         signupBtn.setOnClickListener(this);
-        logoLabel = (TextView)findViewById(R.id.login_logo_label);
+        logoLabel = (TextView) findViewById(R.id.login_logo_label);
         usernameField = (EditText) findViewById(R.id.username_textfield);
         passwordField = (EditText) findViewById(R.id.password_textfield);
         loginBtn = (Button) findViewById(R.id.login_btn);
@@ -147,7 +147,6 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                                 try {
                                     /*
                                     System.out.println("object: " +object.getString("email"));
-
                                     System.out.println("Profile changed: " + profile);
                                     System.out.println("Save: " + profile.getFirstName());
                                     System.out.println("Save: " + profile.getLastName());
@@ -173,8 +172,6 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                                 profileTracker = new ProfileTracker() {
                                     @Override
                                     protected void onCurrentProfileChanged(Profile oldProfile, Profile currentProfile) {
-
-
                                         if (currentProfile == null) {
                                             System.out.println("Profile changed: logged out");
                                             prompt.setText("Logged out");
@@ -186,14 +183,11 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                                             System.out.println("Save: " + currentProfile.getProfilePictureUri(100, 100));
                                             //TODO Send to server and save local info
                                             prompt.setText("FB logged in as " + Profile.getCurrentProfile().getName());
-
                                             createSOSUser("facebook",
                                                     currentProfile.getFirstName(),
                                                     currentProfile.getLastName(),
                                                     currentProfile.getId(),
                                                     facebookEmail[0]);
-
-
                                         }
                                     }
                                 };*/
@@ -223,8 +217,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
             protected void onCurrentProfileChanged(Profile oldProfile, Profile currentProfile) {
 
 
-
-                if(currentProfile != null && !isLogging){
+                if (currentProfile != null && !isLogging) {
                     isLogging = true;
                     createSOSUser("facebook",
                             currentProfile.getFirstName(),
@@ -256,9 +249,6 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         } else {
             Log.i(TAG, "No valid Google Play Services APK found.");
         }
-
-
-
 
 
     }
@@ -352,7 +342,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                     // so it can use GCM/HTTP or CCS to send messages to your app.
                     // The request to your server should be authenticated if your app
                     // is using accounts.
-                   // sendRegistrationIdToBackend();
+                    // sendRegistrationIdToBackend();
 
                     // For this demo: we don't need to send it because the device
                     // will send upstream messages to a server that echo back the
@@ -383,9 +373,6 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         }.execute(null, null, null);
 
     }
-
-
-
 
 
     private boolean checkPlayServices() {
@@ -450,7 +437,8 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         return true;
     }
 
-    @Override    public boolean onOptionsItemSelected(MenuItem item) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -493,9 +481,9 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
             //startActivity(mainActivity);
             //finish();
 
-            Log.d("Debug","Logging in");
+            Log.d("Debug", "Logging in");
             doSOSLogin("SOS", usernameField.getText().toString(), passwordField.getText().toString());
-            Log.d("Debug","Fiished Logging in");
+            Log.d("Debug", "Fiished Logging in");
 
         } else if (v == signupBtn) {
 
@@ -709,7 +697,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                     } else if (response.getString("success").equalsIgnoreCase("1") && response.getString("expectResults").equalsIgnoreCase("0")) {
                         prompt = Toast.makeText(appContext, "Invalid login!", Toast.LENGTH_SHORT);//TODO: Use R String
                         prompt.show();
-                    }else{
+                    } else {
                         prompt = Toast.makeText(appContext, "Else statement!", Toast.LENGTH_SHORT);//TODO: Use R String
                         prompt.show();
                     }

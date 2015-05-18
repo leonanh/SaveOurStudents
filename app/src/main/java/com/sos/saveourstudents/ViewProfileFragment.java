@@ -4,14 +4,15 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.gc.materialdesign.views.Button;
-import com.gc.materialdesign.views.ButtonFloat;
+import com.rey.material.widget.FloatingActionButton;
 
 import org.solovyev.android.views.llm.DividerItemDecoration;
 import org.solovyev.android.views.llm.LinearLayoutManager;
@@ -29,7 +30,7 @@ import java.util.ArrayList;
  */
 public class ViewProfileFragment extends Fragment {
     private static final String ARG_PARAM1 = "student";
-    private Button editButton;
+    private FloatingActionButton editButton;
 
     private Student currStudent;
 
@@ -59,12 +60,11 @@ public class ViewProfileFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             // Grab the current student from our created Bundle
-            currStudent = (Student) (getArguments().getParcelable(ARG_PARAM1));
+            currStudent = getArguments().getParcelable(ARG_PARAM1);
         }
 
         else currStudent = new Student("Brady", "Shi", 0, "UCSD", "Computer Engineering", "Coffee Addict",
                 null); // Unnecessary with FragmentTransaction
-
 
     }
 
@@ -80,22 +80,16 @@ public class ViewProfileFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        // Begin inserting data into the About Me of the Student
-        RecyclerView aboutMeContents = (RecyclerView) getActivity().
-                findViewById(R.id.profile_aboutMeContents);
+        updateCurrentStudentView();
 
-        // About Me will ALWAYS have a School, Major, and Description
-        aboutMeContents.setHasFixedSize(true);
-
-        // LinearLayoutManager will include line separations between each About Me descriptor
-        LinearLayoutManager aboutMeContentsLLM = new LinearLayoutManager(getActivity(),
-                android.support.v7.widget.LinearLayoutManager.VERTICAL, false);
-        aboutMeContents.setLayoutManager(aboutMeContentsLLM);
-        aboutMeContents.addItemDecoration(new DividerItemDecoration(getActivity(), null));
-        aboutMeContents.setAdapter(new RVAdapter(initializeData()));
+        LinearLayout aboutMeContents = (LinearLayout) getActivity()
+                .findViewById(R.id.profile_aboutMeContents);
+        aboutMeContents.setDividerDrawable(getActivity().getResources()
+                .getDrawable(R.drawable.abc_list_divider_mtrl_alpha));
+        aboutMeContents.setShowDividers(LinearLayout.SHOW_DIVIDER_BEGINNING);
 
         // Set the OnClickListener for the edit floating action button
-        editButton = (ButtonFloat) getActivity().findViewById(R.id.profile_editButton);
+        editButton = (FloatingActionButton) getActivity().findViewById(R.id.profile_editButton);
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,24 +98,24 @@ public class ViewProfileFragment extends Fragment {
                 }
             }
         });
-
-
     }
 
     /**
-     * Helper method to grab data from the current student
-     * @return New ArrayList of StudentInformations which contain a descriptor and description
+     * Update the View with the student's current values
      */
-    private ArrayList<StudentInformation> initializeData() {
-        ArrayList<StudentInformation> studentInfoList = new ArrayList<>();
-        studentInfoList.add(new StudentInformation(getResources()
-                .getString(R.string.profile_school), currStudent.getSchool()));
-        studentInfoList.add(new StudentInformation(getResources()
-                .getString(R.string.profile_major), currStudent.getMajor()));
-        studentInfoList.add(new StudentInformation(getResources()
-                .getString(R.string.profile_description), currStudent.getDescription()));
-
-        return studentInfoList;
+    private void updateCurrentStudentView() {
+        ((TextView) getActivity().findViewById(R.id.profile_firstName))
+                .setText(currStudent.getFirstName());
+        ((TextView) getActivity().findViewById(R.id.profile_lastName))
+                .setText(currStudent.getLastName());
+        ((TextView) getActivity().findViewById(R.id.profile_myRating))
+                .setText(((Integer) currStudent.getRating()).toString());
+        ((TextView) getActivity().findViewById(R.id.profile_mySchool))
+                .setText(currStudent.getSchool());
+        ((TextView) getActivity().findViewById(R.id.profile_myMajor))
+                .setText(currStudent.getMajor());
+        ((TextView) getActivity().findViewById(R.id.profile_myDescription))
+                .setText(currStudent.getDescription());
     }
 
     @Override
@@ -152,72 +146,7 @@ public class ViewProfileFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnEditButtonListener{
-        public void onEditButton();
-    }
-
-    /**
-     * Helper class for the RecyclerView that contains a descriptor/description
-     * (e.g. School, <name of school>)
-     */
-    class StudentInformation {
-        String descriptor;
-        String description;
-
-        StudentInformation(String descriptor, String description) {
-            this.descriptor = descriptor;
-            this.description = description;
-        }
-    }
-
-    /**
-     * RecyclerView adapter that will set the TextView information of each StudentViewHolder
-     */
-    private class RVAdapter extends RecyclerView.Adapter<RVAdapter.StudentViewHolder> {
-
-        private ArrayList<StudentInformation> studentInfo;
-
-        public RVAdapter(ArrayList<StudentInformation> studentInfo) {
-            this.studentInfo = studentInfo;
-        }
-
-        @Override
-        public StudentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.aboutme_layout, parent, false);
-            StudentViewHolder svh = new StudentViewHolder(v);
-            return svh;
-        }
-
-        @Override
-        public void onBindViewHolder(StudentViewHolder holder, int position) {
-            holder.descriptor.setText(studentInfo.get(position).descriptor);
-            holder.description.setText(studentInfo.get(position).description);
-        }
-
-        @Override
-        public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-            super.onAttachedToRecyclerView(recyclerView);
-        }
-
-        @Override
-        public int getItemCount() {
-            return studentInfo.size();
-        }
-
-        public class StudentViewHolder extends RecyclerView.ViewHolder{
-            RelativeLayout viewHolderLayout;
-            TextView descriptor;
-            TextView description;
-
-            public StudentViewHolder(View itemView) {
-                super(itemView);
-                viewHolderLayout = ((RelativeLayout) itemView
-                        .findViewById(R.id.profile_aboutMe_layout));
-                descriptor = ((TextView) itemView.findViewById(R.id.profile_aboutMe_descriptor));
-                description = ((TextView) itemView.findViewById(R.id.profile_aboutMe_description));
-
-            }
-        }
+        void onEditButton();
     }
 
 }

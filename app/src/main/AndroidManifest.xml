@@ -64,12 +64,11 @@
 
         <activity android:name=".ForgotLoginActivity"/>
 
-        <activity android:name=".ProfileActivity"/>
-
-        <activity android:name=".QuestionActivity"/>
-
+        <activity android:name=".QuestionActivity"
+            android:windowSoftInputMode="stateVisible|adjustResize"/>
 
 
+        <activity android:name=".MemberJoinActivity"/>
 
 
 
@@ -107,6 +106,15 @@
 
 
 
+        <activity
+            android:name=".ProfileActivity"
+            android:label="@string/title_activity_profile"
+            android:windowSoftInputMode="adjustPan"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
     </application>
 
 </manifest>
