@@ -1,78 +1,75 @@
 package com.sos.saveourstudents;
 
-import android.support.v7.app.ActionBarActivity;
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-
 
 /**
  * Created by HTPC on 4/26/2015.
  */
-public class Validations extends ActionBarActivity {
+public class Validations  {
+    private static final int MIN_LENGTH = 3;
+    private static final int MAX_LENGTH = 16;
 
-    private final Pattern hasUppercase = Pattern.compile("[A-Z]");
-    private final Pattern hasLowercase = Pattern.compile("[a-z]");
-    private final Pattern hasNumber = Pattern.compile("\\d");
-    private final Pattern hasSpecialChar = Pattern.compile("[^a-zA-Z0-9 ]");
+    private static final int FIRST_LAST_MAX_LENGTH = 20;
 
+    public static final int REPEAT_NOT_SAME = 0;
+    public static final int INCORRECT_LENGTH_TOP = 1;
+    public static final int INCORRECT_LENGTH_BOT = 2;
+    public static final int VALIDATION_PASSED = 3;
 
-    //boolean = false;  //test result
+    public boolean testEmailSignUp(String incomingEmail) {
+        boolean isValid = false;
 
-    public static boolean validUsername( String userName )
-    {
-        if (userName.length()  > 16)
-            return false;
-        if (userName.length() <  3)
-            return false;
-        return true;
+        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+        CharSequence inputStr = incomingEmail;
+
+        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(inputStr);
+        if (matcher.matches()) {
+            isValid = true;
+        }
+        return isValid;
+
     }
 
-    public static boolean validPassword( String password )
-    {
-        if (password.length() < 8)
+    public boolean testUserName(String incomingUser) {
+        if (incomingUser.length() > MAX_LENGTH) {
             return false;
-
-        return true;
-
+        } else if (incomingUser.length() < MIN_LENGTH) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
+    public int testPass(String incomingPass1,String incomingPass2) {
+        //TextView passBottom, passBottom2;
 
-    /**
-     * Verify password is valid, can return bool or int or whatever is clear to distinguish validity
-     * @param pass1
-     * @return
-     */
-    public String validateNewPass(String pass1) {
-        if (pass1 == null) {
-            //return error
+
+        if (incomingPass1.length() > MAX_LENGTH || incomingPass1.length() < MIN_LENGTH) {
+            //passBottom.setText(R.string.create_password_promp_err);
+            return INCORRECT_LENGTH_TOP;
         }
 
-        if (pass1.isEmpty()) {
-            //return error
+        if (incomingPass2.length() > MAX_LENGTH || incomingPass2.length() < MIN_LENGTH) {
+            //passBottom2.setText(R.string.create_password_promp_err);
+            return INCORRECT_LENGTH_BOT;
         }
 
-        if (!hasUppercase.matcher(pass1).find()) {
-            //error - logger.info(pass1 + " <-- needs uppercase");
+        if (!(incomingPass1.equals(incomingPass2))) {
+            //passBottom2.setText(R.string.create_password_promp_notsame);
+            //passBottom.setText(R.string.create_password_prompt);
+            return REPEAT_NOT_SAME;
         }
 
-        if (!hasLowercase.matcher(pass1).find()) {
-            //error - logger.info(pass1 + " <-- needs lowercase");
-        }
-
-        if (!hasNumber.matcher(pass1).find()) {
-            //error - logger.info(pass1 + "<-- needs a number");
-        }
-
-        if (!hasSpecialChar.matcher(pass1).find()) {
-            //error - logger.info(pass1 + "<-- needs a specail character");
-        }
-
-
-        return null; //return whatever indicator you feel is useful
+        return VALIDATION_PASSED;
     }
-
-
 
 
 
