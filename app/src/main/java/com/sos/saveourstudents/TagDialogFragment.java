@@ -37,8 +37,6 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
     final int QUESTION_FILTERS = 1;
     int dialogType;
 
-
-    DisplayMetrics dispMetrics;
     ViewGroup flowLayout, flowLayout2;
     JSONArray popularTags = null;
     Context mContext;
@@ -50,9 +48,8 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
 
 
 
-    public TagDialogFragment(Context context, DisplayMetrics metrics, int dialogType) {
+    public TagDialogFragment(Context context, int dialogType) {
         mContext = context;
-        dispMetrics = metrics;
         this.dialogType = dialogType;
 
 

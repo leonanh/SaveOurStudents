@@ -135,8 +135,8 @@ public class FragmentFeed extends Fragment {
 
 
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getQuestions"+
-                "?latitude="+1.000000+//32.8800604+ //TODO
-                "&longitude="+2.000000+//-117.2340135+  //TODO
+                "?latitude="+32.88006+ //TODO Actual Location
+                "&longitude="+-117.2340133+ //TODO Actual Location
                 filterListFix+
                 "&limit="+50;
 
@@ -242,11 +242,20 @@ public class FragmentFeed extends Fragment {
             //viewHolder.questionText.setText(mCardManagerInstance.getCounters().get(i).title+"");
             //viewHolder.venueType.setText(mInstance.getCounters().get(i)+"");
             try {
-                System.out.println("Question "+position+": "+mQuestionList.getJSONObject(position).getJSONObject("map"));
-                viewHolder.nameText.setText(mQuestionList.getJSONObject(position).getJSONObject("map").getString("user_id"));
 
-                viewHolder.questionText.setText(mQuestionList.getJSONObject(position).getJSONObject("map").getString("text"));
+                String firstName = mQuestionList.getJSONObject(position).getJSONObject("map").getString("first_name");
+                String lastName = mQuestionList.getJSONObject(position).getJSONObject("map").getString("last_name");
+                String theDate = mQuestionList.getJSONObject(position).getJSONObject("map").getString("date");
+                String topic = mQuestionList.getJSONObject(position).getJSONObject("map").getString("topic");
+                String text = mQuestionList.getJSONObject(position).getJSONObject("map").getString("text");
 
+                System.out.println("Question " + position + ": " + mQuestionList.getJSONObject(position).getJSONObject("map"));
+                viewHolder.nameText.setText(firstName + " " + lastName);
+
+                //System.out.println("date: " + Singleton.getInstance().doDateLogic(theDate));
+                viewHolder.questionText.setText(topic + ": "+text);
+
+                viewHolder.dateText.setText(Singleton.getInstance().doDateLogic(theDate));
 
 
 

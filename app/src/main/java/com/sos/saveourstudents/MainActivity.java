@@ -17,7 +17,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -74,6 +73,7 @@ public class MainActivity extends ActionBarActivity {
 
         FragmentManager manager = getSupportFragmentManager();
         android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
+
 
 
         mViewPager = (ViewPager) this.findViewById(R.id.pager);
@@ -193,18 +193,10 @@ public class MainActivity extends ActionBarActivity {
         }
         else if (id == R.id.action_filter) {
 
-            DisplayMetrics metrics = new DisplayMetrics();
-            /*
-            SharedPreferences sharedPref = getSharedPreferences(
-                    getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-*/
 
-            getWindowManager().getDefaultDisplay().getMetrics(metrics);
             FragmentTransaction ft = getFragmentManager().beginTransaction();
 
-            DialogFragment newFragment = new TagDialogFragment(this, metrics, 0);
-
-            newFragment.setCancelable(true);
+            DialogFragment newFragment = new TagDialogFragment(this, 0);
 
             newFragment.show(getSupportFragmentManager(), "");
 
