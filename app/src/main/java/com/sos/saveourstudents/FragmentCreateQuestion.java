@@ -1,19 +1,28 @@
 package com.sos.saveourstudents;
 
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.rey.material.widget.EditText;
 
 import org.json.JSONArray;
@@ -21,9 +30,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class FragmentCreateQuestion extends Fragment implements View.OnClickListener {
+public class FragmentCreateQuestion extends Fragment implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener,
+        Response.Listener, Response.ErrorListener {
 
     private Context mContext;
+    public GoogleApiClient mGoogleApiClient;
+    LocationRequest mLocationRequest;
+    Location mCurrentLocation;
 
     private EditText questionEditText, topicEditText;
 
@@ -53,102 +66,17 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
         topicEditText = (EditText) rootView.findViewById(R.id.topic_edit_text);
 
 
+        buildGoogleApiClient();
+
+
+        //If edit, get question info from server
+        //If create, set variables to null
 
 
         return rootView;
 
 
     }
-
-    private void showTags(){
-
-        View tagView = null;
-            try {
-
-                for(int a = 0; a < popularTags.length(); a++){
-
-                    System.out.println("want to display tag: "+popularTags.getJSONObject(a));
-                    tagView = inflater.inflate(R.layout.tag_item_layout, null, false);
-                    tagView.findViewById(R.id.the_linear).setOnClickListener(this);
-                    TextView tagText = (TextView) tagView.findViewById(R.id.tag_text);
-                    tagText.setText(popularTags.getJSONObject(a).getString("tag"));
-                    flowLayout.addView(tagView);
-                }
-
-
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-
-
-
-    }
-
-
-    private void getTagData(){
-
-
-        /**
-         * JSON Array Example
-         */
-        String tag_json_arry = "json_array_req";
-        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getTags";
-
-
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
-                url,
-                (JSONObject)null,
-                new Response.Listener<JSONObject>()
-                {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-
-                            JSONObject result = new JSONObject(response.toString());
-                            if(!result.getString("success").equalsIgnoreCase("1")){
-                                //Error getting data
-                                return;
-                            }
-                            if(result.getString("expectResults").equalsIgnoreCase("0")){
-                                //No results to show
-                                return;
-                            }
-                            else{
-                                popularTags = result.getJSONArray("result");
-                            }
-
-
-                            System.out.println("popularTags "+popularTags.toString());
-
-                            //showTags();
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-
-
-
-
-                    }
-                }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-                System.out.println("Error: " + error.toString());
-            }
-        });
-
-        // Access the RequestQueue through your singleton class.
-        Singleton.getInstance().addToRequestQueue(jsObjRequest);
-
-
-    }
-
 
 
     @Override
@@ -177,14 +105,20 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
 
         }
         else if(v == sendButton){
-
+            System.out.println("Location: "+mCurrentLocation);
             if (!topicEditText.getText().toString().equalsIgnoreCase("")) {
                 topicEditText.clearError();
 
                 if (!questionEditText.getText().toString().equalsIgnoreCase("")) {
                     questionEditText.clearError();
 
-                    //TODO sendQuestionToServer();
+                    if(mCurrentLocation != null){
+                        sendQuestionToServer();
+                        //postQuestion();
+                    }
+                    else{
+                        Toast.makeText(mContext, "Cant find location...", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     //Question edit text empty
                     questionEditText.setError("Question is empty");
@@ -200,6 +134,12 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
         else if(v == addTagsButton){
 
             //TODO show tags dialog
+            FragmentTransaction ft = getActivity().getFragmentManager().beginTransaction();
+
+            DialogFragment newFragment = new TagDialogFragment(mContext, 1);
+
+            newFragment.show(getActivity().getSupportFragmentManager(), "");
+
 
         }
 
@@ -216,63 +156,59 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
         String userId = sharedPref.getString("user_id", "");
 
 
-         /*
 
-         editor.putString("first_name", response.getJSONArray("result").getJSONObject(0).getString("first_name"));
-                        editor.putString("last_name", response.getJSONArray("result").getJSONObject(0).getString("last_name"));
-                        editor.putString("email", response.getJSONArray("result").getJSONObject(0).getString("email"));
-                        editor.putString("image", response.getJSONArray("result").getJSONObject(0).getString("image"));
-                        editor.putString("user_id", response.getJSONArray("result").getJSONObject(0).getString("user_id"));
+/*
+        String filterListFix = "";
 
+        if(myList.size() == 0){
+            //Dont use any filters. Just return all questions in range
+        } else {//Use filters
+            for (int a = 0; a < myList.size(); a++) {
+                filterListFix = filterListFix + "&tags=" + myList.get(a);
+            }
+        }
+        */
 
-          */
-        System.out.println("Im'a send this question to server");
-
-        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createQuestion?"+
-                "userId="+userId+
-                "&latitude="+
-                "&longitude="+
-                "&text="+
-                "&tags="+
-                "&tutor="+
-                "&studygroup=";
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createQuestion";
 
 
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
-                url,
+        String uri = Uri.parse("http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createQuestion")
+                .buildUpon()
+                .appendQueryParameter("userId", "39uo830mgaqfbmctt6j9tkt8ab")
+                .appendQueryParameter("latitude", mCurrentLocation.getLatitude()+"")
+                .appendQueryParameter("longitude", mCurrentLocation.getLongitude()+"")
+                .appendQueryParameter("text", questionEditText.getText().toString())
+                .appendQueryParameter("tags", "UCSD")
+                .appendQueryParameter("tutor", "0")
+                .appendQueryParameter("studygroup", "1")
+                .appendQueryParameter("topic", topicEditText.getText().toString())
+
+                .build().toString();
+
+        System.out.println("URI: "+uri);
+
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, uri,
                 (JSONObject)null,
-                new Response.Listener<JSONObject>()
-                {
+                new Response.Listener<JSONObject>(){
 
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
 
                             JSONObject result = new JSONObject(response.toString());
+                            System.out.println("result "+result);
                             if(!result.getString("success").equalsIgnoreCase("1")){
                                 //Error getting data
                                 return;
                             }
-                            if(result.getString("expectResults").equalsIgnoreCase("0")){
-                                //No results to show
-                                return;
-                            }
                             else{
-                                popularTags = result.getJSONArray("result");
+                                //TODO Show alert for success
                             }
-
-
-                            System.out.println("popularTags "+popularTags.toString());
-
-                            //showTags();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
-
-
-
 
                     }
                 }, new Response.ErrorListener() {
@@ -282,21 +218,80 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
 
                 System.out.println("Error: " + error.toString());
             }
+
         });
+
+
 
         // Access the RequestQueue through your singleton class.
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
 
 
-
-
-
-
-
-
     }
 
 
+    protected void startLocationUpdates() {
+        LocationServices.FusedLocationApi.requestLocationUpdates(
+                mGoogleApiClient, mLocationRequest, this);
+    }
+
+    protected void createLocationRequest() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(10000);
+        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
 
 
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(mContext)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener( this)
+                .addApi(LocationServices.API)
+                .build();
+
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        System.out.println("Connected to GoogleApi: "+mCurrentLocation);
+        createLocationRequest();
+        startLocationUpdates();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        mCurrentLocation = location;
+        System.out.println("Location: "+location);
+        //Stop updates after we get a location....
+        stopLocationUpdates();
+    }
+
+    protected void stopLocationUpdates() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(
+                mGoogleApiClient, this);
+    }
+
+    @Override
+    public void onErrorResponse(VolleyError error) {
+
+    }
+
+    @Override
+    public void onResponse(Object response) {
+
+    }
 }

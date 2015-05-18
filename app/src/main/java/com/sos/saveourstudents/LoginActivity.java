@@ -435,7 +435,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
             }
             //TODO: Database validation performed here.
             Intent mainActivity = new Intent(this, MainActivity.class);
-            MainActivity.LOGGED_IN = true;//TODO: Temporary variable
+            //MainActivity.LOGGED_IN = true;//TODO: Temporary variable
             startActivity(mainActivity);
             finish();
         }
@@ -591,6 +591,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
 
 
+    //System.out.println("url: "+url);
 
 
 

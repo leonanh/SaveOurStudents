@@ -23,7 +23,9 @@
     <color name="accent_dark">#FFA000</color>
     <color name="primary_text">#212121</color>
     <color name="primary_text1">#FFFFFF</color>
+    <color name="secondary_text">#727272</color>
     <color name="time_dist_hint">#555555</color>
+    <color name="divider_color">#B6B6B6</color>
     <color name="hint_text_on_background">#EBEBEB</color>
 
 	<color name="hint_text">#727272</color>

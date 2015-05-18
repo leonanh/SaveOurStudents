@@ -37,8 +37,7 @@ import java.util.List;
  */
 public class FragmentViewQuestion extends Fragment implements
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        View.OnClickListener{
+        GoogleApiClient.OnConnectionFailedListener{
 
     RecycleViewAdapter mAdapter;
     RecyclerView mRecyclerView;
@@ -322,7 +321,6 @@ public class FragmentViewQuestion extends Fragment implements
         mMapView.onResume();
         mMap.getUiSettings().setScrollGesturesEnabled(false);
 
-        mMap.setMyLocationEnabled(true);
         zoomToMyPosition();
 
     }
@@ -352,8 +350,8 @@ public class FragmentViewQuestion extends Fragment implements
 
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
-                    .zoom(13)                   // Sets the zoom
-                    .bearing(0)                // Sets the orientation of the camera to east
+                    .zoom(17)                   // Sets the zoom
+                    .bearing(90)                // Sets the orientation of the camera to east
                     .tilt(40)                   // Sets the tilt of the camera to 30 degrees
                     .build();                   // Creates a CameraPosition from the builder
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));

@@ -47,17 +47,24 @@ public class ProfileActivity extends AppCompatActivity
 
     }
 
+    /**
+     * Overrides onBackPressed()
+     * EditProfileFragment should go back to ViewProfileFragment
+     */
     @Override
     public void onBackPressed() {
-        if(viewProfileFragment != null && editProfileFragment != null) {
-            FragmentManager fragmentManager = getFragmentManager();
-            fragmentManager.beginTransaction()
-                    .remove(editProfileFragment)
-                    .attach(viewProfileFragment)
-                    .commit();
-            editProfileFragment = null;
-        }
-        else super.onBackPressed();
+        if (viewProfileFragment != null && editProfileFragment != null) {
+            if (findViewById(R.id.profile_editProfile_overall).hasFocus()) {
+                FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction()
+                        .remove(editProfileFragment)
+                        .attach(viewProfileFragment)
+                        .commit();
+                editProfileFragment = null;
+            } else {
+                findViewById(R.id.profile_editProfile_overall).requestFocus();
+            }
+        } else super.onBackPressed();
     }
 
     @Override
@@ -100,7 +107,7 @@ public class ProfileActivity extends AppCompatActivity
 
     @Override
     public void onDoneButton() {
-        if(editProfileFragment != null && viewProfileFragment != null) {
+        if (editProfileFragment != null && viewProfileFragment != null) {
             editProfileFragment.updateStudent();
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction()
@@ -108,8 +115,7 @@ public class ProfileActivity extends AppCompatActivity
                     .attach(viewProfileFragment)
                     .commit();
             editProfileFragment = null;
-        }
-        else {
+        } else {
             Log.e("ProfileActivity", "NullPointerException for a fragment");
         }
     }
