@@ -4,6 +4,7 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -13,9 +14,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -27,8 +28,6 @@ import com.rey.material.widget.EditText;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.HashMap;
 
 
 public class FragmentCreateQuestion extends Fragment implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener,
@@ -148,65 +147,6 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
     }
 
 
-    private void postQuestion(){
-
-        //http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createQuestion?
-        // userId=erdh01ce44fgmvuevk1qtdokql&latitude=32.88006&longitude=-117.2340133&text=Help&tags=UCSD&tutor=0&studygroup=1&topic=ucsd
-
-        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createQuestion";
-
-        String temp = questionEditText.getText().toString();
-
-        String url2 =
-                "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createQuestion?"+
-                "userId=user1"+//userId+
-                "&latitude="+mCurrentLocation.getLatitude()+
-                "&longitude="+mCurrentLocation.getLongitude()+
-                "&text="+temp+
-                "&tags=UCSD"+ //TODO
-                "&tutor="+0+
-                "&studygroup="+1+
-                "&topic="+topicEditText.getText().toString();
-
-// Post params to be sent to the server
-        HashMap<String, String> params = new HashMap<String, String>();
-        params.put("userId", "mingyuhu");
-        params.put("latitude", mCurrentLocation.getLatitude() + "");
-        params.put("longitude", mCurrentLocation.getLongitude()+"");
-        params.put("text", questionEditText.getText().toString());
-        params.put("tags", "UCSD");
-        params.put("tutor", "0");
-        params.put("studygroup", "1");
-        params.put("topic", topicEditText.getText().toString());
-
-        System.out.println("url2 : " + url2);
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(url, new JSONObject(params),
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            System.out.println("response1 : "+response);
-                            VolleyLog.v("Response:%n %s", response.toString(4));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.e("Error: ", error.getMessage());
-            }
-        });
-
-
-        Singleton.getInstance().addToRequestQueue(jsObjRequest);
-
-
-
-
-    }
-
-
 
     private void sendQuestionToServer(){
 
@@ -214,8 +154,6 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
         String userId = sharedPref.getString("user_id", "");
-
-
 
 
 
@@ -232,51 +170,25 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
         */
 
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createQuestion";
-             /*   +
-                "?userId=2bmbplf1fvcat2rhd5ml9pnnf7"+ //TODO -debug
-                "&latitude="+mCurrentLocation.getLatitude()+
-                "&longitude="+mCurrentLocation.getLongitude()+
-                "&text="+questionEditText.getText().toString()+
-                "&tags=UCSD"+ //TODO
-                "&tutor="+0+
-                "&studygroup="+1+
-                "&topic="+topicEditText.getText().toString();
-*/
 
 
-        HashMap<String, String> params = new HashMap<String, String>();
-        params.put("userId", "4emgn0b19gsl0j8s2obfsa95hf");
-        params.put("latitude", mCurrentLocation.getLatitude() + "");
-        params.put("longitude", mCurrentLocation.getLongitude()+"");
-        params.put("text", questionEditText.getText().toString());
-        params.put("tags", "UCSD");
-        params.put("tutor", "0");
-        params.put("studygroup", "1");
-        params.put("topic", topicEditText.getText().toString());
-/*
-        JSONObject obj = new JSONObject();
-        try {
-            obj.put("userId","39uo830mgaqfbmctt6j9tkt8ab");
-            obj.put("latitude", mCurrentLocation.getLatitude() + "");
-            obj.put("longitude", mCurrentLocation.getLongitude()+"");
-            obj.put("text", questionEditText.getText().toString());
-            obj.put("tags", "UCSD");
-            obj.put("tutor", new Integer(0));
-            obj.put("studygroup", new Integer(1));
-            obj.put("topic", topicEditText.getText().toString());
+        String uri = Uri.parse("http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createQuestion")
+                .buildUpon()
+                .appendQueryParameter("userId", "39uo830mgaqfbmctt6j9tkt8ab")
+                .appendQueryParameter("latitude", mCurrentLocation.getLatitude()+"")
+                .appendQueryParameter("longitude", mCurrentLocation.getLongitude()+"")
+                .appendQueryParameter("text", questionEditText.getText().toString())
+                .appendQueryParameter("tags", "UCSD")
+                .appendQueryParameter("tutor", "0")
+                .appendQueryParameter("studygroup", "1")
+                .appendQueryParameter("topic", topicEditText.getText().toString())
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-*/
+                .build().toString();
+
+        System.out.println("URI: "+uri);
 
 
-        System.out.println("url: "+url);
-        //System.out.println("obj: "+obj);
-
-        /*
-
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, url,
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, uri,
                 (JSONObject)null,
                 new Response.Listener<JSONObject>(){
 
@@ -290,19 +202,9 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
                                 //Error getting data
                                 return;
                             }
-                            if(result.getString("expectResults").equalsIgnoreCase("0")){
-                                //No results to show
-                                return;
-                            }
                             else{
-                                System.out.println("popularTags "+popularTags.toString());
-                                //popularTags = result.getJSONArray("result");
+                                //TODO Show alert for success
                             }
-
-
-
-
-                            //showTags();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -317,58 +219,12 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
                 System.out.println("Error: " + error.toString());
             }
 
-        });*/
+        });
 
-        /*
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Method.GET,
-                url, new JSONObject(params),
-                new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        //JSONObject result = new JSONObject(response.toString());
-                        System.out.println("result "+response.toString());
-
-                    }
-                }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                //VolleyLog.d(TAG, "Error: " + error.getMessage());
-
-            }
-        }) {
-
-
-
-        };*/
-
-        /*
-        StringRequest myReq = new StringRequest(Request.Method.POST,
-                url,
-                this,
-                this) {
-
-            protected Map<String, String> getParams() throws com.android.volley.AuthFailureError {
-                HashMap<String, String> params = new HashMap<String, String>();
-                params.put("userId", "4emgn0b19gsl0j8s2obfsa95hf");
-                params.put("latitude", mCurrentLocation.getLatitude() + "");
-                params.put("longitude", mCurrentLocation.getLongitude()+"");
-                params.put("text", questionEditText.getText().toString());
-                params.put("tags", "UCSD");
-                params.put("tutor", "0");
-                params.put("studygroup", "1");
-                params.put("topic", topicEditText.getText().toString());
-
-                return params;
-            };
-        };
 
 
         // Access the RequestQueue through your singleton class.
-        Singleton.getInstance().addToRequestQueue(myReq);
-*/
-
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
 
 
     }
