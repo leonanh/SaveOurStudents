@@ -36,6 +36,9 @@ dependencies {
     // Dependencies for hdodenhof's CircleImageView library
     compile 'de.hdodenhof:circleimageview:1.2.2'
 
+    // Dependencies for navasmdc's MaterialDesign Library
+    compile 'com.github.navasmdc:MaterialDesign:1.+@aar'
+
     // Dependencies for solovyev's LinearLayoutManager Library (for wrap_content functionality)
     compile 'org.solovyev.android.views:linear-layout-manager:0.2@aar'
 

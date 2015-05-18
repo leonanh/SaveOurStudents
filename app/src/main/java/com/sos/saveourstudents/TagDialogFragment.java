@@ -23,6 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -36,8 +37,6 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
     final int QUESTION_FILTERS = 1;
     int dialogType;
 
-
-    DisplayMetrics dispMetrics;
     ViewGroup flowLayout, flowLayout2;
     JSONArray popularTags = null;
     Context mContext;
@@ -49,9 +48,8 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
 
 
 
-    public TagDialogFragment(Context context, DisplayMetrics metrics, int dialogType) {
+    public TagDialogFragment(Context context, int dialogType) {
         mContext = context;
-        dispMetrics = metrics;
         this.dialogType = dialogType;
 
 
@@ -164,13 +162,16 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
                             } else {
 
                                 popularTags = result.getJSONObject("result").getJSONArray("myArrayList");
-                                String[] autoCompleteArray = new String[popularTags.length()];
+                                ArrayList<String> autoCompleteArray = new ArrayList<>();
                                 for(int a = 0; a < popularTags.length(); a++){
                                     String text = popularTags.getJSONObject(a).getJSONObject("map").getString("tag");
-                                    if(!text.equalsIgnoreCase(""))
-                                        autoCompleteArray[a] = text;
+
+                                    if(!text.equalsIgnoreCase("")) {
+                                        autoCompleteArray.add(text);
+                                    }
 
                                 }
+
 
                                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext, R.layout.my_simple_dropdown_item_1line, autoCompleteArray);
                                 editText.setAdapter(adapter);

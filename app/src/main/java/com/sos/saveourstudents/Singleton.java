@@ -1,26 +1,27 @@
 package com.sos.saveourstudents;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Typeface;
-import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
 import com.sos.saveourstudents.supportclasses.LruBitmapCache;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 
-public class Singleton implements
-		GoogleApiClient.ConnectionCallbacks,
-		GoogleApiClient.OnConnectionFailedListener{
+public class Singleton {
 
 	private final String TAG = "SOS Tag";
 	private static Singleton instance = null;
@@ -28,7 +29,8 @@ public class Singleton implements
 
 	private RequestQueue mRequestQueue;
 	private ImageLoader mImageLoader;
-	private GoogleApiClient mGoogleApiClient;
+
+
 	//static Typeface face;
 	static public android.graphics.Typeface face;
 	/**
@@ -39,6 +41,7 @@ public class Singleton implements
 	public static void initialize(Context ctx) {
 		mContext = ctx;
 		face = Typeface.createFromAsset(mContext.getAssets(), "CODE Bold.otf");
+		//buildGoogleApiClient();
 	}
 
 
@@ -56,7 +59,6 @@ public class Singleton implements
 	 * The private constructor. Here you can use the context to initialize your variables.
 	 */
 	private Singleton() {
-
 	}
 	/**
 	 * The main method used to get the instance
@@ -115,39 +117,6 @@ public class Singleton implements
 		}
 	}
 
-	/**
-	 * +oogle Maps api
-	 */
-	protected synchronized void buildGoogleApiClient() {
-		mGoogleApiClient = new GoogleApiClient.Builder(mContext)
-				.addConnectionCallbacks(this)
-				.addOnConnectionFailedListener(this)
-				.addApi(LocationServices.API)
-				.build();
-
-        /*GoogleApiClient client = new GoogleApiClient.Builder(this)
-                .addApi(Plus.API)
-                .addScope(Plus.SCOPE_PLUS_LOGIN)
-                .setAccountName("users.account.name@gmail.com")
-                .build();*/
-		mGoogleApiClient.connect();
-	}
-
-
-	@Override
-	public void onConnected(Bundle bundle) {
-
-	}
-
-	@Override
-	public void onConnectionSuspended(int i) {
-
-	}
-
-	@Override
-	public void onConnectionFailed(ConnectionResult connectionResult) {
-
-	}
 
 
 	static String get_SHA_1_SecurePassword(String passwordToHash){
@@ -170,6 +139,65 @@ public class Singleton implements
 		return generatedPassword;
 	}
 
+	@SuppressLint("SimpleDateFormat")
+	public String doDateLogic(String theDate){
+		theDate = theDate.replace(",", "");
+
+
+		String newDate = null;
+		Date oldDate = null;
+
+		DateFormat dateFormat = new SimpleDateFormat("MMM dd yyyy hh:mm:ss a", Locale.ENGLISH);
+
+		dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+		try {
+			oldDate = dateFormat.parse(theDate);
+			Date currentDate = new Date();
+
+			long diff = currentDate.getTime() - oldDate.getTime();
+			long seconds = diff / 1000;
+			long minutes = seconds / 60;
+			long hours = minutes / 60;
+			long days = hours / 24;
+			long months = days / 30;
+			long years = months / 12;
+
+
+			if (oldDate.before(currentDate)) {
+
+				if (days < 1) { //Less than a day
+					if(hours < 1){
+						newDate = minutes+"M";
+					}
+					else{
+						newDate = hours+"H";
+					}
+
+					if(newDate.equalsIgnoreCase("0M")){
+						newDate = "Just now";
+					}
+				}
+				else{//A day
+					newDate = days+"D";
+				}
+				if(months > 0){
+					newDate = months+"MO";
+				}
+
+				if(years > 0){
+					newDate = years+"YR";
+				}
+			}
+			else
+				newDate = "Just now";
+
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		return newDate;
+	}
 
 
 }

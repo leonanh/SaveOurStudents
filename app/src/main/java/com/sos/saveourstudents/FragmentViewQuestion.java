@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -24,6 +25,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.sos.saveourstudents.supportclasses.FlowLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,9 +62,15 @@ public class FragmentViewQuestion extends Fragment implements
         //Call this method to initiate volley request
         getQuestionData();
 
-
+        View taglist = rootView.findViewById(R.id.tag_list_layout);
+        for(int i = 0; i < 10; i++) {
+            TextView tag = new TextView(taglist.getContext());
+            tag.setText("#dummyTag");
+            ((LinearLayout)taglist).addView(tag);
+        }
 
         return rootView;
+
 
 
     }
@@ -206,10 +214,6 @@ public class FragmentViewQuestion extends Fragment implements
                 }
             }
 
-
-
-
-
         }
 
         private void buildMemberRecyclerView(){
@@ -242,7 +246,8 @@ public class FragmentViewQuestion extends Fragment implements
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View v = null;
             if (viewType == TYPE_ITEM) {
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_item_layout,parent,false);
+               // v = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_item_layout_new,parent,false);
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_question_comment,parent,false);
             } else if (viewType == TYPE_MAP) {
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.question_map_item,parent,false);
             }
@@ -313,7 +318,6 @@ public class FragmentViewQuestion extends Fragment implements
         mMapView.onResume();
         mMap.getUiSettings().setScrollGesturesEnabled(false);
 
-        mMap.setMyLocationEnabled(true);
         zoomToMyPosition();
 
     }
@@ -343,8 +347,8 @@ public class FragmentViewQuestion extends Fragment implements
 
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
-                    .zoom(13)                   // Sets the zoom
-                    .bearing(0)                // Sets the orientation of the camera to east
+                    .zoom(17)                   // Sets the zoom
+                    .bearing(90)                // Sets the orientation of the camera to east
                     .tilt(40)                   // Sets the tilt of the camera to 30 degrees
                     .build();                   // Creates a CameraPosition from the builder
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -356,20 +360,7 @@ public class FragmentViewQuestion extends Fragment implements
     }
 
 
-
-
-
-
-
-
-
-
-
 }
-
-
-
-
 
 
 class MemberListAdapter extends RecyclerView.Adapter<MemberListAdapter.ViewHolder> {
