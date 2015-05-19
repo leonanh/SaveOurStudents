@@ -4,6 +4,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
     android:fitsSystemWindows="true"
     android:background="@android:color/white">
 
@@ -74,7 +75,8 @@
             android:layout_marginBottom="16dp"
             app:fab_iconSrc="@drawable/ic_add_white_24dp"
             app:fab_backgroundColor="@color/accent"
-            app:rd_style="@style/Material.Drawable.Ripple.Wave" />
+            app:fab_elevation="1dp"
+            />
 
         <!--
             <com.rey.material.widget.ProgressView

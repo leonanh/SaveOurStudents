@@ -12,8 +12,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -25,7 +25,7 @@ import com.sos.saveourstudents.supportclasses.NavDrawerAdapter;
 import com.sos.saveourstudents.supportclasses.RecyclerItemClickListener;
 import com.sos.saveourstudents.supportclasses.SlidingTabLayout;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity {
 
 
     ViewPager mViewPager;
@@ -39,7 +39,7 @@ public class MainActivity extends ActionBarActivity {
 
     ActionBarDrawerToggle mDrawerToggle;
 
-    //ButtonFloat fab;
+    com.rey.material.widget.FloatingActionButton fab;
 
     int ICONS[] = {R.drawable.ic_settings_black_24dp,R.drawable.ic_exit_to_app_black_24dp, R.drawable.ic_help_black_24dp};
     String TITLES[] = {"Profile","Logout","Help"};
@@ -74,7 +74,15 @@ public class MainActivity extends ActionBarActivity {
         FragmentManager manager = getSupportFragmentManager();
         android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
 
-
+        fab = (com.rey.material.widget.FloatingActionButton) findViewById(R.id.fab_image);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent mIntent = new Intent(MainActivity.this, QuestionActivity.class);
+                mIntent.putExtra("type", 1);
+                startActivity(mIntent);
+            }
+        });
 
         mViewPager = (ViewPager) this.findViewById(R.id.pager);
         mViewPager.setAdapter(new MyPagerAdapter(this.getSupportFragmentManager()));
@@ -86,7 +94,7 @@ public class MainActivity extends ActionBarActivity {
         mTabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
-                //eturn Color.WHITE;
+
                 return MainActivity.this.getResources().getColor(R.color.primary_dark);
             }
         });
@@ -203,7 +211,7 @@ public class MainActivity extends ActionBarActivity {
 
         }
 
-
+/*
         if (id == R.id.view_question) {
 
             Intent mIntent = new Intent(this, QuestionActivity.class);
@@ -220,7 +228,7 @@ public class MainActivity extends ActionBarActivity {
 
             return true;
         }
-
+*/
         if (id == R.id.add_member) {
 
             Intent mIntent = new Intent(this, MemberJoinActivity.class);
