@@ -22,7 +22,7 @@
                 android:layout_marginRight="5dp"
                 android:src="@drawable/defaultprofile"
                 app:border_color="@color/primary_light"
-                app:border_width="2dp"
+                app:border_width="1dp"
                 android:clickable="true"/>
 
             <TextView

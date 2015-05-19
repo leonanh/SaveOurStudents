@@ -41,9 +41,8 @@ public class MainActivity extends AppCompatActivity {
 
     com.rey.material.widget.FloatingActionButton fab;
 
-    int ICONS[] = {R.drawable.ic_settings_black_24dp,R.drawable.ic_exit_to_app_black_24dp, R.drawable.ic_help_black_24dp};
-    String TITLES[] = {"Profile","Logout","Help"};
-    int PROFILEIMAGE = R.drawable.defaultprofile;
+    int ICONS[] = {R.drawable.ic_person_black_24dp,R.drawable.ic_exit_to_app_black_24dp, R.drawable.ic_settings_black_24dp};
+    String TITLES[] = {"Profile","Logout","Settings"};
 
 
     SharedPreferences sharedPref;
@@ -61,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         sharedPref = getSharedPreferences(
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
-        if(!sharedPref.contains("first_name")){
+        if(!sharedPref.contains("first_name")){//Your not logged in. Go to login activity
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         }
@@ -99,8 +98,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        SharedPreferences sharedPref = getSharedPreferences(
-                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.RecyclerView); // Assigning the RecyclerView Object to the xml View
 
