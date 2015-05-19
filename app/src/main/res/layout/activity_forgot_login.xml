@@ -50,14 +50,16 @@
 
     <Button
         android:id="@+id/send_credentials_to_email_btn"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="80dp"
+        android:layout_marginRight="80dp"
         android:text="@string/send_email_prompt"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:textColor="@color/primary_text"
         android:layout_alignParentBottom="true"
-        android:textSize="@dimen/textview_font_size"
-        android:background="@color/primary_light"
+        android:background="@color/primary_light" />
 
-        android:elevation="5dp" />
 
     <TextView
         android:layout_width="wrap_content"
