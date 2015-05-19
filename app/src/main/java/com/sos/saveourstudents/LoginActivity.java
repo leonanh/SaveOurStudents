@@ -74,7 +74,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
     LoginManager loginManager;
     ImageView fbLogin;
     String facebookEmail;
-
+    String userImageUrl;
 
     //GCM
     public static final String PROPERTY_REG_ID = "registration_id";
@@ -225,6 +225,8 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
 
                 if(currentProfile != null && !isLogging){
+
+                    userImageUrl = currentProfile.getProfilePictureUri(100, 100).toString(); //TODO send with create user
                     isLogging = true;
                     createSOSUser("facebook",
                             currentProfile.getFirstName(),
@@ -518,6 +520,8 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
             //Need email, deviceId
 
 
+            //System.out.println("getImage: " + );
+            userImageUrl = currentPerson.getImage().getUrl(); //TODO send with create user
             String firstName = currentPerson.getName().getGivenName();
             String lastName = currentPerson.getName().getFamilyName();
             String userId = currentPerson.getId();
@@ -525,6 +529,10 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
 
             //prompt.setText("Welcome, " + firstName + " " + lastName);
+
+
+
+
 
             createSOSUser("google", firstName, lastName, userId, email);
 
@@ -677,7 +685,8 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                         editor.putString("first_name", response.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("first_name"));
                         editor.putString("last_name", response.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("last_name"));
                         editor.putString("email", response.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("email"));
-                        editor.putString("image", response.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("image"));
+                        //editor.putString("image", response.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("image"));
+                        editor.putString("image", userImageUrl);//TODO FIX
                         editor.putString("user_id", response.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("user_id"));
                         editor.putString("provider", provider);
                         editor.commit();

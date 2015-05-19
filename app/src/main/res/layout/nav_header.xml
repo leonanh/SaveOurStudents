@@ -46,7 +46,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/user_image"
         app:border_color="@color/primary_light"
-        app:border_width="2dp"
+        app:border_width="1dp"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:src="@drawable/defaultprofile"

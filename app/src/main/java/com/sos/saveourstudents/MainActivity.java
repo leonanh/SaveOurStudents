@@ -99,12 +99,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
+        SharedPreferences sharedPref = getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.RecyclerView); // Assigning the RecyclerView Object to the xml View
 
         mRecyclerView.setHasFixedSize(true);                            // Letting the system know we wont change the size of the list
-        mAdapter = new NavDrawerAdapter(TITLES, ICONS, "Name","Email", PROFILEIMAGE);
+
+        String name = sharedPref.getString("first_name", "") + " "+ sharedPref.getString("last_name", "");
+        mAdapter = new NavDrawerAdapter(TITLES, ICONS, name, sharedPref.getString("email", "email"), sharedPref.getString("image", "image"));//PROFILEIMAGE
 
 
         mRecyclerView.setAdapter(mAdapter);                              // Setting the adapter to RecyclerView

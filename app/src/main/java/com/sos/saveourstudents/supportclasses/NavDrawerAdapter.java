@@ -8,7 +8,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.sos.saveourstudents.R;
+import com.sos.saveourstudents.Singleton;
 
 public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.ViewHolder> {
 
@@ -20,8 +23,11 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
     private int mIcons[];       // Int Array to store the passed icons resource value from MainActivity.java
 
     private String name;        //String Resource for header View Name
-    private int profile;        //int Resource for header view profile picture
+    //private int profile;        //int Resource for header view profile picture
+    private String userImageUrl;
     private String email;       //String Resource for header view email
+
+
 
 
     // Creating a ViewHolder which extends the RecyclerView View Holder
@@ -60,13 +66,14 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
     }
 
 
-    public NavDrawerAdapter(String Titles[], int Icons[], String Name, String Email, int Profile) { // MyAdapter Constructor with titles and icons parameter
+    public NavDrawerAdapter(String Titles[], int Icons[], String Name, String Email, String userImageUrl ) { //int Profile MyAdapter Constructor with titles and icons parameter
         // titles, icons, name, email, profile pic are passed from the main activity as we
         mNavTitles = Titles;
         mIcons = Icons;
         name = Name;
         email = Email;
-        profile = Profile;
+        this.userImageUrl = userImageUrl;
+
 
     }
 
@@ -102,9 +109,11 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
             holder.imageView.setImageResource(mIcons[position - 1]);// Settimg the image with array of our icons
         } else {
 
-            holder.profile.setImageResource(profile);           // Similarly we set the resources for header view
-            //holder.name.setText(name);
-            //holder.email.setText(email);
+            System.out.println("UserImage url: "+userImageUrl);
+            //holder.profile.setImageResource(profile);           // Similarly we set the resources for header view
+            getUserImage(userImageUrl, holder.profile);
+            holder.name.setText(name);
+            holder.email.setText(email);
         }
     }
 
@@ -126,6 +135,35 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
 
     private boolean isPositionHeader(int position) {
         return position == 0;
+    }
+
+
+    private void getUserImage(String imageUrl, final ImageView imageView){
+
+
+
+        ImageLoader imageLoader = Singleton.getInstance().getImageLoader();
+        // If you are using normal ImageView
+        imageLoader.get(imageUrl, new ImageLoader.ImageListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //Log.e(TAG, "Image Load Error: " + error.getMessage());
+            }
+            @Override
+            public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
+                if (response.getBitmap() != null) {
+
+                    imageView.setImageBitmap(response.getBitmap());
+                    //TODO imageview.setImageBitmap(response.getBitmap());
+                }
+                else{
+                    // Default image...
+                }
+            }
+        });
+
+
+
     }
 
 }
