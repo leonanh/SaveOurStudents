@@ -199,45 +199,19 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-            ///return true;
-        }
-        else if (id == R.id.action_filter) {
 
+        if (id == R.id.action_filter) {
 
             FragmentTransaction ft = getFragmentManager().beginTransaction();
-
             DialogFragment newFragment = new TagDialogFragment(this, 0);
-
             newFragment.show(getSupportFragmentManager(), "");
 
-
         }
 
-/*
-        if (id == R.id.view_question) {
-
-            Intent mIntent = new Intent(this, QuestionActivity.class);
-            mIntent.putExtra("type", 0);
-            startActivity(mIntent);
-            return true;
-        }
-
-        if (id == R.id.edit_question) {
-
-            Intent mIntent = new Intent(this, QuestionActivity.class);
-            mIntent.putExtra("type", 1);
-            startActivity(mIntent);
-
-            return true;
-        }
-*/
-        if (id == R.id.add_member) {
+        else if (id == R.id.add_member) {
 
             Intent mIntent = new Intent(this, MemberJoinActivity.class);
             startActivity(mIntent);
-
-            return true;
         }
 
         return super.onOptionsItemSelected(item);

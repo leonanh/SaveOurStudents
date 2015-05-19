@@ -695,7 +695,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                         Intent mainActivity = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(mainActivity);
                         finish();
-                    } else if (response.getString("success").equalsIgnoreCase("1") && response.getString("expectResults").equalsIgnoreCase("0")) {
+                    } else if (response.getString("success").equalsIgnoreCase("1") && response.getString("expectResults").equalsIgnoreCase("0")) {//TODO this check is not correct
                         prompt = Toast.makeText(appContext, "Invalid login!", Toast.LENGTH_SHORT);//TODO: Use R String
                         prompt.show();
                     }else{

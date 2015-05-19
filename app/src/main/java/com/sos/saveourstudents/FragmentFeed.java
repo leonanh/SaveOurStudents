@@ -9,7 +9,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,7 +19,6 @@ import android.widget.TextView;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.balysv.materialripple.MaterialRippleLayout;
 
@@ -91,7 +89,7 @@ public class FragmentFeed extends Fragment {
         /**
          * Image Request Example
          */
-
+/*
         String urlimage = "http://i01.i.aliimg.com/img/pb/487/830/416/416830487_639.jpg";
         ImageLoader imageLoader = Singleton.getInstance().getImageLoader();
         // If you are using normal ImageView
@@ -108,7 +106,7 @@ public class FragmentFeed extends Fragment {
                 }
             }
         });
-
+*/
 
 
 
