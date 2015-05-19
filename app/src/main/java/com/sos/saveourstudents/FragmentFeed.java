@@ -255,10 +255,10 @@ public class FragmentFeed extends Fragment {
                 viewHolder.nameText.setText(firstName + " " + lastName);
 
                 //System.out.println("date: " + Singleton.getInstance().doDateLogic(theDate));
-                viewHolder.questionText.setText(topic + ": "+text);
+                viewHolder.questionText.setText(text);
 
                 viewHolder.dateText.setText(Singleton.getInstance().doDateLogic(theDate));
-
+                viewHolder.topicText.setText(topic);
 
 
 
@@ -281,6 +281,7 @@ public class FragmentFeed extends Fragment {
             public TextView questionText;
             public TextView nameText;
             public TextView dateText;
+            public TextView topicText;
             public TextView distanceText;
             private MaterialRippleLayout rippleView;
 
@@ -291,6 +292,7 @@ public class FragmentFeed extends Fragment {
                 questionText = (TextView) itemView.findViewById(R.id.question_text);
                 nameText = (TextView) itemView.findViewById(R.id.name_text);
                 dateText = (TextView) itemView.findViewById(R.id.timestamp_text);
+                topicText = (TextView) itemView.findViewById(R.id.topic_text);
                 //distanceText = (TextView) itemView.findViewById(R.id.question_text);
                 userImage = (ImageView) itemView.findViewById(R.id.user_image);
                 rippleView = (MaterialRippleLayout) itemView.findViewById(R.id.ripple);
