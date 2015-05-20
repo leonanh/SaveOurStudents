@@ -89,9 +89,9 @@ public class FragmentFeed extends Fragment {
         /**
          * Image Request Example
          */
-         /*
+/*
         String urlimage = "http://i01.i.aliimg.com/img/pb/487/830/416/416830487_639.jpg";
-        //ImageLoader imageLoader = Singleton.getInstance().getImageLoader();
+        ImageLoader imageLoader = Singleton.getInstance().getImageLoader();
         // If you are using normal ImageView
         imageLoader.get(urlimage, new ImageLoader.ImageListener() {
             @Override
@@ -106,7 +106,7 @@ public class FragmentFeed extends Fragment {
                 }
             }
         });
-        */
+*/
 
 
 

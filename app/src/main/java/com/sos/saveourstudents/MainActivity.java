@@ -41,9 +41,8 @@ public class MainActivity extends AppCompatActivity {
 
     com.rey.material.widget.FloatingActionButton fab;
 
-    int ICONS[] = {R.drawable.ic_settings_black_24dp,R.drawable.ic_exit_to_app_black_24dp, R.drawable.ic_help_black_24dp};
-    String TITLES[] = {"Profile","Logout","Help"};
-    int PROFILEIMAGE = R.drawable.defaultprofile;
+    int ICONS[] = {R.drawable.ic_person_black_24dp,R.drawable.ic_exit_to_app_black_24dp, R.drawable.ic_settings_black_24dp};
+    String TITLES[] = {"Profile","Logout","Settings"};
 
 
     SharedPreferences sharedPref;
@@ -61,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         sharedPref = getSharedPreferences(
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
-        if(!sharedPref.contains("first_name")){
+        if(!sharedPref.contains("first_name")){//Your not logged in. Go to login activity
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         }
@@ -100,11 +99,12 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
         mRecyclerView = (RecyclerView) findViewById(R.id.RecyclerView); // Assigning the RecyclerView Object to the xml View
 
         mRecyclerView.setHasFixedSize(true);                            // Letting the system know we wont change the size of the list
-        mAdapter = new NavDrawerAdapter(TITLES, ICONS, "Name","Email", PROFILEIMAGE);
+
+        String name = sharedPref.getString("first_name", "") + " "+ sharedPref.getString("last_name", "");
+        mAdapter = new NavDrawerAdapter(TITLES, ICONS, name, sharedPref.getString("email", "email"), sharedPref.getString("image", "image"));//PROFILEIMAGE
 
 
         mRecyclerView.setAdapter(mAdapter);                              // Setting the adapter to RecyclerView
@@ -196,45 +196,19 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-            ///return true;
-        }
-        else if (id == R.id.action_filter) {
 
+        if (id == R.id.action_filter) {
 
             FragmentTransaction ft = getFragmentManager().beginTransaction();
-
             DialogFragment newFragment = new TagDialogFragment(this, 0);
-
             newFragment.show(getSupportFragmentManager(), "");
 
-
         }
 
-/*
-        if (id == R.id.view_question) {
-
-            Intent mIntent = new Intent(this, QuestionActivity.class);
-            mIntent.putExtra("type", 0);
-            startActivity(mIntent);
-            return true;
-        }
-
-        if (id == R.id.edit_question) {
-
-            Intent mIntent = new Intent(this, QuestionActivity.class);
-            mIntent.putExtra("type", 1);
-            startActivity(mIntent);
-
-            return true;
-        }
-*/
-        if (id == R.id.add_member) {
+        else if (id == R.id.add_member) {
 
             Intent mIntent = new Intent(this, MemberJoinActivity.class);
             startActivity(mIntent);
-
-            return true;
         }
 
         return super.onOptionsItemSelected(item);

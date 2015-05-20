@@ -12,11 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -33,14 +35,16 @@ import org.json.JSONObject;
 public class FragmentCreateQuestion extends Fragment implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener,
         Response.Listener, Response.ErrorListener {
 
+    private SharedPreferences sharedPref;
     private Context mContext;
     public GoogleApiClient mGoogleApiClient;
     LocationRequest mLocationRequest;
     Location mCurrentLocation;
 
     private EditText questionEditText, topicEditText;
-
+    private ImageView userImage;
     private ImageView sendButton, addTagsButton;
+    private TextView userName;
     LayoutInflater inflater;
     ViewGroup flowLayout;
     View rootView;
@@ -53,6 +57,9 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
         mContext = this.getActivity();
         this.inflater = inflater;
 
+        sharedPref = mContext.getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
         rootView = inflater.inflate(R.layout.fragment_create_question, container,
                 false);
 
@@ -62,15 +69,17 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
         addTagsButton = (ImageView) rootView.findViewById(R.id.add_tag_button);
         addTagsButton.setOnClickListener(this);
 
+        userName = (TextView) rootView.findViewById(R.id.question_name_text);
         questionEditText = (EditText) rootView.findViewById(R.id.question_edit_text);
         topicEditText = (EditText) rootView.findViewById(R.id.topic_edit_text);
-
+        userImage = (ImageView) rootView.findViewById(R.id.question_image);
 
         buildGoogleApiClient();
 
 
-        //If edit, get question info from server
-        //If create, set variables to null
+        String name = sharedPref.getString("first_name", "") + " "+ sharedPref.getString("last_name", "");
+        userName.setText(name);
+        getUserImage(sharedPref.getString("image", "image"), userImage);
 
 
         return rootView;
@@ -294,4 +303,34 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
     public void onResponse(Object response) {
 
     }
+
+
+
+    private void getUserImage(String imageUrl, final ImageView imageView){
+
+
+
+        ImageLoader imageLoader = Singleton.getInstance().getImageLoader();
+        // If you are using normal ImageView
+        imageLoader.get(imageUrl, new ImageLoader.ImageListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //Log.e(TAG, "Image Load Error: " + error.getMessage());
+            }
+            @Override
+            public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
+                if (response.getBitmap() != null) {
+
+                    imageView.setImageBitmap(response.getBitmap());
+                    //TODO imageview.setImageBitmap(response.getBitmap());
+                }
+                else{
+                    // Default image...
+                }
+            }
+        });
+
+    }
+
+
 }

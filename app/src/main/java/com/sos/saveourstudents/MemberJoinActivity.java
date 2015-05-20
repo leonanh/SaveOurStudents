@@ -1,12 +1,18 @@
 package com.sos.saveourstudents;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
+import com.rey.material.widget.FloatingActionButton;
 
 
 /**
@@ -14,8 +20,8 @@ import android.widget.TextView;
  */
 public class MemberJoinActivity extends Activity implements View.OnClickListener{
 
-    Button acceptButton;
-    Button declineButton;
+    FloatingActionButton acceptButton;
+    FloatingActionButton declineButton;
     RelativeLayout userProfile;
 
     @Override
@@ -23,8 +29,20 @@ public class MemberJoinActivity extends Activity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.member_join_layout);
 
-        Student enteringStudent = new Student("Brady", "Shi", 0, "UCSD", "Computer Engineering",
+
+        SharedPreferences sharedPref = getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
+
+        //String name = sharedPref.getString("first_name", "") + " "+ sharedPref.getString("last_name", "");
+
+        Student enteringStudent = new Student(sharedPref.getString("first_name", ""), sharedPref.getString("last_name", ""), 0, "UCSD", "Computer Engineering",
                 "Coffee Addict", null);
+
+
+
+
+
 
         TextView joiningMemberName = (TextView) findViewById(R.id.member_name);
         joiningMemberName.setText(enteringStudent.getFirstName());
@@ -35,9 +53,12 @@ public class MemberJoinActivity extends Activity implements View.OnClickListener
         TextView memberInfoMajor = (TextView) findViewById(R.id.joining_member_major);
         memberInfoMajor.setText(enteringStudent.getMajor());
 
+        ImageView userImage = (ImageView) findViewById(R.id.joining_member_image);
+        getUserImage(sharedPref.getString("image", ""), userImage);
+
         userProfile = (RelativeLayout) findViewById(R.id.joining_member_info);
-        acceptButton = (Button) findViewById(R.id.member_accept_button);
-        declineButton = (Button) findViewById(R.id.member_decline_button);
+        acceptButton = (FloatingActionButton) findViewById(R.id.accept_fab);
+        declineButton = (FloatingActionButton) findViewById(R.id.decline_fab);
 
         userProfile.setOnClickListener(this);
         acceptButton.setOnClickListener(this);
@@ -68,6 +89,36 @@ public class MemberJoinActivity extends Activity implements View.OnClickListener
             startActivity(new Intent(this, ProfileActivity.class));
             finish();
         }
+    }
+
+
+
+    private void getUserImage(String imageUrl, final ImageView imageView){
+
+
+
+        ImageLoader imageLoader = Singleton.getInstance().getImageLoader();
+        // If you are using normal ImageView
+        imageLoader.get(imageUrl, new ImageLoader.ImageListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //Log.e(TAG, "Image Load Error: " + error.getMessage());
+            }
+            @Override
+            public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
+                if (response.getBitmap() != null) {
+
+                    imageView.setImageBitmap(response.getBitmap());
+                    //TODO imageview.setImageBitmap(response.getBitmap());
+                }
+                else{
+                    // Default image...
+                }
+            }
+        });
+
+
+
     }
 
 

@@ -1,26 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_gravity="center"
-    android:background="#29000000">
+    android:background="@android:color/white">
 
-    <View
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_centerInParent="true"
-        android:id="@+id/anchor"
-        android:layout_marginTop="-27dp"/>
+
+
+
 
     <RelativeLayout
-        android:layout_marginTop="10dp"
-        android:id="@+id/joining_member_info"
-        android:layout_gravity="center"
+        android:id="@+id/dialog"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/joining_member_info"
+        android:background="@color/primary"
+        android:elevation="2dp"
+        >
+
+        <com.sos.saveourstudents.supportclasses.CustomTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="User"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="70dp"
+            android:textColor="@android:color/white"
+            android:id="@+id/member_name"
+            />
+
+        <com.sos.saveourstudents.supportclasses.CustomTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="would like to join your group!"
+            android:id="@+id/join_text"
+            android:layout_below="@+id/member_name"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="10dp"/>
+
+
+
+
+
+    </RelativeLayout>
+
+
+<!--
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/cardview_light_background"
-        android:layout_above="@id/anchor">
+        android:background="@android:color/white"
+        android:layout_centerInParent="true" >
+-->
+
+    <RelativeLayout
+        android:layout_marginTop="25dp"
+        android:id="@+id/joining_member_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:layout_centerInParent="true">
 
         <de.hdodenhof.circleimageview.CircleImageView
             xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -32,20 +76,20 @@
             android:layout_marginRight="10dp"
             android:src="@drawable/defaultprofile"
             app:border_color="@color/primary_light"
-            app:border_width="4dp" />
+            app:border_width="2dp" />
 
-        <TextView
+        <com.sos.saveourstudents.supportclasses.CustomTextView
             android:id="@+id/joining_member_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
             android:text="My Name"
             android:textSize="21sp"
             android:textColor="@android:color/black"
             android:layout_toRightOf="@id/joining_member_image"
+            android:layout_alignTop="@+id/joining_member_image"
             android:textIsSelectable="false" />
 
-        <TextView
+        <com.sos.saveourstudents.supportclasses.CustomTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="3dp"
@@ -58,67 +102,71 @@
             android:layout_below="@id/joining_member_name"
              />
 
-
-
-    </RelativeLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="would like to join your group!"
-        android:id="@+id/join_text"
-        android:layout_above="@id/joining_member_info"
-        android:layout_centerInParent="true"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="User"
-        android:id="@+id/member_name"
-        android:layout_above="@id/join_text"
-        android:layout_centerHorizontal="true"
-        />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/member_join_button_layout"
-        android:layout_below="@id/joining_member_info">
+        <!--
 
         <LinearLayout
             android:layout_height="wrap_content"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:id="@+id/decline_button_layout"
-            android:orientation="vertical">
+            android:layout_width="match_parent"
+            android:layout_weight="2"
+            android:orientation="horizontal"
+            android:layout_below="@+id/joining_member_image"
+            >
 
             <com.rey.material.widget.Button
                 style="@style/Material.Drawable.Ripple.Touch"
                 android:id="@+id/member_decline_button"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="Decline"
                 app:rd_enable="true"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_height="wrap_content"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:id="@+id/accept_button_layout"
-            android:orientation="vertical">
 
             <com.rey.material.widget.Button
                 style="@style/Material.Drawable.Ripple.Touch"
                 android:id="@+id/member_accept_button"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="Accept"
                 app:rd_enable="true"/>
+
         </LinearLayout>
-    </LinearLayout>
+
+-->
+
+
+
+    </RelativeLayout>
+
+
+    <com.rey.material.widget.FloatingActionButton
+        style="@style/Material.Widget.FloatingActionButton.Light"
+        android:id="@+id/accept_fab"
+        android:layout_width="@dimen/fab_icon_size"
+        android:layout_height="@dimen/fab_icon_size"
+        android:layout_alignParentRight="true"
+        android:layout_alignBottom="@+id/dialog"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="-28dp"
+        app:fab_iconSrc="@drawable/ic_check_white_24dp"
+        app:fab_backgroundColor="@color/accent"
+        app:fab_elevation="2dp"
+        android:elevation="2dp"
+        />
+
+    <com.rey.material.widget.FloatingActionButton
+        style="@style/Material.Widget.FloatingActionButton.Light"
+        android:id="@+id/decline_fab"
+        android:layout_width="@dimen/fab_icon_size"
+        android:layout_height="@dimen/fab_icon_size"
+        android:layout_alignBottom="@+id/dialog"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="-28dp"
+        app:fab_iconSrc="@drawable/ic_clear_white_24dp"
+        app:fab_backgroundColor="@color/accent"
+        app:fab_elevation="2dp"
+        android:layout_toLeftOf="@+id/accept_fab"
+        android:elevation="2dp"
+        />
+
 </RelativeLayout>
