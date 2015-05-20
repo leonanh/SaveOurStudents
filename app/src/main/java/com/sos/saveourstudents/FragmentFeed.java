@@ -1,6 +1,7 @@
 package com.sos.saveourstudents;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.balysv.materialripple.MaterialRippleLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -87,9 +89,9 @@ public class FragmentFeed extends Fragment {
         /**
          * Image Request Example
          */
-         /*
+/*
         String urlimage = "http://i01.i.aliimg.com/img/pb/487/830/416/416830487_639.jpg";
-        //ImageLoader imageLoader = Singleton.getInstance().getImageLoader();
+        ImageLoader imageLoader = Singleton.getInstance().getImageLoader();
         // If you are using normal ImageView
         imageLoader.get(urlimage, new ImageLoader.ImageListener() {
             @Override
@@ -104,7 +106,7 @@ public class FragmentFeed extends Fragment {
                 }
             }
         });
-        */
+*/
 
 
 
@@ -253,10 +255,10 @@ public class FragmentFeed extends Fragment {
                 viewHolder.nameText.setText(firstName + " " + lastName);
 
                 //System.out.println("date: " + Singleton.getInstance().doDateLogic(theDate));
-                viewHolder.questionText.setText(topic + ": "+text);
+                viewHolder.questionText.setText(text);
 
                 viewHolder.dateText.setText(Singleton.getInstance().doDateLogic(theDate));
-
+                viewHolder.topicText.setText(topic);
 
 
 
@@ -264,19 +266,7 @@ public class FragmentFeed extends Fragment {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-			/*
-			Counter counter = counters.get(i);
-			viewHolder.counterName.setText(counter.name);
-			viewHolder.counterIncrement.setText(counter.increment+"");
-			viewHolder.counterTotal.setText(counter.total+"");
-			int color = CounterManager.getInstance().getCounters().get(i).color;
-			viewHolder.rippleView.setRippleColor(color);
-			viewHolder.counterName.setTextColor(color);
-			viewHolder.counterIncrement.setTextColor(color);
-			viewHolder.counterTotal.setTextColor(color);
-			viewHolder.upArrow.setColorFilter(color);
-			viewHolder.downArrow.setColorFilter(color);
-			*/
+
 
         }
 
@@ -285,14 +275,15 @@ public class FragmentFeed extends Fragment {
             return mQuestionList.length();
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder implements View.OnTouchListener {
+        public class ViewHolder extends RecyclerView.ViewHolder implements View.OnTouchListener, View.OnClickListener {
 
             public ImageView userImage;
             public TextView questionText;
             public TextView nameText;
             public TextView dateText;
+            public TextView topicText;
             public TextView distanceText;
-            //private RippleView rippleView;
+            private MaterialRippleLayout rippleView;
 
 
             //Declare views here, dont fill them
@@ -301,28 +292,38 @@ public class FragmentFeed extends Fragment {
                 questionText = (TextView) itemView.findViewById(R.id.question_text);
                 nameText = (TextView) itemView.findViewById(R.id.name_text);
                 dateText = (TextView) itemView.findViewById(R.id.timestamp_text);
+                topicText = (TextView) itemView.findViewById(R.id.topic_text);
                 //distanceText = (TextView) itemView.findViewById(R.id.question_text);
-                //userImage = (ImageView) itemView.findViewById(R.id.question_text);
-                //rippleView = (RippleView) itemView.findViewById(R.id.more);
-                //rippleView.setOnTouchListener(this);
-
+                userImage = (ImageView) itemView.findViewById(R.id.user_image);
+                rippleView = (MaterialRippleLayout) itemView.findViewById(R.id.ripple);
+                rippleView.setOnTouchListener(this);
+                userImage.setOnClickListener(this);
+                nameText.setOnClickListener(this);
 
             }
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
-                /*
-                if(v ==  rippleView && event.getAction() == MotionEvent.ACTION_UP){
-                    System.out.println("Clicked Question");
-
+                if(v == rippleView && event.getAction() == MotionEvent.ACTION_UP){
+                    Intent mIntent = new Intent(mContext, QuestionActivity.class);
+                    mIntent.putExtra("type", 0);
+                    startActivity(mIntent);
                 }
-*/
+
 
 
                 return false;
             }
 
+            @Override
+            public void onClick(View v) {
+                //System.out.println("Clicked: "+v);
+                if(v == nameText || v == userImage){
+                    startActivity(new Intent(mContext, ProfileActivity.class));
+
+                }
+            }
         }
 
     }

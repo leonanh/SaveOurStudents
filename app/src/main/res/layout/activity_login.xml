@@ -10,6 +10,7 @@
         android:layout_height="@dimen/login_screen_main_logo"
         android:layout_alignParentStart="false"
         android:src="@drawable/logo_placeholder"
+        android:background="@color/primary"
         android:layout_alignParentRight="false"
         android:paddingTop="@dimen/container_padding" />
 
@@ -18,13 +19,15 @@
         android:layout_below="@id/login_logo"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:background="@color/primary"
         android:text="@string/app_name"
+        android:textColor="@color/primary_text1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
         android:gravity="center_horizontal"
         android:textSize="@dimen/textview_font_size"
-        android:paddingBottom="@dimen/container_padding" />
+        android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding_material"/>
 
     <LinearLayout
-        android:background="@color/primary"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_below="@id/login_logo_label"
@@ -35,37 +38,41 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/login_logo_label"
+        android:layout_marginTop="@dimen/abc_edit_text_inset_top_material"
+        android:padding="@dimen/abc_text_size_body_2_material"
         android:ems="10"
         android:hint="@string/username_hint"
         android:inputType="textPersonName"
         android:gravity="center"
-        android:layout_margin="@dimen/container_padding" />
+        />
 
     <EditText
         android:id="@+id/password_textfield"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/username_textfield"
+        android:padding="@dimen/abc_text_size_body_1_material"
         android:ems="10"
         android:gravity="center|center_horizontal"
         android:hint="@string/password_hint"
         android:inputType="textPassword"
-        android:layout_marginLeft="@dimen/container_padding"
-        android:layout_marginRight="@dimen/container_padding"
-        android:layout_marginBottom="@dimen/container_padding" />
+        />
 
     <Button
         android:id="@+id/login_btn"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/password_textfield"
+        android:paddingTop="@dimen/abc_button_padding_vertical_material"
+        android:paddingBottom="@dimen/abc_button_padding_vertical_material"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
         android:text="@string/login"
-        android:background="@color/primary_light"
+        android:background="@color/primary"
         android:layout_marginBottom="@dimen/container_padding"
-        android:textSize="30dp"
-        android:textColor="@color/primary_dark"
-        android:translationZ="5dp"
-        android:elevation="5dp" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:textColor="@color/primary_text1" />
+
 
     <ImageView
         android:id="@+id/facebook_login_btn"
@@ -90,31 +97,31 @@
 
     <TextView
         android:id="@+id/signup_btn"
-        android:textSize="@dimen/textview_font_size"
+        android:textSize="@dimen/abc_text_size_body_1_material"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/sign_up"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
         android:layout_alignParentEnd="false"
         android:layout_alignParentStart="false"
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="@dimen/container_padding"
         android:layout_marginBottom="@dimen/container_padding"
-        android:textColor="@color/primary_text1" />
+        android:textColor="@color/primary_dark" />
 
     <TextView
         android:id="@+id/forgot_login_btn"
-        android:textSize="@dimen/textview_font_size"
+        android:textSize="@dimen/abc_text_size_body_1_material"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/forgot_login"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginRight="@dimen/container_padding"
         android:layout_marginBottom="@dimen/container_padding"
-        android:textColor="@color/primary_text1" />
+        android:textColor="@color/primary_dark" />
 
 </RelativeLayout>

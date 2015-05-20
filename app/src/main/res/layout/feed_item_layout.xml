@@ -63,11 +63,12 @@
                 android:layout_toLeftOf="@+id/timestamp_text"
                 />
 
+
             <View
                 android:id="@+id/divider"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_below="@+id/tag_container"
+                android:layout_below="@+id/topic_text"
                 android:background="@color/divider_color"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
@@ -101,7 +102,7 @@
                 android:layout_marginRight="15dp"
                 />
 
-
+<!--
             <LinearLayout
                 android:id="@+id/tag_container"
                 android:layout_width="match_parent"
@@ -111,35 +112,24 @@
                 android:layout_marginLeft="15dp"
                 android:layout_marginBottom="5dp"
                 android:gravity="right">
+-->
 
 
-                <com.sos.saveourstudents.supportclasses.CustomTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:text="#UCSD"
-                    android:textColor="@color/primary_dark"
-                    android:textSize="12sp"
-                    android:layout_alignTop="@+id/name_text"
-                    android:layout_alignBottom="@+id/name_text"
-                    android:gravity="center"
-                    android:layout_marginRight="15dp"
-                    />
 
                 <com.sos.saveourstudents.supportclasses.CustomTextView
-                    android:layout_width="wrap_content"
+                    android:id="@+id/topic_text"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_below="@+id/user_image"
                     android:text="#cse110"
                     android:textColor="@color/primary_dark"
                     android:textSize="12sp"
-                    android:layout_alignTop="@+id/name_text"
-                    android:layout_alignBottom="@+id/name_text"
-                    android:gravity="center"
                     android:layout_marginRight="15dp"
+                    android:layout_marginBottom="5dp"
+                    android:gravity="right"
                     />
 
-            </LinearLayout>
+
 
             <!--    MOVE somewhere else
                         <com.sos.saveourstudents.supportclasses.CustomTextView
