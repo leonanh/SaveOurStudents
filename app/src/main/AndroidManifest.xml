@@ -68,7 +68,7 @@
             android:windowSoftInputMode="stateVisible|adjustResize"/>
 
 
-        <activity android:name=".MemberJoinActivity"/>
+        <activity android:name=".MemberJoinActivity" android:theme="@android:style/Theme.Dialog"/>
 
 
 

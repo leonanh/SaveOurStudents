@@ -1,7 +1,9 @@
 package com.sos.saveourstudents;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -33,6 +35,7 @@ import java.util.Set;
 @SuppressLint("ValidFragment")
 public class TagDialogFragment extends DialogFragment implements View.OnClickListener {
 
+    private NoticeDialogListener mListener;
     final int SEARCH_FILTERS = 0;
     final int QUESTION_FILTERS = 1;
     int dialogType;
@@ -48,12 +51,16 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
 
 
 
+    public interface NoticeDialogListener {
+        void passTagList(DialogFragment dialog, Set<String> activeFilters);
+    }
+
     public TagDialogFragment(Context context, int dialogType) {
         mContext = context;
         this.dialogType = dialogType;
 
 
-
+        //If calling this dialog from mainActivity
         if(dialogType == SEARCH_FILTERS){
             SharedPreferences sharedPref = mContext.getSharedPreferences(
                     mContext.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
@@ -70,8 +77,9 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
 
             }
 
-        }
+        }//If calling this dialog from createQuestion
         else if(dialogType == QUESTION_FILTERS){
+
             activeFilters = new HashSet();
 
         }
@@ -84,10 +92,28 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
         super.onCreate(savedInstanceState);
 
         setStyle(DialogFragment.STYLE_NO_TITLE, 1);
+        if(getArguments() != null && getArguments().containsKey("list")){
+            //System.out.println("list: "+ getArguments().getStringArrayList("list"));
+            activeFilters.addAll(getArguments().getStringArrayList("list"));
 
-
-
+        }
     }
+
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+
+        try {
+            mListener = (NoticeDialogListener) getTargetFragment();
+        } catch (ClassCastException e) {
+            throw new ClassCastException(getTargetFragment().toString()
+                    + " must implement NoticeDialogListener");
+        }
+        //((NoticeDialogListener)getTargetFragment()).onDialogPositiveClick(this);
+    }
+
 
     @Override
     public void onResume() {
@@ -101,7 +127,7 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
 
         //System.out.println(dispMetrics.widthPixels +" , "+dispMetrics.heightPixels);
         params.width = (int) (metrics.widthPixels * (.8));//ViewGroup.LayoutParams.MATCH_PARENT;
-        params.height = (int) (metrics.heightPixels * .7);
+        params.height = (int) (metrics.heightPixels * .8);
         getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
 
 
@@ -278,6 +304,7 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
             //System.out.println("v is selected: " + v.isSelected());
             //Add tag to selected list
             addTagToActiveList(editText.getText().toString());
+            editText.setText("");
         }
         else if(v.getId() == R.id.active_tag_text){
             TextView temp = (TextView) v;
@@ -332,7 +359,7 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
 
 
         updateActiveTagsUI();
-
+        updatePopularTagsUI();
 
     }
 
@@ -374,6 +401,16 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
         updateActiveTagsUI();
         updatePopularTagsUI();
     }
+
+
+    @Override
+    public void onDismiss(final DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if(dialogType == QUESTION_FILTERS)
+            ((NoticeDialogListener)getTargetFragment()).passTagList(this, activeFilters);
+
+    }
+
 
 
 }

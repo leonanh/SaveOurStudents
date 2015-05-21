@@ -47,87 +47,87 @@
                 android:layout_marginTop="10dp"
                 android:src="@drawable/defaultprofile" />
 
-            <com.sos.saveourstudents.supportclasses.CustomTextView
-                android:id="@+id/name_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_toRightOf="@+id/user_image"
-                android:text="Elon Musk"
-                android:textColor="@color/primary_text"
-                android:textIsSelectable="false"
-                android:textSize="18sp"
-                android:layout_alignTop="@+id/user_image"
-                android:layout_alignBottom="@+id/user_image"
-                android:gravity="center_vertical"
-                android:layout_toLeftOf="@+id/timestamp_text"
-                />
+
 
 
             <View
                 android:id="@+id/divider"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_below="@+id/topic_text"
+                android:layout_below="@+id/linear_layout"
                 android:background="@color/divider_color"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
+                android:layout_marginTop="5dp"
                 />
 
 
 
-        <com.sos.saveourstudents.supportclasses.CustomTextView
+        <TextView
                 android:id="@+id/question_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/divider"
-                android:layout_margin="15dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="15dp"
+                android:layout_marginTop="10dp"
                 android:ellipsize="end"
                 android:text="Max acceleration was 6X gravity, altitude 1187m, lateral distance 1202m and velocity 155 m/s. Main chutes deployed 970m."
                 android:textColor="@color/primary_text" />
 
 
 
-            <com.sos.saveourstudents.supportclasses.CustomTextView
+        <TextView
                 android:id="@+id/timestamp_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:text="3h"
-                android:textColor="@color/secondary_text"
-                android:textSize="12sp"
-                android:layout_alignTop="@+id/name_text"
-                android:layout_alignBottom="@+id/name_text"
-                android:gravity="center"
-                android:layout_marginRight="15dp"
-                />
-
-<!--
-            <LinearLayout
-                android:id="@+id/tag_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_below="@+id/user_image"
-                android:layout_marginLeft="15dp"
-                android:layout_marginBottom="5dp"
-                android:gravity="right">
--->
+                android:layout_alignParentRight="true"
+                android:layout_toRightOf="@+id/linear_layout"
+                android:text="3h"
+                android:textColor="@color/secondary_text"
+                android:layout_alignTop="@+id/linear_layout"
+                android:layout_alignBottom="@+id/linear_layout"
+                android:gravity="right"
+                android:layout_marginRight="15dp"
+                android:padding="5dp" />
+
+        <LinearLayout
+            android:id="@+id/linear_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:weightSum="2"
+            android:orientation="vertical"
+            android:layout_alignBottom="@+id/user_image"
+            android:layout_alignTop="@+id/user_image"
+            android:layout_toRightOf="@+id/user_image">
 
 
 
-                <com.sos.saveourstudents.supportclasses.CustomTextView
-                    android:id="@+id/topic_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/user_image"
-                    android:text="#cse110"
-                    android:textColor="@color/primary_dark"
-                    android:textSize="12sp"
-                    android:layout_marginRight="15dp"
-                    android:layout_marginBottom="5dp"
-                    android:gravity="right"
-                    />
+            <TextView
+                android:id="@+id/name_text"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="Elon Musk"
+                android:textColor="@color/primary_text"
+                android:gravity="center_vertical"
+                />
+
+            <TextView
+                android:id="@+id/topic_text"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="Topic"
+                android:textColor="@color/primary_dark"
+                android:gravity="center_vertical" />
+
+
+
+        </LinearLayout>
+
+
 
 
 

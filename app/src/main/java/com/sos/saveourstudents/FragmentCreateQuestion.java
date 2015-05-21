@@ -3,14 +3,16 @@ package com.sos.saveourstudents;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Criteria;
 import android.location.Location;
-import android.net.Uri;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,13 +29,23 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.rey.material.widget.EditText;
 
-import org.json.JSONArray;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
 
 public class FragmentCreateQuestion extends Fragment implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener,
-        Response.Listener, Response.ErrorListener {
+        Response.Listener, Response.ErrorListener,TagDialogFragment.NoticeDialogListener {
+    public final int DIALOG_FRAGMENT = 1;
+
+    private ArrayList<String> tagList;
 
     private SharedPreferences sharedPref;
     private Context mContext;
@@ -43,12 +55,12 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
 
     private EditText questionEditText, topicEditText;
     private ImageView userImage;
-    private ImageView sendButton, addTagsButton;
-    private TextView userName;
+    private ImageView sendButton, addTagsButton, locationToggle, groupToggle, tutorToggle;
+    private TextView userName, requestGroupText, requestTutorText;
+    private boolean showLocation = true;
     LayoutInflater inflater;
-    ViewGroup flowLayout;
     View rootView;
-    JSONArray popularTags = null;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,15 +81,31 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
         addTagsButton = (ImageView) rootView.findViewById(R.id.add_tag_button);
         addTagsButton.setOnClickListener(this);
 
+        locationToggle = (ImageView) rootView.findViewById(R.id.location_toggle);
+        locationToggle.setOnClickListener(this);
+
+        requestGroupText = (TextView) rootView.findViewById(R.id.study_group_text);
+        requestGroupText.setOnClickListener(this);
+        groupToggle = (ImageView) rootView.findViewById(R.id.study_group_toggle);
+        groupToggle.setOnClickListener(this);
+        groupToggle.setSelected(false);
+
+        requestTutorText = (TextView) rootView.findViewById(R.id.tutor_text);
+        requestTutorText.setOnClickListener(this);
+        tutorToggle = (ImageView) rootView.findViewById(R.id.tutor_toggle);
+        tutorToggle.setOnClickListener(this);
+        tutorToggle.setSelected(false);
+
         userName = (TextView) rootView.findViewById(R.id.question_name_text);
         questionEditText = (EditText) rootView.findViewById(R.id.question_edit_text);
         topicEditText = (EditText) rootView.findViewById(R.id.topic_edit_text);
-        userImage = (ImageView) rootView.findViewById(R.id.question_image);
+        userImage = (ImageView) rootView.findViewById(R.id.question_user_image);
 
         buildGoogleApiClient();
 
+        tagList = new ArrayList<String>();
 
-        String name = sharedPref.getString("first_name", "") + " "+ sharedPref.getString("last_name", "");
+        String name = sharedPref.getString("first_name", "") + " " + sharedPref.getString("last_name", "");
         userName.setText(name);
         getUserImage(sharedPref.getString("image", "image"), userImage);
 
@@ -87,6 +115,32 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
 
     }
 
+
+    private void clickGroupButton(){
+        if(!groupToggle.isSelected()) {
+            groupToggle.setColorFilter(getResources().getColor(R.color.primary_dark));
+            requestGroupText.setTextColor(getResources().getColor(R.color.primary_dark));
+        }
+        else{
+            groupToggle.setColorFilter(getResources().getColor(R.color.hint_text));
+            requestGroupText.setTextColor(getResources().getColor(R.color.hint_text));
+        }
+        groupToggle.setSelected(!groupToggle.isSelected());
+    }
+
+    private void clickTutorButton(){
+
+        if(!tutorToggle.isSelected()) {
+            tutorToggle.setColorFilter(getResources().getColor(R.color.primary_dark));
+            requestTutorText.setTextColor(getResources().getColor(R.color.primary_dark));
+        }
+        else{
+            tutorToggle.setColorFilter(getResources().getColor(R.color.hint_text));
+            requestTutorText.setTextColor(getResources().getColor(R.color.hint_text));
+        }
+        tutorToggle.setSelected(!tutorToggle.isSelected());
+
+    }
 
     @Override
     public void onResume() {
@@ -106,48 +160,69 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        //System.out.println(v.getId() == R.id.the_linear);
-        if(v.getId() == R.id.the_linear){
 
-            System.out.println("v is selected: " + v.isSelected());
-            v.setSelected(!v.isSelected());
+        if(v == sendButton){
+            System.out.println("Location: " + mCurrentLocation);
 
-        }
-        else if(v == sendButton){
-            System.out.println("Location: "+mCurrentLocation);
-            if (!topicEditText.getText().toString().equalsIgnoreCase("")) {
-                topicEditText.clearError();
+            InputMethodManager imm = (InputMethodManager)mContext.getSystemService(
+                    Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(questionEditText.getWindowToken(), 0);
 
-                if (!questionEditText.getText().toString().equalsIgnoreCase("")) {
-                    questionEditText.clearError();
 
-                    if(mCurrentLocation != null){
-                        sendQuestionToServer();
-                        //postQuestion();
-                    }
-                    else{
-                        Toast.makeText(mContext, "Cant find location...", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    //Question edit text empty
-                    questionEditText.setError("Question is empty");
-                }
 
-            } else {
-                //Topic empty
+            boolean error = false;
+            if(topicEditText.getText().toString().equalsIgnoreCase("")) {
                 topicEditText.setError("Topic is empty");
+                error = true;
+            }
+            else{topicEditText.clearError();}
+            if(questionEditText.getText().toString().equalsIgnoreCase("")) {
+                questionEditText.setError("Question is empty");
+                error = true;
+            }
+            else{questionEditText.clearError();}
+            if(mCurrentLocation == null && showLocation){
+                Toast.makeText(mContext, "Cant find location", Toast.LENGTH_SHORT).show();
+                error = true;
+            }
+
+            if(!error){
+                sendQuestionToServer();
             }
 
 
         }
         else if(v == addTagsButton){
 
-            //TODO show tags dialog
             FragmentTransaction ft = getActivity().getFragmentManager().beginTransaction();
 
-            DialogFragment newFragment = new TagDialogFragment(mContext, 1);
+            DialogFragment newFragment = new TagDialogFragment(mContext, DIALOG_FRAGMENT);
+            newFragment.setTargetFragment(FragmentCreateQuestion.this, DIALOG_FRAGMENT);
+            Bundle listbundle = new Bundle();
+            listbundle.putStringArrayList("list", tagList);
 
+            newFragment.setArguments(listbundle);
             newFragment.show(getActivity().getSupportFragmentManager(), "");
+
+
+        }
+        else if(v == locationToggle){
+            if(showLocation){
+                locationToggle.setImageDrawable(getResources().getDrawable(R.drawable.ic_location_off_grey600_36dp));
+            }
+            else{
+                locationToggle.setImageDrawable(getResources().getDrawable(R.drawable.ic_location_on_grey600_36dp));
+            }
+
+            showLocation = !showLocation;
+        }
+        else if(v == groupToggle || v == requestGroupText){
+            clickGroupButton();
+
+
+        }
+        else if(v == tutorToggle || v == requestTutorText){
+            clickTutorButton();
 
 
         }
@@ -159,45 +234,55 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
 
     private void sendQuestionToServer(){
 
-        SharedPreferences sharedPref = mContext.getSharedPreferences(
-                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
-        String userId = sharedPref.getString("user_id", "");
+        double latitude = 0.0;
+        double longitude = 0.0;
 
+        if (mCurrentLocation == null) {
+            if (getLastKnownLocation() != null) {
+                System.out.println("Using last known location, which is not current. So its probably wrong.");
+                mCurrentLocation = getLastKnownLocation();
+                latitude = mCurrentLocation.getLatitude();
+                longitude = mCurrentLocation.getLongitude();
+            } else {
+                if (showLocation) {
+                    System.out.println("Error getting current or last known location. Unable to send this post");
+                    Toast.makeText(mContext, "Unable to send this post", Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
 
+                }
 
-/*
-        String filterListFix = "";
-
-        if(myList.size() == 0){
-            //Dont use any filters. Just return all questions in range
-        } else {//Use filters
-            for (int a = 0; a < myList.size(); a++) {
-                filterListFix = filterListFix + "&tags=" + myList.get(a);
             }
         }
-        */
-
-        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createQuestion";
-
-
-        String uri = Uri.parse("http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createQuestion")
-                .buildUpon()
-                .appendQueryParameter("userId", "39uo830mgaqfbmctt6j9tkt8ab")
-                .appendQueryParameter("latitude", mCurrentLocation.getLatitude()+"")
-                .appendQueryParameter("longitude", mCurrentLocation.getLongitude()+"")
-                .appendQueryParameter("text", questionEditText.getText().toString())
-                .appendQueryParameter("tags", "UCSD")
-                .appendQueryParameter("tutor", "0")
-                .appendQueryParameter("studygroup", "1")
-                .appendQueryParameter("topic", topicEditText.getText().toString())
-
-                .build().toString();
-
-        System.out.println("URI: "+uri);
+        else{
+            latitude = mCurrentLocation.getLatitude();
+            longitude = mCurrentLocation.getLongitude();
+        }
 
 
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, uri,
+        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        params.add(new BasicNameValuePair("userId", sharedPref.getString("user_id", "")));
+        params.add(new BasicNameValuePair("latitude", latitude+""));
+        params.add(new BasicNameValuePair("longitude", longitude + ""));
+        params.add(new BasicNameValuePair("text", questionEditText.getText().toString()));
+
+        for (int a = 0; a < tagList.size(); a++) {
+            params.add(new BasicNameValuePair("tags", tagList.get(a)));
+        }
+        params.add(new BasicNameValuePair("tutor", (tutorToggle.isSelected() ? 1 : 0)+""));
+        params.add(new BasicNameValuePair("studygroup", (groupToggle.isSelected() ? 1 : 0)+""));
+        params.add(new BasicNameValuePair("topic", topicEditText.getText().toString()));
+
+
+        String paramString = URLEncodedUtils.format(params, "utf-8").replace("+", "%20");
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createQuestion?"+paramString;
+
+
+        System.out.println("url: " + url);
+
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
                 (JSONObject)null,
                 new Response.Listener<JSONObject>(){
 
@@ -231,8 +316,6 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
         });
 
 
-
-        // Access the RequestQueue through your singleton class.
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
 
 
@@ -308,8 +391,6 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
 
     private void getUserImage(String imageUrl, final ImageView imageView){
 
-
-
         ImageLoader imageLoader = Singleton.getInstance().getImageLoader();
         // If you are using normal ImageView
         imageLoader.get(imageUrl, new ImageLoader.ImageListener() {
@@ -317,18 +398,48 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
             public void onErrorResponse(VolleyError error) {
                 //Log.e(TAG, "Image Load Error: " + error.getMessage());
             }
+
             @Override
             public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
                 if (response.getBitmap() != null) {
 
                     imageView.setImageBitmap(response.getBitmap());
                     //TODO imageview.setImageBitmap(response.getBitmap());
-                }
-                else{
+                } else {
                     // Default image...
                 }
             }
         });
+
+    }
+
+
+    private Location getLastKnownLocation() {
+
+        LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+
+        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+        if (location != null) {
+            return location;
+        }
+
+        return null;
+    }
+
+
+    @Override
+    public void passTagList(DialogFragment dialog, Set<String> activeFilters) {
+        System.out.println("activeFilters: "+activeFilters.toString());
+        if(activeFilters.size() > 0 ){
+            tagList.clear();
+            tagList.addAll(activeFilters);
+            addTagsButton.setColorFilter(getResources().getColor(R.color.primary_dark));
+        }
+        else{
+            tagList.clear();
+            addTagsButton.setColorFilter(getResources().getColor(R.color.hint_text));
+        }
 
     }
 
