@@ -1,19 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-<android.support.v7.widget.CardView
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/card_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:layout_marginTop="5dp"
-        card_view:cardCornerRadius="0dp"
-        card_view:cardElevation="0dp"
-        card_view:cardUseCompatPadding="false">
--->
+
+
     <com.balysv.materialripple.MaterialRippleLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/ripple"
         android:layout_width="match_parent"
@@ -70,8 +59,8 @@
                 android:layout_below="@+id/divider"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
-                android:layout_marginBottom="15dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
                 android:ellipsize="end"
                 android:text="Max acceleration was 6X gravity, altitude 1187m, lateral distance 1202m and velocity 155 m/s. Main chutes deployed 970m."
                 android:textColor="@color/primary_text" />
@@ -80,17 +69,17 @@
 
         <TextView
                 android:id="@+id/timestamp_text"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_toRightOf="@+id/linear_layout"
                 android:text="3h"
                 android:textColor="@color/secondary_text"
                 android:layout_alignTop="@+id/linear_layout"
                 android:layout_alignBottom="@+id/linear_layout"
                 android:gravity="right"
                 android:layout_marginRight="15dp"
-                android:padding="5dp" />
+                android:padding="5dp"
+                android:minWidth="40dp"/>
 
         <LinearLayout
             android:id="@+id/linear_layout"
@@ -129,7 +118,42 @@
 
 
 
+        <ImageView
+            android:id="@+id/group_icon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_group_grey600_36dp"
+            android:layout_alignTop="@+id/linear_layout"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="15dp"
+            android:layout_toLeftOf="@+id/tutor_icon"
+            android:tint="@color/primary_light"/>
 
+
+
+        <ImageView
+            android:id="@+id/tutor_icon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_school_grey600_36dp"
+            android:layout_alignTop="@+id/linear_layout"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="15dp"
+            android:padding="3dp"
+            android:layout_toLeftOf="@+id/timestamp_text"
+            android:tint="@color/hint_text_on_background"/>
+
+        <!--
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/light_primary_bg"
+            android:layout_below="@+id/question_text"
+            android:layout_marginRight="50dp"
+            android:layout_marginBottom="15dp"
+            android:layout_alignParentRight="true"
+            android:id="@+id/tutor_icon" />
+-->
 
             <!--    MOVE somewhere else
                         <com.sos.saveourstudents.supportclasses.CustomTextView
