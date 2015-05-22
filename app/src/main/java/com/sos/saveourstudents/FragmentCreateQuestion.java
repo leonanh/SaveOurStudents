@@ -322,6 +322,7 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
     }
 
 
+
     protected void startLocationUpdates() {
         LocationServices.FusedLocationApi.requestLocationUpdates(
                 mGoogleApiClient, mLocationRequest, this);

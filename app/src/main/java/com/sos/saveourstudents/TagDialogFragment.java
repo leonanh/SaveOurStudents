@@ -408,6 +408,8 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
         super.onDismiss(dialog);
         if(dialogType == QUESTION_FILTERS)
             ((NoticeDialogListener)getTargetFragment()).passTagList(this, activeFilters);
+        else
+            ((MainActivity) getActivity()).updateFragments();
 
     }
 

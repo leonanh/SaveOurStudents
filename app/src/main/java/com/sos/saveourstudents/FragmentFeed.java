@@ -114,7 +114,7 @@ public class FragmentFeed extends Fragment {
         return rootView;
     }
 
-    private void getQuestionData() {
+    public void getQuestionData() {
 
 
 
@@ -251,7 +251,7 @@ public class FragmentFeed extends Fragment {
                 String topic = mQuestionList.getJSONObject(position).getJSONObject("map").getString("topic");
                 String text = mQuestionList.getJSONObject(position).getJSONObject("map").getString("text");
 
-                System.out.println("Question " + position + ": " + mQuestionList.getJSONObject(position).getJSONObject("map"));
+                //System.out.println("Question " + position + ": " + mQuestionList.getJSONObject(position).getJSONObject("map"));
                 viewHolder.nameText.setText(firstName + " " + lastName);
 
                 //System.out.println("date: " + Singleton.getInstance().doDateLogic(theDate));
