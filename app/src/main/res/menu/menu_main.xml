@@ -33,5 +33,10 @@
         android:title="Add Member"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/view_group"
+        android:title="View Group"
+        android:showAsAction="never"
+        />
 
 </menu>

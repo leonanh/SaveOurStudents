@@ -211,6 +211,10 @@ public class MainActivity extends AppCompatActivity {
             startActivity(mIntent);
         }
 
+        else if (id == R.id.view_group) {
+            startActivity(new Intent(this, ViewGroupActivity.class));
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
