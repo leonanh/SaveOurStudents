@@ -74,14 +74,7 @@ public class FragmentFeed extends Fragment {
         });
 
 
-
-
         getQuestionData();
-
-
-
-
-
 
 
 

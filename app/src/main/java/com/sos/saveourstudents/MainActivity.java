@@ -117,7 +117,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         System.out.println("clicked " + position);
 
                         if(position == 1){
-                            startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+                            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                            intent.putExtra("userId", sharedPref.getString("user_id", ""));
+                            startActivity(intent);
+
                         }
                         else if(position == 2){
                             Intent mainActivity = new Intent(MainActivity.this, LoginActivity.class);
