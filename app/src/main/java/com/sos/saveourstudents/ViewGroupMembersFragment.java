@@ -1,13 +1,21 @@
 package com.sos.saveourstudents;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -27,12 +35,15 @@ public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
 
     private OnTutorRatingListener mListener;
 
+    private static ListView mStudentsListView;
+    private static ListView mTutorsListView;
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
      * @param studentsList Parameter 1.
-     * @param tutorsList Parameter 2.
+     * @param tutorsList   Parameter 2.
      * @return A new instance of fragment ViewGroupMembersFragment.
      */
     // TODO: Rename and change types and number of parameters
@@ -74,6 +85,24 @@ public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+
+        // Set up ListViews for Students and Tutors
+        mStudentsListView = (ListView) getActivity()
+                .findViewById(R.id.view_group_members_students_listView);
+        mTutorsListView = (ListView) getActivity()
+                .findViewById(R.id.view_group_members_tutors_listView);
+
+        mStudentsListView.setAdapter(new StudentsArrayAdapter(getActivity(),
+                mStudentsList));
+
+        // TODO: Change layout to a tutors-specific item
+        mTutorsListView.setAdapter(new TutorsArrayAdapter(getActivity(),
+                mTutorsList));
+    }
+
+    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
@@ -102,6 +131,158 @@ public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
      */
     public interface OnTutorRatingListener {
         public void onTutorRatingInteraction(boolean rating);
+    }
+
+    /**
+     * Array adapter to be used with the Students ListView
+     */
+    private class StudentsArrayAdapter extends ArrayAdapter<Student> {
+        HashMap<Student, Integer> mIdMap;
+
+        public StudentsArrayAdapter(Context context,
+                                    List<Student> objects) {
+            super(context, 0, objects);
+            mIdMap = new HashMap<>();
+
+            for (int i = 0; i < objects.size(); i++) {
+                mIdMap.put(objects.get(i), i);
+            }
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            Student currStudentMember = getItem(position);
+            if (convertView == null) {
+                convertView = LayoutInflater.from(getContext())
+                        .inflate(R.layout.view_group_members_student_layout, parent, false);
+            }
+
+            ((TextView) convertView.findViewById(R.id.student_firstName))
+                    .setText(currStudentMember.getFirstName());
+            ((TextView) convertView.findViewById(R.id.student_lastName))
+                    .setText(currStudentMember.getLastName());
+
+            return convertView;
+        }
+    }
+
+    /**
+     * Array adapter to be used with the Tutors ListView
+     * Incorporates Thumbs Up/Down functionality
+     */
+    private class TutorsArrayAdapter extends ArrayAdapter<Student> {
+        private HashMap<Student, Integer> mIdMap;
+        private final int mThumbsUpButtonGreyId = R.drawable.ic_thumb_up_grey_500_18dp;
+        private final int mThumbsUpButtonBlueId = R.drawable.ic_thumb_up_light_blue_500_18dp;
+        private final int mThumbsDownButtonGreyId = R.drawable.ic_thumb_down_grey_500_18dp;
+        private final int mThumbsDownButtonRedId = R.drawable.ic_thumb_down_red_400_18dp;
+
+        public TutorsArrayAdapter(Context context, List<Student> objects) {
+            super(context, 0, objects);
+            mIdMap = new HashMap<>();
+
+            for (int i = 0; i < objects.size(); i++) {
+                mIdMap.put(objects.get(i), i);
+            }
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return mIdMap.get(getItem(position));
+        }
+
+        /**
+         * Sets up the view for the ListView
+         * @param position The position of the current item in the ListView
+         * @param convertView The view of the current item in the ListView
+         * @param parent The ListView
+         * @return convertView after setup
+         */
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            Student currStudentMember = getItem(position);
+            if (convertView == null) {
+                convertView = LayoutInflater.from(getContext())
+                        .inflate(R.layout.view_group_members_tutors_layout, parent, false);
+            }
+
+            ((TextView) convertView.findViewById(R.id.tutor_firstName))
+                    .setText(currStudentMember.getFirstName());
+            ((TextView) convertView.findViewById(R.id.tutor_lastName))
+                    .setText(currStudentMember.getLastName());
+
+            ImageButton mThumbsUpButton =
+                    ((ImageButton) convertView.findViewById(R.id.view_group_members_thumbs_up));
+            ImageButton mThumbsDownButton =
+                    ((ImageButton) convertView.findViewById(R.id.view_group_members_thumbs_down));
+            setUpThumbsUpButton(mThumbsUpButton, mThumbsDownButton);
+            setUpThumbsDownButton(mThumbsUpButton, mThumbsDownButton);
+
+            return convertView;
+        }
+
+        // TODO: Set up Thumbs Up/Down functionality for database rating updates
+        private void setUpThumbsUpButton(final ImageButton mThumbsUpButton,
+                                         final ImageButton mThumbsDownButton) {
+            mThumbsUpButton.setTag(false);
+            mThumbsUpButton.setImageResource(mThumbsUpButtonGreyId);
+            mThumbsUpButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.v("ThumbsUp", "onClick");
+                    // Thumbs Up Button is not clicked
+                    if ((Boolean) mThumbsUpButton.getTag() == false) {
+                        Log.v("ThumbsUp", "SettingLightBlue");
+                        mThumbsUpButton
+                                .setImageResource(mThumbsUpButtonBlueId);
+                        mThumbsUpButton.setTag(true);
+                        // Case 2 - Thumbs down button is currently clicked
+                        if ((Boolean) mThumbsDownButton.getTag() == true) {
+                            mThumbsDownButton
+                                    .setImageResource(mThumbsDownButtonGreyId);
+                            mThumbsDownButton.setTag(false);
+                        }
+                    }
+                    // Thumbs Up Button is currently clicked
+                    else {
+                        Log.v("ThumbsUp", "SettingGrayUp");
+                        mThumbsUpButton
+                                .setImageResource(mThumbsUpButtonGreyId);
+                        mThumbsUpButton.setTag(false);
+                    }
+                }
+            });
+        }
+
+        private void setUpThumbsDownButton(final ImageButton mThumbsUpButton,
+                                           final ImageButton mThumbsDownButton) {
+            mThumbsDownButton.setTag(false);
+            mThumbsDownButton.setImageResource(mThumbsDownButtonGreyId);
+            mThumbsDownButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Thumbs Down Button is not clicked
+                    if ((Boolean) mThumbsDownButton.getTag() == false) {
+                        mThumbsDownButton
+                                .setImageResource(mThumbsDownButtonRedId);
+                        mThumbsDownButton.setTag(true);
+                        // Case 2 - Thumbs Up Button is currently clicked
+                        if ((Boolean) mThumbsUpButton.getTag() == true) {
+                            mThumbsUpButton
+                                    .setImageResource(mThumbsUpButtonGreyId);
+                            mThumbsUpButton.setTag(false);
+                        }
+                    }
+                    // Thumbs Down Button is currently clicked
+                    else {
+                        mThumbsDownButton
+                                .setImageResource(mThumbsDownButtonGreyId);
+                        mThumbsDownButton.setTag(false);
+                    }
+                }
+            });
+        }
+
     }
 
 }
