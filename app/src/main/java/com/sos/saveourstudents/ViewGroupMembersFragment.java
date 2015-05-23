@@ -1,48 +1,47 @@
 package com.sos.saveourstudents;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ViewGroupMembersFragment.OnFragmentInteractionListener} interface
+ * {@link OnTutorRatingListener} interface
  * to handle interaction events.
  * Use the {@link ViewGroupMembersFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ViewGroupMembersFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
+    private static final String ARG_LISTOFSTUDENTS = "studentsList";
+    private static final String ARG_LISTOFTUTORS = "tutorsList";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private ArrayList<Student> mStudentsList;
+    private ArrayList<Student> mTutorsList;
 
-    private OnFragmentInteractionListener mListener;
+    private OnTutorRatingListener mListener;
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param studentsList Parameter 1.
+     * @param tutorsList Parameter 2.
      * @return A new instance of fragment ViewGroupMembersFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ViewGroupMembersFragment newInstance(String param1, String param2) {
+    public static ViewGroupMembersFragment newInstance(ArrayList<Student> studentsList,
+                                                       ArrayList<Student> tutorsList) {
         ViewGroupMembersFragment fragment = new ViewGroupMembersFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putParcelableArrayList(ARG_LISTOFSTUDENTS, studentsList);
+        args.putParcelableArrayList(ARG_LISTOFTUTORS, tutorsList);
         fragment.setArguments(args);
         return fragment;
     }
@@ -55,8 +54,8 @@ public class ViewGroupMembersFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mStudentsList = getArguments().getParcelableArrayList(ARG_LISTOFSTUDENTS);
+            mTutorsList = getArguments().getParcelableArrayList(ARG_LISTOFTUTORS);
         }
     }
 
@@ -67,10 +66,10 @@ public class ViewGroupMembersFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_view_group_members, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    // TODO: Hook method into UI event
+    public void onTutorRating(boolean rating) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onTutorRatingInteraction(rating);
         }
     }
 
@@ -78,10 +77,10 @@ public class ViewGroupMembersFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnFragmentInteractionListener) activity;
+            mListener = (OnTutorRatingListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnTutorRatingListener");
         }
     }
 
@@ -101,9 +100,8 @@ public class ViewGroupMembersFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+    public interface OnTutorRatingListener {
+        public void onTutorRatingInteraction(boolean rating);
     }
 
 }
