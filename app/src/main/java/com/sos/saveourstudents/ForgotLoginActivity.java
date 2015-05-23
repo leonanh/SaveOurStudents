@@ -2,6 +2,7 @@ package com.sos.saveourstudents;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
@@ -95,25 +96,20 @@ public class ForgotLoginActivity extends Activity implements View.OnClickListene
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    // Parsing json object response
-                    // response will be json object
-                    System.out.println("Response: " + response);
-                    //String email = response.getString("email");
 
                     if(response.getString("expectResults").equalsIgnoreCase("0")) {
-                        emaildne = Toast.makeText(appContext, "Email DNE!", Toast.LENGTH_SHORT);
+                        emaildne = Toast.makeText(appContext, R.string.invalidEmail, Toast.LENGTH_SHORT);
                         emaildne.show();
                         //System.out.println("debug");
                     } else if (response.getString("success").equalsIgnoreCase("1")) {
                         //email exists
-                        emailsent = Toast.makeText(appContext, "Email sent!", Toast.LENGTH_SHORT);
+                        emailsent = Toast.makeText(appContext, R.string.emailSent, Toast.LENGTH_SHORT);
                         emailsent.show();
+                        Intent loginActivity = new Intent(ForgotLoginActivity.this, LoginActivity.class);
+                        startActivity(loginActivity);
+                        finish();
 
-                        //System.out.println("Success!!!!!!@!@!@!@1");
-                        //Intent loginActivity = new Intent(this, LoginActivity.class);
-                        //startActivity(loginActivity);
-                        //finish();
-
+                        return;
                     }
 
                 } catch (JSONException e) {
@@ -131,13 +127,8 @@ public class ForgotLoginActivity extends Activity implements View.OnClickListene
 
         });
 
-
-
         Singleton.getInstance().addToRequestQueue(jsonObjReq);
 
     }
-
-
-
 
 }

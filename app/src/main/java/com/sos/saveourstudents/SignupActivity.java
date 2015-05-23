@@ -60,7 +60,7 @@ public class SignupActivity extends Activity implements View.OnClickListener {
         String passwordInput2;
         String firstName;
         String lastName;
-        //TODO JSON NOT WORKING!!!
+
         if (v == signUpBtn) {
 
             emailInput1 = emailInput.getText().toString();
@@ -101,25 +101,19 @@ public class SignupActivity extends Activity implements View.OnClickListener {
 
                                     if(response.getString("success").equalsIgnoreCase("1")){
                                         // Sign Up successful
-                                        System.out.println("Signed Up successfully");
                                         Intent loginActivity = new Intent(SignupActivity.this, LoginActivity.class);
                                         startActivity(loginActivity);
                                         finish();
-                                        /*
-                                        //Error getting data
-                                        System.out.println("First if");*/
+
                                         return;
                                     } else {
-                                        //No results to show (empty array returned)
+                                        //Failed to Sign Up b/c email is taken
                                         emailInput.setError("Email is taken");
-                                        System.out.println("2nd if");
-                                        response.getJSONObject("result").getJSONArray("myArrayList");
+                                        //response.getJSONObject("result").getJSONArray("myArrayList");
                                     }
-
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-
                             }
                         }, new Response.ErrorListener() {
 
