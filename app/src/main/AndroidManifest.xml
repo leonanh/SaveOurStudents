@@ -55,20 +55,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+      
 
 
 
-        <activity  android:name=".LoginActivity"/>
+        <activity android:name=".LoginActivity"/>
 
         <activity android:name=".SignupActivity"/>
 
         <activity android:name=".ForgotLoginActivity"/>
 
         <activity android:name=".QuestionActivity"
-            android:windowSoftInputMode="stateVisible|adjustResize"/>
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
 
 
         <activity android:name=".MemberJoinActivity"/>
+
+        <activity android:name=".SettingsActivity"/>
+
 
 
 
@@ -102,18 +106,22 @@
 
         <service android:name=".supportclasses.GcmIntentService" />
 
-
-
-
-
         <activity
             android:name=".ProfileActivity"
             android:label="@string/title_activity_profile"
-            android:windowSoftInputMode="adjustPan"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="adjustPan" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".ViewGroupActivity"
+            android:label="@string/title_activity_view_group"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.sos.saveourstudents.MainActivity" />
         </activity>
     </application>
 

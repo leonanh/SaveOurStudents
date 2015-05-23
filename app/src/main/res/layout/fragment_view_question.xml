@@ -12,7 +12,7 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/question_image"
+            android:id="@+id/question_user_image"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginLeft="5dp"
@@ -31,7 +31,7 @@
             android:text="My Name"
             android:textSize="18sp"
             android:textColor="@android:color/black"
-            android:layout_toRightOf="@+id/question_image"
+            android:layout_toRightOf="@+id/question_user_image"
             android:textIsSelectable="false" />
 
         <TextView
@@ -43,7 +43,7 @@
             android:layout_marginTop="1dp"
             android:textSize="12sp"
             android:text="3 hours ago"
-            android:layout_toRightOf="@+id/question_image"/>
+            android:layout_toRightOf="@+id/question_user_image"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -61,7 +61,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@android:color/black"
-            android:layout_below="@+id/question_image"
+            android:layout_below="@+id/question_user_image"
             android:layout_marginTop="5dp"
             android:layout_marginRight="5dp"
             android:layout_marginLeft="5dp"
