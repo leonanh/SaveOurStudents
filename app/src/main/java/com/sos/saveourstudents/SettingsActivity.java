@@ -1,6 +1,8 @@
 package com.sos.saveourstudents;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,25 +13,36 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.rey.material.widget.Slider;
+
 /**
  * Created by Xian on 5/19/2015.
  */
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Button doneButton;
-    boolean emailChanged = false;
-    boolean passwordChanged = false;
-    boolean distanceChanged = false;
-    Toast confirmation;
+    Validations validations = new Validations();
     Context appContext;
     Toolbar toolbar;
-    EditText emailField;
-    EditText passwordField;
-    TextView emailConfirmation;
-    TextView passwordConfirmation;
     TextView distanceConfirmation;
+    SharedPreferences sharedPref;
+    String email;
+    String curPassword;
+    String enteredPW;
+    String enteredPW2;
+    int currdistance;
+    int newdistance;
+    Slider distanceSlider;
+    Button emailButton;
+    Button passwordButton;
+    EditText newEmail;
+    EditText password;
+    EditText newPassword;
+    EditText newPasswordReEnter;
+    boolean validEmail;
+    boolean validPassword;
+    TextView currDistanceDisplay;
 
-    private SharedPreferences sharedPref;
+    Toast prompt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,55 +50,123 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         setContentView(R.layout.application_settings);
         appContext = getApplicationContext();
 
-        emailField = (EditText) findViewById(R.id.change_email);
-        passwordField = (EditText) findViewById(R.id.change_password);
-        emailConfirmation = (TextView) findViewById(R.id.email_confirmation);
-        passwordConfirmation = (TextView) findViewById(R.id.password_confirmation);
-        distanceConfirmation = (TextView) findViewById(R.id.distance_confirmation);
-
-        toolbar = (Toolbar) findViewById(R.id.settings_toolbar);
-        toolbar.setTitle("Settings");
-        setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_18dp);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
         sharedPref = getSharedPreferences(
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
-        /*TODO*/
-        /* Set confirmation text to green and set text to X changed if valid change
-         * Otherwise set confirmation to red and set text to Invalid X
-         * Remove hardcoded text in xml (used to see location of textview)
-         *
-         * Get input checks to see if email/pw/distance was changed
-         */
-        doneButton = (Button) findViewById(R.id.settings_save_button);
-        doneButton.setOnClickListener(this);
+        distanceSlider = (Slider) findViewById(R.id.distance_slider);
+        currDistanceDisplay = (TextView) findViewById(R.id.current_distance);
+        distanceConfirmation = (TextView) findViewById(R.id.distance_confirmation);
+        emailButton = (Button) findViewById(R.id.change_email);
+        passwordButton = (Button) findViewById(R.id.change_password);
+
+        toolbar = (Toolbar) findViewById(R.id.settings_toolbar);
+
+            toolbar.setTitle(R.string.app_name);
+            setSupportActionBar(toolbar);
+            toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_18dp);
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
+
+        currdistance = sharedPref.getInt("distance", 1);
+
+        currDistanceDisplay.setText(currdistance+"");
+        distanceSlider.setPosition(currdistance, true);
+        distanceSlider.setValue(currdistance, true);
+        distanceSlider.setOnPositionChangeListener(new Slider.OnPositionChangeListener() {
+            @Override
+            public void onPositionChanged(Slider slider, float oldPos, float newPos, int oldValue, int newValue) {
+                currDistanceDisplay.setText(newValue+"");
+            }
+
+        });
+
+
+
+        emailButton.setOnClickListener(this);
+        passwordButton.setOnClickListener(this);
     }
 
+    @Override
     public void onClick(View v) {
-        if(v == doneButton) {
-            if (emailChanged) {
-                //Update email database
-                confirmation = Toast.makeText(appContext, "Setting changed", Toast.LENGTH_SHORT);
-                confirmation.show();
+       /* if(v == distanceSlider)
+        {
+            newdistance = (int)distanceSlider.getPosition();
+            currDistanceDisplay.setText(newdistance);
+            if(newdistance != currdistance)
+            {
+                distanceConfirmation.setText("Distance Changed");
+                distanceConfirmation.setTextColor(R.color.green);
             }
-            if (passwordChanged) {
-                //Update password database
-                confirmation = Toast.makeText(appContext, "Setting changed", Toast.LENGTH_SHORT);
-                confirmation.show();
-            }
-            if (distanceChanged) {
-                //Update distance database
-                confirmation = Toast.makeText(appContext, "Setting changed", Toast.LENGTH_SHORT);
-                confirmation.show();
-            }
-            finish();
+
+        }*/
+        if(v == emailButton) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Change Email");
+            newEmail = new EditText(this);
+            newEmail.setHint("New Email");
+            builder.setView(newEmail);
+            builder.setPositiveButton("Change Email", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    email = newEmail.getText().toString();
+                    validEmail = verifyEmail(email);
+                    if(validEmail) {
+                        // change with server
+                        prompt = Toast.makeText(appContext, "Email Changed", Toast.LENGTH_SHORT);
+                        prompt.show();
+                    }
+                    else
+                    {
+                        //toast invalid email
+                        prompt = Toast.makeText(appContext, "Invalid Email", Toast.LENGTH_SHORT);
+                        prompt.show();
+                    }
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // go back
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
         }
+        if(v == passwordButton) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Change Password");
+            password = new EditText(this);
+            password.setHint("Current Password");
+            builder.setView(password);
+            newPassword = new EditText(this);
+            newPassword.setHint("New Password");
+            builder.setView(newPassword);
+            newPasswordReEnter= new EditText(this);
+            newPasswordReEnter.setHint("Re-enter New Password");
+            builder.setView(newPasswordReEnter);
+            builder.setPositiveButton("Change Email", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    curPassword = password.getText().toString();
+                    enteredPW = newPassword.getText().toString();
+                    enteredPW2 = newPasswordReEnter.getText().toString();
+                    validPassword = true;
+                    prompt = Toast.makeText(appContext, "Password Changed", Toast.LENGTH_SHORT);
+                    prompt.show();
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // go back
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+    }
+
+    private boolean verifyEmail(String incomingEmail) {
+        return validations.testEmailSignUp(incomingEmail);
     }
 }
