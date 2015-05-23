@@ -26,7 +26,7 @@ import com.sos.saveourstudents.supportclasses.SlidingTabLayout;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private boolean fabShowing = true;
+    private boolean fabShowing = false;
 
     ViewPager mViewPager;
     SlidingTabLayout mTabs;
@@ -69,16 +69,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toolbar toolbar = (Toolbar) findViewById(R.id.the_toolbar);
         setSupportActionBar(toolbar);
 
-
         fab = (com.rey.material.widget.FloatingActionButton) findViewById(R.id.fab_image);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent mIntent = new Intent(MainActivity.this, QuestionActivity.class);
-                mIntent.putExtra("type", 1);
-                startActivity(mIntent);
-            }
-        });
+
+        hideFab();
+        buildFab();
+
+
 
         mViewPager = (ViewPager) this.findViewById(R.id.pager);
         viewPagerAdapter = new MyPagerAdapter(this.getSupportFragmentManager());
@@ -253,8 +249,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        System.out.println("clicked tabs: ");
+        //System.out.println("clicked tabs: ");
     }
+
+
+    private void buildFab(){
+
+
+        //TODO Does user have active question?
+
+        //TODO Show fab
+        showFab();
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent mIntent = new Intent(MainActivity.this, QuestionActivity.class);
+                mIntent.putExtra("type", 1);
+                startActivity(mIntent);
+            }
+        });
+
+
+
+
+    }
+
+
 }
 
 
