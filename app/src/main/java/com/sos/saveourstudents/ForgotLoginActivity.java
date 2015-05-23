@@ -2,7 +2,6 @@ package com.sos.saveourstudents;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,7 +10,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -70,22 +68,26 @@ public class ForgotLoginActivity extends Activity implements View.OnClickListene
             }
 
             //TODO: Add database validation
-            doRetrieveInfo();
+            doRetrieveInfo(emailentry.getText().toString());
 
-            emailsent = Toast.makeText(appContext, "Email sent!", Toast.LENGTH_SHORT);
-            emailsent.show();
+            //emailsent = Toast.makeText(appContext, "Email sent!", Toast.LENGTH_SHORT);
+            //emailsent.show();
+            /*
             Intent loginActivity = new Intent(this, LoginActivity.class);
             startActivity(loginActivity);
-            finish();
+            finish();*/
         }
     }
 
     private void doRetrieveInfo(final String email)
     {
         //find the valid url
-        String url = "http://53.200.33.91:8080/com.mysql.services/rest/serviceclass/forgotPassword?" +
-                "&email" + emailInput;
+        //http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getQuestions
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/forgotPassword?" +
+                "email=" + email;
 
+
+        System.out.println("Url: "+url);
         final JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url,
                 (JSONObject) null, new Response.Listener<JSONObject>() {
             @Override
@@ -93,15 +95,18 @@ public class ForgotLoginActivity extends Activity implements View.OnClickListene
                 try {
                     // Parsing json object response
                     // response will be json object
-                    String email = response.getString("email");
+                    System.out.println("Response: "+response);
+                    //String email = response.getString("email");
 
                     if (response.getString("success").equalsIgnoreCase("1")) {
                         //email exists
                         emailsent = Toast.makeText(appContext, "Email sent!", Toast.LENGTH_SHORT);
                         emailsent.show();
-                        Intent loginActivity = new Intent(this, LoginActivity.class);
-                        startActivity(loginActivity);
-                        finish();
+
+                        System.out.println("Success!!!!!!@!@!@!@1");
+                        //Intent loginActivity = new Intent(this, LoginActivity.class);
+                        //startActivity(loginActivity);
+                        //finish();
 
                     }else {
                         prompt = Toast.makeText(appContext, "Email DNE!", Toast.LENGTH_SHORT);
@@ -123,5 +128,12 @@ public class ForgotLoginActivity extends Activity implements View.OnClickListene
         });
 
 
+
+        Singleton.getInstance().addToRequestQueue(jsonObjReq);
+
     }
+
+
+
+
 }
