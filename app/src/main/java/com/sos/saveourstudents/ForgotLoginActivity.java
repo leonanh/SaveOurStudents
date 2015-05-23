@@ -29,6 +29,7 @@ public class ForgotLoginActivity extends Activity implements View.OnClickListene
     EditText emailentry;
     TextView errormsg;
     Toast emailsent;
+    Toast emaildne;
     Context appContext;
 
     //private String jsonResponse;
@@ -55,7 +56,7 @@ public class ForgotLoginActivity extends Activity implements View.OnClickListene
         sendEmailBtn.setOnClickListener(this);
 
         prompt = Toast.makeText(appContext, "", Toast.LENGTH_SHORT);
-        String emailInput;
+        //String emailInput;
     }
 
     @Override
@@ -70,9 +71,10 @@ public class ForgotLoginActivity extends Activity implements View.OnClickListene
             //TODO: Add database validation
             doRetrieveInfo(emailentry.getText().toString());
 
+            /*
             //emailsent = Toast.makeText(appContext, "Email sent!", Toast.LENGTH_SHORT);
             //emailsent.show();
-            /*
+
             Intent loginActivity = new Intent(this, LoginActivity.class);
             startActivity(loginActivity);
             finish();*/
@@ -95,10 +97,13 @@ public class ForgotLoginActivity extends Activity implements View.OnClickListene
                 try {
                     // Parsing json object response
                     // response will be json object
-                    System.out.println("Response: "+response);
+                    System.out.println("Response: " + response);
                     //String email = response.getString("email");
 
-                    if (response.getString("success").equalsIgnoreCase("1")) {
+                    if(response.getString("expectedResults").equalsIgnoreCase("0")) {
+                        emaildne = Toast.makeText(appContext, "Email DNE!", Toast.LENGTH_SHORT);
+                        emaildne.show();
+                    } else if (response.getString("success").equalsIgnoreCase("1")) {
                         //email exists
                         emailsent = Toast.makeText(appContext, "Email sent!", Toast.LENGTH_SHORT);
                         emailsent.show();
@@ -108,8 +113,6 @@ public class ForgotLoginActivity extends Activity implements View.OnClickListene
                         //startActivity(loginActivity);
                         //finish();
 
-                    }else {
-                        prompt = Toast.makeText(appContext, "Email DNE!", Toast.LENGTH_SHORT);
                     }
 
                 } catch (JSONException e) {

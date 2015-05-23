@@ -23,6 +23,16 @@ public class Validations  {
     public static final int INCORRECT_LENGTH_BOT = 2;
     public static final int VALIDATION_PASSED = 3;
 
+    public boolean testFirstLast(String incomingFirstLast) {
+        if (incomingFirstLast.length() > FIRST_LAST_MAX_LENGTH) {
+            return false;
+        } else if (incomingFirstLast.length() < 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     public boolean testEmailSignUp(String incomingEmail) {
         boolean isValid = false;
 

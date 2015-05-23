@@ -179,7 +179,7 @@ public class SignupActivity extends Activity implements View.OnClickListener {
 
 
     private boolean verifyFirstLast(String incomingFirstLast) {
-        boolean firstLastIsValid = validations.testEmailSignUp(incomingFirstLast);
+        boolean firstLastIsValid = validations.testFirstLast(incomingFirstLast);
 
         if (firstLastIsValid == false) {
             return false;
