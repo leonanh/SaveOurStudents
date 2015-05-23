@@ -30,7 +30,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     String enteredPW;
     String enteredPW2;
     int currdistance;
-    int newdistance;
     Slider distanceSlider;
     Button emailButton;
     Button passwordButton;
@@ -40,6 +39,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     EditText newPasswordReEnter;
     boolean validEmail;
     boolean validPassword;
+    boolean correctPassword;
     TextView currDistanceDisplay;
 
     Toast prompt;
@@ -61,15 +61,15 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
         toolbar = (Toolbar) findViewById(R.id.settings_toolbar);
 
-            toolbar.setTitle(R.string.app_name);
-            setSupportActionBar(toolbar);
-            toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_18dp);
-            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    finish();
-                }
-            });
+        toolbar.setTitle(R.string.app_name);
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_18dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         currdistance = sharedPref.getInt("distance", 1);
 
@@ -80,6 +80,11 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onPositionChanged(Slider slider, float oldPos, float newPos, int oldValue, int newValue) {
                 currDistanceDisplay.setText(newValue+"");
+                if(newValue != oldValue)
+                {
+                    distanceConfirmation.setText("Distance Changed");
+                    distanceConfirmation.setTextColor(getResources().getColor(R.color.green));
+                }
             }
 
         });
@@ -92,17 +97,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onClick(View v) {
-       /* if(v == distanceSlider)
-        {
-            newdistance = (int)distanceSlider.getPosition();
-            currDistanceDisplay.setText(newdistance);
-            if(newdistance != currdistance)
-            {
-                distanceConfirmation.setText("Distance Changed");
-                distanceConfirmation.setTextColor(R.color.green);
-            }
-
-        }*/
         if(v == emailButton) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Change Email");
@@ -151,9 +145,18 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                     curPassword = password.getText().toString();
                     enteredPW = newPassword.getText().toString();
                     enteredPW2 = newPasswordReEnter.getText().toString();
-                    validPassword = true;
-                    prompt = Toast.makeText(appContext, "Password Changed", Toast.LENGTH_SHORT);
-                    prompt.show();
+                    correctPassword = true; // TODO check if password is correct
+                    validPassword = verifyPassword(enteredPW, enteredPW2);
+                    if(validPassword && correctPassword)
+                    {
+                        prompt = Toast.makeText(appContext, "Password Changed", Toast.LENGTH_SHORT);
+                        prompt.show();
+                    }
+                    else
+                    {
+                        //toast invalid email
+                        prompt.show();
+                    }
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -168,5 +171,30 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     private boolean verifyEmail(String incomingEmail) {
         return validations.testEmailSignUp(incomingEmail);
+    }
+
+    private boolean verifyPassword(String incomingPass1, String incomingPass2) {
+        int verifyPassword1 = validations.testPass(incomingPass1, incomingPass2);
+
+
+        if (verifyPassword1 == Validations.INCORRECT_LENGTH_TOP) {
+            prompt = Toast.makeText(appContext, "Invalid Password Length", Toast.LENGTH_SHORT);
+            return false;
+        }
+
+        if ( verifyPassword1 == Validations.INCORRECT_LENGTH_BOT) {
+            prompt = Toast.makeText(appContext, "Invalid Password Length", Toast.LENGTH_SHORT);
+            return false;
+        }
+
+        if (verifyPassword1 == Validations.REPEAT_NOT_SAME){
+            prompt = Toast.makeText(appContext, "Passwords Do Not Match", Toast.LENGTH_SHORT);
+            return false;
+        }
+
+        if (verifyPassword1 == Validations.VALIDATION_PASSED) {
+            return true;
+        }
+        return true;
     }
 }
