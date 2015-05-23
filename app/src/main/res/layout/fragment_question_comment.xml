@@ -22,13 +22,12 @@
             android:layout_height="match_parent"
             ripple:rv_color="@color/primary">
 -->
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/question_image"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:layout_marginLeft="5dp"
+                android:layout_marginLeft="8dp"
                 android:layout_marginTop="5dp"
-                android:layout_marginRight="5dp"
                 android:src="@drawable/defaultprofile"/>
 
 
@@ -36,9 +35,10 @@
                 android:id="@+id/question_name_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
+                android:layout_alignTop="@id/question_image"
+                android:layout_marginLeft="8dp"
                 android:text="My Name"
-                android:textSize="15sp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                 android:textColor="@color/primary_dark"
                 android:layout_toRightOf="@+id/question_image"
                 android:textIsSelectable="false"
@@ -49,11 +49,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/black"
+                android:layout_marginTop="4dp"
+                android:layout_marginRight="14dp"
+                android:layout_marginBottom="8dp"
                 android:layout_below="@+id/question_name_text"
-                android:layout_toRightOf="@+id/question_image"
-                android:layout_margin="1dp"
+                android:layout_alignLeft="@id/question_name_text"
                 android:text="Let's have an all nighter in the dungeon! I'll grab my laptop and we can pair program"
-                android:textSize="13sp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:ellipsize="end" />
 
 
@@ -62,12 +64,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/time_dist_hint"
-                android:textSize="12sp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                android:layout_marginRight="8dp"
                 android:layout_alignParentRight="true"
                 android:text="3h"
-                android:layout_alignBottom="@+id/question_name_text" />
+                android:layout_alignTop="@+id/question_name_text" />
 
 <!--
         </com.andexert.library.RippleView>
