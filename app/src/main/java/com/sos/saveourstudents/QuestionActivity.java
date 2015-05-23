@@ -2,19 +2,12 @@ package com.sos.saveourstudents;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.LinearLayout.LayoutParams;
-
-import com.sos.saveourstudents.supportclasses.FlowLayout;
 
 
-public class QuestionActivity extends ActionBarActivity {
+public class QuestionActivity extends AppCompatActivity {
 
     //int a = 0;
     Fragment theFragToShow;

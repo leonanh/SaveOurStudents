@@ -14,7 +14,7 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/question_image"
+                android:id="@+id/question_user_image"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginLeft="5dp"
@@ -25,6 +25,9 @@
                 app:border_width="1dp"
                 android:clickable="true"/>
 
+
+
+
             <TextView
                 android:id="@+id/question_name_text"
                 android:layout_width="match_parent"
@@ -33,21 +36,76 @@
                 android:text="My Name"
                 android:textSize="18sp"
                 android:textColor="@android:color/black"
-                android:layout_toRightOf="@+id/question_image"
+                android:layout_toRightOf="@+id/question_user_image"
                 android:textIsSelectable="false"
-                android:layout_toLeftOf="@+id/send_button"/>
+                android:layout_toLeftOf="@+id/send_button"
+                />
+
 
         <ImageView
             android:id="@+id/send_button"
-            android:layout_width="50dp"
+            android:layout_width="40dp"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_send_grey600_36dp"
             android:layout_alignParentRight="true"
-            android:layout_alignBottom="@+id/question_image"
+            android:layout_alignBottom="@+id/question_user_image"
             android:layout_alignParentTop="true"
             android:padding="5dp"
             android:tint="@color/hint_text"/>
 
+
+
+        <!-- Group Toggle -->
+
+        <ImageView
+            android:id="@+id/study_group_toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_group_grey600_36dp"
+            android:layout_below="@+id/question_user_image"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="5dp"
+            />
+
+        <TextView
+            android:id="@+id/study_group_text"
+            style="@style/Material.Drawable.CheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Request study group"
+            android:gravity="center_vertical"
+            android:layout_alignBottom="@+id/study_group_toggle"
+            android:layout_alignTop="@+id/study_group_toggle"
+            android:layout_toRightOf="@+id/study_group_toggle"/>
+
+
+        <!-- Tutor Toggle -->
+
+        <ImageView
+            android:id="@+id/tutor_toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_school_grey600_36dp"
+            android:layout_toLeftOf="@+id/tutor_text"
+            android:layout_below="@+id/question_user_image"
+            android:layout_marginTop="15dp"
+            />
+
+
+        <TextView
+            android:id="@+id/tutor_text"
+            style="@style/Material.Drawable.CheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Request tutor"
+            android:gravity="center_vertical"
+            android:layout_alignTop="@+id/tutor_toggle"
+            android:layout_alignBottom="@+id/tutor_toggle"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="10dp"/>
 
 
     </RelativeLayout>
@@ -61,7 +119,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:textColor="@color/primary_text"
         android:textColorHint="@color/hint_text"
         android:hint="Choose a topic..."
@@ -86,13 +144,13 @@
         android:layout_height="match_parent"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="5dp"
         android:textColor="@color/primary_text"
         android:textColorHint="@color/hint_text"
         android:hint="Write your question..."
         app:et_dividerPadding="4dp"
         android:layout_below="@+id/topic_edit_text"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="5dp"
         android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine"
         app:et_dividerColor="@android:color/white"
         android:maxLength ="2000"
@@ -113,27 +171,40 @@
         android:background="@color/primary_light"
         android:layout_alignParentBottom="true">
 
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"/>
+<!--
 
         <ImageView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"/>
-
-        <ImageView
+            android:id="@+id/group_toggle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:padding="10dp"/>
+            android:padding="10dp"
+            android:src="@drawable/ic_group_grey600_36dp"
+            android:tint="@color/hint_text"/>
 
         <ImageView
+            android:id="@+id/tutor_toggle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:padding="10dp"
+            android:src="@drawable/ic_school_grey600_36dp"
+            android:tint="@color/hint_text"/>
+-->
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
             android:padding="10dp"/>
+
+        <ImageView
+            android:id="@+id/location_toggle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:src="@drawable/ic_location_on_grey600_36dp"
+            android:tint="@color/hint_text"/>
 
         <ImageView
             android:id="@+id/add_tag_button"

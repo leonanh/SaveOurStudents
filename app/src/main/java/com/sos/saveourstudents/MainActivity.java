@@ -1,12 +1,10 @@
 package com.sos.saveourstudents;
 
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -20,18 +18,20 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.TranslateAnimation;
 
 import com.sos.saveourstudents.supportclasses.NavDrawerAdapter;
 import com.sos.saveourstudents.supportclasses.RecyclerItemClickListener;
 import com.sos.saveourstudents.supportclasses.SlidingTabLayout;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private boolean fabShowing = false;
 
     ViewPager mViewPager;
     SlidingTabLayout mTabs;
 
-
+    MyPagerAdapter viewPagerAdapter;
     RecyclerView mRecyclerView;                           // Declaring RecyclerView
     RecyclerView.Adapter mAdapter;                        // Declaring Adapter For Recycler View
     RecyclerView.LayoutManager mLayoutManager;            // Declaring Layout Manager as a linear layout manager
@@ -69,22 +69,16 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.the_toolbar);
         setSupportActionBar(toolbar);
 
-
-        FragmentManager manager = getSupportFragmentManager();
-        android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
-
         fab = (com.rey.material.widget.FloatingActionButton) findViewById(R.id.fab_image);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent mIntent = new Intent(MainActivity.this, QuestionActivity.class);
-                mIntent.putExtra("type", 1);
-                startActivity(mIntent);
-            }
-        });
+
+        hideFab();
+        buildFab();
+
+
 
         mViewPager = (ViewPager) this.findViewById(R.id.pager);
-        mViewPager.setAdapter(new MyPagerAdapter(this.getSupportFragmentManager()));
+        viewPagerAdapter = new MyPagerAdapter(this.getSupportFragmentManager());
+        mViewPager.setAdapter(viewPagerAdapter);
         mTabs = (SlidingTabLayout) this.findViewById(R.id.tabs);
         mTabs.setDistributeEvenly(true);
 
@@ -94,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public int getIndicatorColor(int position) {
 
-                return MainActivity.this.getResources().getColor(R.color.primary_dark);
+                return MainActivity.this.getResources().getColor(R.color.primary_light);
             }
         });
 
@@ -119,12 +113,19 @@ public class MainActivity extends AppCompatActivity {
                         System.out.println("clicked " + position);
 
                         if(position == 1){
-                            startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+                            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                            intent.putExtra("userId", sharedPref.getString("user_id", ""));
+                            startActivity(intent);
+
                         }
                         else if(position == 2){
-                            Intent mainActivity = new Intent(MainActivity.this, LoginActivity.class);
-                            startActivity(mainActivity);
+                            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                            startActivity(intent);
                             finish();
+                        }
+                        else if(position == 3){
+                            Intent intent = new Intent(MainActivity.this,SettingsActivity.class);
+                            startActivity(intent);
                         }
 
                     }
@@ -191,16 +192,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
 
         if (id == R.id.action_filter) {
 
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
-            DialogFragment newFragment = new TagDialogFragment(this, 0);
+            TagDialogFragment newFragment = new TagDialogFragment(this, 0);
             newFragment.show(getSupportFragmentManager(), "");
 
         }
@@ -211,19 +209,74 @@ public class MainActivity extends AppCompatActivity {
             startActivity(mIntent);
         }
 
-        else if (id == R.id.view_group) {
-            startActivity(new Intent(this, ViewGroupActivity.class));
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
 
+    public void hideFab(){
+        if(fabShowing){
+            TranslateAnimation anim = new TranslateAnimation(0, 0, 0, 300);
+            anim.setDuration(200);
+            anim.setFillAfter(true);
+            fab.startAnimation(anim);
+            fabShowing = false;
+        }
+    }
+
+    public void showFab(){
+        if(!fabShowing){
+            TranslateAnimation anim = new TranslateAnimation( 0, 0 , 300, 0 );
+            anim.setDuration(200);
+            anim.setFillAfter( true );
+            fab.startAnimation(anim);
+            fabShowing = true;
+        }
+
+
+    }
+
+    public void updateFragments(){
+        updateMapFragment();
+        updateFeedFragment();
+    }
+    private void updateMapFragment(){
+        ((FragmentMap) viewPagerAdapter.getItem(1)).getLocationUpdate();
+    }
+    private void updateFeedFragment(){
+        ((FragmentFeed) viewPagerAdapter.getItem(0)).getQuestionData();
+    }
+
+
+    @Override
+    public void onClick(View v) {
+        //System.out.println("clicked tabs: ");
+    }
+
+
+    private void buildFab(){
+
+
+        //TODO Does user have active question?
+
+        //TODO Show fab
+        showFab();
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent mIntent = new Intent(MainActivity.this, QuestionActivity.class);
+                mIntent.putExtra("type", 1);
+                startActivity(mIntent);
+            }
+        });
+
+
+
+
+    }
+
+
 }
-
-
-
-
 
 
 
@@ -235,6 +288,7 @@ class MyPagerAdapter extends FragmentPagerAdapter {
     FragmentFeed feed = new FragmentFeed();
     FragmentMap map = new FragmentMap();
     String[] tabNames = {"Feed", "Map"};
+
 
     public MyPagerAdapter(FragmentManager fm) {
         super(fm);
@@ -250,12 +304,17 @@ class MyPagerAdapter extends FragmentPagerAdapter {
         if(position == 0){
             return feed;
         }
-        else
+        else{
             return map;
+        }
+
+
     }
 
     @Override
     public int getCount() {
         return tabNames.length;
     }
+
 }
+

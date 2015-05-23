@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar" >
-        <!--<item name="android:windowTranslucentStatus">true</item>-->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+
+
     </style>
 
+    <style name="SnackBarSingleLine" parent="Material.Widget.SnackBar.Mobile">
+        <item name="sb_text">This is single-line snackbar.</item>
+        <item name="sb_actionText">CLOSE</item>
+        <item name="sb_duration">0</item>
+    </style>
 
 </resources>
