@@ -686,7 +686,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                         editor.putString("last_name", response.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("last_name"));
                         editor.putString("email", response.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("email"));
                         //editor.putString("image", response.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("image"));
-                        editor.putString("image", userImageUrl);//TODO FIX
+                        editor.putString("image", userImageUrl);//TODO FIX this needs to be saved from createUser call
                         editor.putString("user_id", response.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("user_id"));
                         editor.putString("provider", provider);
                         editor.commit();
