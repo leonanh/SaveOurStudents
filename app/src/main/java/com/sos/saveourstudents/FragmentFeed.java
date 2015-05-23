@@ -316,11 +316,7 @@ public class FragmentFeed extends Fragment {
                         e.printStackTrace();
                     }
 
-
-
                 }
-
-
 
                 return false;
             }
@@ -338,8 +334,6 @@ public class FragmentFeed extends Fragment {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
-
 
                 }
             }
