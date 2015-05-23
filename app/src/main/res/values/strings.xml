@@ -44,16 +44,19 @@
     <string name="profile_description">Description</string>
 
     <string name="view_profile">View Profile</string>
-    <string name="profile_editProfile">Edit Profile</string>"
+    <string name="profile_editProfile">Edit Profile</string>
     <string name="profile_firstName">First Name</string>
     <string name="profile_lastName">Last Name</string>
 
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="view_group_question">Question</string>
+    <string name="view_group_location">Location</string>
+    <string name="view_group_members">Members</string>
+
     <string name="title_activity_edit_profile">EditProfileActivity</string>
     <string name="title_activity_question">QuestionActivity</string>
 
     <!-- Shared Prefs -->
     <string name="preference_file_key">com.sos.saveourstudents</string>
+    <string name="title_activity_view_group">ViewGroupActivity</string>
 
 </resources>
