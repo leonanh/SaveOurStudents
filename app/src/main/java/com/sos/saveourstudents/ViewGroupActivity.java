@@ -46,6 +46,10 @@ public class ViewGroupActivity extends AppCompatActivity
         // TODO: Populate mStudents and mTutors with students from database
         mStudents.add(new Student("Brady", "Shi", 0, "UCSD", "Computer Engineering",
                 "Coffee Addict", null));
+        mStudents.add(new Student("Brady", "Shi", 0, "UCSD", "Computer Engineering",
+                "Coffee Addict", null));
+        mTutors.add(new Student("Brady", "Shi", 0, "UCSD", "Computer Engineering",
+                "Coffee Addict", null));
         mTutors.add(new Student("Brady", "Shi", 0, "UCSD", "Computer Engineering",
                 "Coffee Addict", null));
 
