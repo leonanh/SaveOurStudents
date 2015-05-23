@@ -218,7 +218,6 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
         else if(v == groupToggle || v == requestGroupText){
             clickGroupButton();
 
-
         }
         else if(v == tutorToggle || v == requestTutorText){
             clickTutorButton();
@@ -273,6 +272,7 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
         params.add(new BasicNameValuePair("tutor", (tutorToggle.isSelected() ? 1 : 0)+""));
         params.add(new BasicNameValuePair("studygroup", (groupToggle.isSelected() ? 1 : 0)+""));
         params.add(new BasicNameValuePair("topic", topicEditText.getText().toString()));
+        params.add(new BasicNameValuePair("visibleLocation", (showLocation ? 1 : 0)+""));
 
 
         String paramString = URLEncodedUtils.format(params, "utf-8").replace("+", "%20");

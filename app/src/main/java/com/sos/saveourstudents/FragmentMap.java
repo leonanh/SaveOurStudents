@@ -58,8 +58,6 @@ public class FragmentMap extends Fragment implements
     LocationRequest mLocationRequest;
     Location mCurrentLocation;
 
-
-
     private GoogleMap mMap;
     private MapView mMapView;
     private Context mContext;
