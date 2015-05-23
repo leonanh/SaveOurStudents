@@ -3,6 +3,9 @@ package com.sos.saveourstudents;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -21,6 +24,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.balysv.materialripple.MaterialRippleLayout;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,7 +42,14 @@ import java.util.Set;
 /**
  * Created by deamon on 4/21/15.
  */
-public class FragmentFeed extends Fragment {
+public class FragmentFeed extends Fragment implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+
+
+    private SharedPreferences sharedPref;
+    LocationRequest mLocationRequest;
+    Location mCurrentLocation;
+    Location lastKnownLocation;
+    private GoogleApiClient mGoogleApiClient;
 
     private final String TAG = "SOS Tag";
     private RecycleViewAdapter mAdapter;
@@ -73,8 +88,16 @@ public class FragmentFeed extends Fragment {
             }
         });
 
+        sharedPref = mContext.getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
-        getQuestionData();
+
+        buildGoogleApiClient();
+
+
+        LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        lastKnownLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
 
 
 
@@ -112,8 +135,7 @@ public class FragmentFeed extends Fragment {
 
 
 
-        SharedPreferences sharedPref = mContext.getSharedPreferences(
-                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
         Set<String> filterList = new HashSet<String>(sharedPref.getStringSet("filter_list", new HashSet<String>()));
 
         List<String> myList = new ArrayList<String>();
@@ -134,7 +156,7 @@ public class FragmentFeed extends Fragment {
                 "?latitude="+32.88006+ //TODO Actual Location
                 "&longitude="+-117.2340133+ //TODO Actual Location
                 filterListFix+
-                "&limit="+50;
+                "&limit="+sharedPref.getInt("distance", 10);
 
 
         System.out.println("URL: "+url);
@@ -163,7 +185,6 @@ public class FragmentFeed extends Fragment {
                                 mQuestionList = theResponse.getJSONObject("result").getJSONArray("myArrayList");
                             }
                             else{
-
                                 mQuestionList = theResponse.getJSONObject("result").getJSONArray("myArrayList");
                             }
 
@@ -206,6 +227,30 @@ public class FragmentFeed extends Fragment {
 
     }
 
+    @Override
+    public void onLocationChanged(Location location) {
+        mCurrentLocation = location;
+
+        getQuestionData();
+        stopLocationUpdates();
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        getLocationUpdate();
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
 
     public static class CardManager {
 
@@ -218,6 +263,49 @@ public class FragmentFeed extends Fragment {
         }
 
     }
+
+    public void getLocationUpdate(){
+        createLocationRequest();
+        startLocationUpdates();
+    }
+
+
+
+    protected void startLocationUpdates() {
+        LocationServices.FusedLocationApi.requestLocationUpdates(
+                mGoogleApiClient, mLocationRequest, this);
+    }
+
+    protected void stopLocationUpdates() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(
+                mGoogleApiClient, this);
+    }
+
+    protected void createLocationRequest() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(10000);
+        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+
+
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(mContext)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+
+        mGoogleApiClient.connect();
+
+
+    }
+
+
+
+
+
 
     public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.ViewHolder>{
 
@@ -238,6 +326,7 @@ public class FragmentFeed extends Fragment {
             //viewHolder.questionText.setText(mCardManagerInstance.getCounters().get(i).title+"");
             //viewHolder.venueType.setText(mInstance.getCounters().get(i)+"");
             try {
+                System.out.println("question: "+mQuestionList.getJSONObject(position).getJSONObject("map"));
 
                 String firstName = mQuestionList.getJSONObject(position).getJSONObject("map").getString("first_name");
                 String lastName = mQuestionList.getJSONObject(position).getJSONObject("map").getString("last_name");
@@ -245,9 +334,18 @@ public class FragmentFeed extends Fragment {
                 String topic = mQuestionList.getJSONObject(position).getJSONObject("map").getString("topic");
                 String text = mQuestionList.getJSONObject(position).getJSONObject("map").getString("text");
 
-                //TODO boolean group = mQuestionList.getJSONObject(position).getJSONObject("map").getString("group");
-                //TODO boolean tutor = mQuestionList.getJSONObject(position).getJSONObject("map").getString("tutor");
+                boolean group = mQuestionList.getJSONObject(position).getJSONObject("map").getBoolean("study_group");
+                boolean tutor = mQuestionList.getJSONObject(position).getJSONObject("map").getBoolean("tutor");
 
+                double latitude = Double.parseDouble(mQuestionList.getJSONObject(position).getJSONObject("map").getString("latitude"));
+                double longitude = Double.parseDouble(mQuestionList.getJSONObject(position).getJSONObject("map").getString("longitude"));
+
+                if(group){
+                    viewHolder.groupIcon.setColorFilter(getResources().getColor(R.color.primary_light));
+                }
+                if(tutor){
+                    viewHolder.tutorIcon.setColorFilter(getResources().getColor(R.color.primary_light));
+                }
 
                 //System.out.println("Question " + position + ": " + mQuestionList.getJSONObject(position).getJSONObject("map"));
                 viewHolder.nameText.setText(firstName + " " + lastName);
@@ -257,6 +355,25 @@ public class FragmentFeed extends Fragment {
 
                 viewHolder.dateText.setText(Singleton.getInstance().doDateLogic(theDate));
                 viewHolder.topicText.setText(topic);
+
+
+                //if(sharedPref.getString("distanceType"))
+
+
+                if(mCurrentLocation != null){
+                    viewHolder.distanceText.setText(
+                            Singleton.getInstance().doDistanceLogic(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(),
+                                    latitude, longitude, "MI")+"");
+                }
+                else if(lastKnownLocation != null){
+                    System.out.println("mCurrentLocation is null, trying lastknown");
+                    viewHolder.distanceText.setText(
+                            Singleton.getInstance().doDistanceLogic(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude(),
+                                    latitude, longitude, "MI") + "");
+                }
+                else{
+                    System.out.println("mCurrentLocation and lastknown is null");
+                }
 
 
 
@@ -275,6 +392,8 @@ public class FragmentFeed extends Fragment {
 
         public class ViewHolder extends RecyclerView.ViewHolder implements View.OnTouchListener, View.OnClickListener {
 
+            public ImageView groupIcon;
+            public ImageView tutorIcon;
             public ImageView userImage;
             public TextView questionText;
             public TextView nameText;
@@ -291,8 +410,11 @@ public class FragmentFeed extends Fragment {
                 nameText = (TextView) itemView.findViewById(R.id.name_text);
                 dateText = (TextView) itemView.findViewById(R.id.timestamp_text);
                 topicText = (TextView) itemView.findViewById(R.id.topic_text);
-                //distanceText = (TextView) itemView.findViewById(R.id.question_text);
+                distanceText = (TextView) itemView.findViewById(R.id.distance_text);
                 userImage = (ImageView) itemView.findViewById(R.id.user_image);
+
+                groupIcon = (ImageView) itemView.findViewById(R.id.group_icon);
+                tutorIcon = (ImageView) itemView.findViewById(R.id.tutor_icon);
                 rippleView = (MaterialRippleLayout) itemView.findViewById(R.id.ripple);
                 rippleView.setOnTouchListener(this);
                 userImage.setOnClickListener(this);

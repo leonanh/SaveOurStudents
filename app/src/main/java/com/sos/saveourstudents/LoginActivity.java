@@ -74,7 +74,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
     LoginManager loginManager;
     ImageView fbLogin;
     String facebookEmail;
-    String userImageUrl;
+    String userImageUrl = "";
 
     //GCM
     public static final String PROPERTY_REG_ID = "registration_id";
@@ -98,6 +98,9 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
         loginManager = LoginManager.getInstance();
+
+
+
 
         setContentView(R.layout.activity_login);
 
@@ -435,7 +438,8 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         return true;
     }
 
-    @Override    public boolean onOptionsItemSelected(MenuItem item) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -521,7 +525,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
 
             //System.out.println("getImage: " + );
-            userImageUrl = currentPerson.getImage().getUrl(); //TODO send with create user
+            userImageUrl = currentPerson.getImage().getUrl();
             String firstName = currentPerson.getName().getGivenName();
             String lastName = currentPerson.getName().getFamilyName();
             String userId = currentPerson.getId();
@@ -610,15 +614,18 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         //Need firstName, lastName, password (userId)
         //Need email, deviceId
 
+        System.out.println("userImageUrl: "+userImageUrl);
+
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createUser?" +
                 "firstName=" + firstName +
                 "&lastName=" + lastName +
                 "&password=" + Singleton.get_SHA_1_SecurePassword(password) +
                 "&email=" + email +
+                "&image=" + userImageUrl +
                 "&deviceId=" + deviceId;
 
 
-        //System.out.println("URL: "+url);
+        System.out.println("URL: "+url);
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url,
                 (JSONObject) null, new Response.Listener<JSONObject>() {
             @Override
@@ -685,8 +692,8 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                         editor.putString("first_name", response.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("first_name"));
                         editor.putString("last_name", response.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("last_name"));
                         editor.putString("email", response.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("email"));
-                        //editor.putString("image", response.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("image"));
-                        editor.putString("image", userImageUrl);//TODO FIX this needs to be saved from createUser call
+                        editor.putString("image", response.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("image"));
+                        //editor.putString("image", userImageUrl);//TODO FIX this needs to be saved from createUser call
                         editor.putString("user_id", response.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("user_id"));
                         editor.putString("provider", provider);
                         editor.commit();
