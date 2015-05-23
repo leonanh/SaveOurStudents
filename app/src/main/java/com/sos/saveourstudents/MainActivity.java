@@ -123,9 +123,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                         }
                         else if(position == 2){
-                            Intent mainActivity = new Intent(MainActivity.this, LoginActivity.class);
-                            startActivity(mainActivity);
+                            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                            startActivity(intent);
                             finish();
+                        }
+                        else if(position == 3){
+                            Intent intent = new Intent(MainActivity.this,SettingsActivity.class);
+                            startActivity(intent);
                         }
 
                     }

@@ -59,7 +59,7 @@
 
 
 
-        <activity  android:name=".LoginActivity"/>
+        <activity android:name=".LoginActivity"/>
 
         <activity android:name=".SignupActivity"/>
 
@@ -70,6 +70,9 @@
 
 
         <activity android:name=".MemberJoinActivity"/>
+
+        <activity android:name=".SettingsActivity"/>
+
 
 
 
