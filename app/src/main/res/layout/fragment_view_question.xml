@@ -146,12 +146,16 @@
                 android:layout_below="@+id/comment_divider"
                 android:layout_above="@id/comment_edittext"/>
 
-            <ImageView
+            <ImageButton
                 android:id="@+id/send_button"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginRight="8dp"
                 android:layout_alignBottom="@+id/comment_edittext"
                 android:layout_alignParentRight="true"
+                android:background="@null"
                 android:src="@drawable/ic_send_light_blue_500_18dp" />
 
 
