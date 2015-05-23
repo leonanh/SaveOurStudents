@@ -33,7 +33,7 @@
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         />
             -->
-            <com.sos.saveourstudents.supportclasses.CustomTextView
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="?android:attr/actionBarSize"
                 android:text="SaveOurStudents"

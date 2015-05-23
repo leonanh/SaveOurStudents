@@ -19,7 +19,7 @@
         android:elevation="2dp"
         >
 
-        <com.sos.saveourstudents.supportclasses.CustomTextView
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="User"
@@ -30,7 +30,7 @@
             android:id="@+id/member_name"
             />
 
-        <com.sos.saveourstudents.supportclasses.CustomTextView
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
@@ -78,7 +78,7 @@
             app:border_color="@color/primary_light"
             app:border_width="2dp" />
 
-        <com.sos.saveourstudents.supportclasses.CustomTextView
+        <TextView
             android:id="@+id/joining_member_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -89,7 +89,7 @@
             android:layout_alignTop="@+id/joining_member_image"
             android:textIsSelectable="false" />
 
-        <com.sos.saveourstudents.supportclasses.CustomTextView
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="3dp"
@@ -163,7 +163,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginBottom="-28dp"
         app:fab_iconSrc="@drawable/ic_clear_white_24dp"
-        app:fab_backgroundColor="@color/accent"
+        app:fab_backgroundColor="#FF5252"
         app:fab_elevation="2dp"
         android:layout_toLeftOf="@+id/accept_fab"
         android:elevation="2dp"
