@@ -1,6 +1,7 @@
 package com.sos.saveourstudents;
 
 import android.app.FragmentManager;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -9,22 +10,39 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.Response.ErrorListener;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class ProfileActivity extends AppCompatActivity
         implements ViewProfileFragment.OnEditButtonListener,
         EditProfileFragment.OnDoneButtonListener {
 
-    private Student currStudent;
-    private ViewProfileFragment viewProfileFragment;
-    private EditProfileFragment editProfileFragment;
+    private Student mCurrStudent;
+    private ViewProfileFragment mViewProfileFragment;
+    private EditProfileFragment mEditProfileFragment;
+
+    private final String userIdTag = "userId";
+    private String mUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        // TODO: Grab currStudent from database
-        currStudent = new Student("Brady", "Shi", 0, "UCSD", "Computer Engineering",
-                "Coffee Addict", null);
+        mUserId = getIntent().getStringExtra(userIdTag);
+
+        String url =
+                "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getUserById?userId="
+                        + mUserId;
+
+        JsonObjectRequest studentRequest = new JsonObjectRequest(Request.Method.GET,
+                url, new ProfileResponseListener(), new ProfileErrorListener());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.profile_toolbar);
         if (toolbar != null) {
@@ -39,9 +57,9 @@ public class ProfileActivity extends AppCompatActivity
             });
         }
 
-        viewProfileFragment = ViewProfileFragment.newInstance(currStudent);
+        mViewProfileFragment = ViewProfileFragment.newInstance(mCurrStudent);
         getFragmentManager().beginTransaction()
-                .add(R.id.profile_activity_container, viewProfileFragment)
+                .add(R.id.profile_activity_container, mViewProfileFragment)
                 .addToBackStack(null)
                 .commit();
 
@@ -53,14 +71,14 @@ public class ProfileActivity extends AppCompatActivity
      */
     @Override
     public void onBackPressed() {
-        if (viewProfileFragment != null && editProfileFragment != null) {
+        if (mViewProfileFragment != null && mEditProfileFragment != null) {
             if (findViewById(R.id.profile_editProfile_overall).hasFocus()) {
                 FragmentManager fragmentManager = getFragmentManager();
                 fragmentManager.beginTransaction()
-                        .remove(editProfileFragment)
-                        .attach(viewProfileFragment)
+                        .remove(mEditProfileFragment)
+                        .attach(mViewProfileFragment)
                         .commit();
-                editProfileFragment = null;
+                mEditProfileFragment = null;
             } else {
                 findViewById(R.id.profile_editProfile_overall).requestFocus();
             }
@@ -71,6 +89,7 @@ public class ProfileActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
 
+        // TODO: Check if currStudent is the currently logged in student
     }
 
     @Override
@@ -97,26 +116,59 @@ public class ProfileActivity extends AppCompatActivity
 
     @Override
     public void onEditButton() {
-        editProfileFragment = EditProfileFragment.newInstance(currStudent);
+        mEditProfileFragment = EditProfileFragment.newInstance(mCurrStudent);
         getFragmentManager().beginTransaction()
-                .detach(viewProfileFragment)
-                .add(R.id.profile_activity_container, editProfileFragment)
+                .detach(mViewProfileFragment)
+                .add(R.id.profile_activity_container, mEditProfileFragment)
                 .addToBackStack(null)
                 .commit();
     }
 
     @Override
     public void onDoneButton() {
-        if (editProfileFragment != null && viewProfileFragment != null) {
-            editProfileFragment.updateStudent();
+        if (mEditProfileFragment != null && mViewProfileFragment != null) {
+            mEditProfileFragment.updateStudent();
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction()
-                    .remove(editProfileFragment)
-                    .attach(viewProfileFragment)
+                    .remove(mEditProfileFragment)
+                    .attach(mViewProfileFragment)
                     .commit();
-            editProfileFragment = null;
+            mEditProfileFragment = null;
         } else {
             Log.e("ProfileActivity", "NullPointerException for a fragment");
+        }
+    }
+
+    class ProfileResponseListener implements Response.Listener<JSONObject> {
+
+        @Override
+        public void onResponse(JSONObject response) {
+            try {
+                Log.v("ProfileActivity", "Before Response");
+                JSONObject theResponse = new JSONObject(response.toString())
+                        .getJSONObject("result")
+                        .getJSONArray("myArrayList")
+                        .getJSONObject(0)
+                        .getJSONObject("map");
+
+                Log.v("ProfileActivity", "How'd I get here?");
+                mCurrStudent = new Student(theResponse.getString("first_name"),
+                        theResponse.getString("last_name"), theResponse.getInt("rating"),
+                        theResponse.getString("School"), theResponse.getString("major"),
+                        theResponse.getString("description"), null);
+
+                Log.v("ProfileActivity", "How'd I get here?2");
+            } catch (JSONException e) {
+                Log.e("ProfileActivity", "Error retrieving student from database!");
+                e.printStackTrace();
+            }
+        }
+    }
+    class ProfileErrorListener implements ErrorListener {
+
+        @Override
+        public void onErrorResponse(VolleyError error) {
+
         }
     }
 }

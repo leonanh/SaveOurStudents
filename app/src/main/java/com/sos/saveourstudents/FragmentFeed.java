@@ -151,7 +151,7 @@ public class FragmentFeed extends Fragment {
                             //System.out.println("response: "+response.toString()); //DEBUG
 
 
-                            JSONObject theResponse = new JSONObject(response.toString());
+                           JSONObject theResponse = new JSONObject(response.toString());
 
 
                             if(!theResponse.getString("success").equalsIgnoreCase("1")){
