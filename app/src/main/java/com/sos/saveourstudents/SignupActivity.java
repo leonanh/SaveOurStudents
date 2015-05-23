@@ -85,32 +85,35 @@ public class SignupActivity extends Activity implements View.OnClickListener {
                         "firstName=" + firstName  +
                         "&lastName=" + lastName  +
                         "&password=" + Singleton.get_SHA_1_SecurePassword(passwordInput1) +
-                        "&email" + emailInput1 +
+                        "&image=" + null +
+                        "&email=" + emailInput1 +
                         "&deviceId=" + android_id;
 
-
+                System.out.println("ur = " + url);
                 JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
-                        url,(JSONObject)null,
-                        new Response.Listener<JSONObject>()
+                        url,(JSONObject)null, new Response.Listener<JSONObject>()
                         {
-
                             @Override
                             public void onResponse(JSONObject response) {
                                 try {
 
-                                    JSONObject theResponse = new JSONObject(response.toString());
+                                    //JSONObject theResponse = new JSONObject(response.toString());
 
-                                    if(!theResponse.getString("success").equalsIgnoreCase("1")){
+                                    if(response.getString("success").equalsIgnoreCase("1")){
+                                        // Sign Up successful
+                                        System.out.println("Signed Up successfully");
+                                        Intent loginActivity = new Intent(SignupActivity.this, LoginActivity.class);
+                                        startActivity(loginActivity);
+                                        finish();
+                                        /*
                                         //Error getting data
+                                        System.out.println("First if");*/
                                         return;
-                                    }
-                                    if(theResponse.getString("expectResults").equalsIgnoreCase("0")){
+                                    } else {
                                         //No results to show (empty array returned)
-                                        theResponse.getJSONObject("result").getJSONArray("myArrayList");
-                                    }
-                                    else{
-
-                                        theResponse.getJSONObject("result").getJSONArray("myArrayList");
+                                        emailInput.setError("Email is taken");
+                                        System.out.println("2nd if");
+                                        response.getJSONObject("result").getJSONArray("myArrayList");
                                     }
 
                                 } catch (JSONException e) {
@@ -132,6 +135,7 @@ public class SignupActivity extends Activity implements View.OnClickListener {
                 //==================================================================================
             }
         }
+
     }
 
     private boolean verifyPassword(String incomingPass1, String incomingPass2) {

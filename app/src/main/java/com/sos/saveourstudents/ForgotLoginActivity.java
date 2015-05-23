@@ -33,7 +33,7 @@ public class ForgotLoginActivity extends Activity implements View.OnClickListene
     Context appContext;
 
     //private String jsonResponse;
-    Toast prompt; //feedback
+    //Toast prompt; //feedback
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +55,7 @@ public class ForgotLoginActivity extends Activity implements View.OnClickListene
 
         sendEmailBtn.setOnClickListener(this);
 
-        prompt = Toast.makeText(appContext, "", Toast.LENGTH_SHORT);
+        //prompt = Toast.makeText(appContext, "", Toast.LENGTH_SHORT);
         //String emailInput;
     }
 
@@ -100,15 +100,16 @@ public class ForgotLoginActivity extends Activity implements View.OnClickListene
                     System.out.println("Response: " + response);
                     //String email = response.getString("email");
 
-                    if(response.getString("expectedResults").equalsIgnoreCase("0")) {
+                    if(response.getString("expectResults").equalsIgnoreCase("0")) {
                         emaildne = Toast.makeText(appContext, "Email DNE!", Toast.LENGTH_SHORT);
                         emaildne.show();
+                        //System.out.println("debug");
                     } else if (response.getString("success").equalsIgnoreCase("1")) {
                         //email exists
                         emailsent = Toast.makeText(appContext, "Email sent!", Toast.LENGTH_SHORT);
                         emailsent.show();
 
-                        System.out.println("Success!!!!!!@!@!@!@1");
+                        //System.out.println("Success!!!!!!@!@!@!@1");
                         //Intent loginActivity = new Intent(this, LoginActivity.class);
                         //startActivity(loginActivity);
                         //finish();
