@@ -315,9 +315,8 @@ public class FragmentFeed extends Fragment {
 
                     try {
                         String questionId = mQuestionList.getJSONObject(getAdapterPosition()).getJSONObject("map").getString("question_id");
-                        Intent mIntent = new Intent(mContext, QuestionActivity.class);
+                        Intent mIntent = new Intent(mContext, ViewGroupActivity.class);
                         mIntent.putExtra("questionId", questionId);
-                        mIntent.putExtra("type", 0);
                         startActivity(mIntent);
 
                     } catch (JSONException e) {

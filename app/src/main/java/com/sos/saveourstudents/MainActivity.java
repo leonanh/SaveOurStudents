@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public int getIndicatorColor(int position) {
 
-                return MainActivity.this.getResources().getColor(R.color.primary_dark);
+                return MainActivity.this.getResources().getColor(R.color.primary_light);
             }
         });
 
@@ -204,10 +204,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             Intent mIntent = new Intent(this, MemberJoinActivity.class);
             startActivity(mIntent);
-        }
-
-        else if (id == R.id.view_group) {
-            startActivity(new Intent(this, ViewGroupActivity.class));
         }
 
         return super.onOptionsItemSelected(item);

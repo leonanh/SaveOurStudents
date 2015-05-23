@@ -128,7 +128,7 @@ public class FragmentMap extends Fragment implements
         mMap.setMyLocationEnabled(true);
         mMap.setOnMapClickListener(this);
         mMap.setOnMarkerClickListener(this);
-
+        mMap.getUiSettings().setMapToolbarEnabled(false);
 
         try {
             MapsInitializer.initialize(mContext);
@@ -487,8 +487,10 @@ public class FragmentMap extends Fragment implements
         }
         else {
             //System.out.println("Map not visible");
-            if((MainActivity) getActivity() != null)
+            if((MainActivity) getActivity() != null) {
                 ((MainActivity) getActivity()).showFab();
+                detailsLayout.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -507,8 +509,6 @@ public class FragmentMap extends Fragment implements
     public boolean onMarkerClick(Marker marker) {
 
         int position = Integer.parseInt(marker.getSnippet());
-        //System.out.println("position: " + position);
-
 
         try {
 
@@ -520,6 +520,7 @@ public class FragmentMap extends Fragment implements
             timestampDetails.setText(Singleton.getInstance().doDateLogic(mQuestionList.getJSONObject(position).getJSONObject("map").getString("date")));
             questionId.setText(mQuestionList.getJSONObject(position).getJSONObject("map").getString("question_id"));
 
+            showMapToolbar(marker.getPosition());
             ((MainActivity) getActivity()).hideFab();
             detailsLayout.setVisibility(View.VISIBLE);
 
@@ -543,9 +544,7 @@ public class FragmentMap extends Fragment implements
         else{
 
             TextView questionId = (TextView) v.findViewById(R.id.question_id);
-            //System.out.println("V:"+questionId.getText().toString());
-            Intent mIntent = new Intent(mContext, QuestionActivity.class);
-            mIntent.putExtra("type", 0);
+            Intent mIntent = new Intent(mContext, ViewGroupActivity.class);
             mIntent.putExtra("questionId", questionId.getText().toString());
             startActivity(mIntent);
 
@@ -583,6 +582,23 @@ public class FragmentMap extends Fragment implements
         });
 
     }
+
+    //TODO directions get covered by fab/details. Future fix
+    private void showMapToolbar(LatLng location){
+
+        /*
+        // Directions
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(
+                "http://maps.google.com/maps?saddr=51.5, 0.125&daddr=51.5, 0.15"));
+        startActivity(intent);
+
+        // Default google map
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(
+                "http://maps.google.com/maps?q=loc:51.5, 0.125"));
+        startActivity(intent);
+        */
+    }
+
 
 
 }
