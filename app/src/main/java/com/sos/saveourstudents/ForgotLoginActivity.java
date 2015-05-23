@@ -12,6 +12,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by HTPC on 4/26/2015.
  */
@@ -23,6 +32,9 @@ public class ForgotLoginActivity extends Activity implements View.OnClickListene
     TextView errormsg;
     Toast emailsent;
     Context appContext;
+
+    //private String jsonResponse;
+    Toast prompt; //feedback
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +55,9 @@ public class ForgotLoginActivity extends Activity implements View.OnClickListene
         sendEmailBtn.setTypeface(font);
 
         sendEmailBtn.setOnClickListener(this);
+
+        prompt = Toast.makeText(appContext, "", Toast.LENGTH_SHORT);
+        String emailInput;
     }
 
     @Override
@@ -55,6 +70,7 @@ public class ForgotLoginActivity extends Activity implements View.OnClickListene
             }
 
             //TODO: Add database validation
+            doRetrieveInfo();
 
             emailsent = Toast.makeText(appContext, "Email sent!", Toast.LENGTH_SHORT);
             emailsent.show();
@@ -62,5 +78,50 @@ public class ForgotLoginActivity extends Activity implements View.OnClickListene
             startActivity(loginActivity);
             finish();
         }
+    }
+
+    private void doRetrieveInfo(final String email)
+    {
+        //find the valid url
+        String url = "http://53.200.33.91:8080/com.mysql.services/rest/serviceclass/forgotPassword?" +
+                "&email" + emailInput;
+
+        final JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url,
+                (JSONObject) null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    // Parsing json object response
+                    // response will be json object
+                    String email = response.getString("email");
+
+                    if (response.getString("success").equalsIgnoreCase("1")) {
+                        //email exists
+                        emailsent = Toast.makeText(appContext, "Email sent!", Toast.LENGTH_SHORT);
+                        emailsent.show();
+                        Intent loginActivity = new Intent(this, LoginActivity.class);
+                        startActivity(loginActivity);
+                        finish();
+
+                    }else {
+                        prompt = Toast.makeText(appContext, "Email DNE!", Toast.LENGTH_SHORT);
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+        @Override
+        public void onErrorResponse(VolleyError error) {
+
+            System.out.println("Error: " + error.toString());
+        }
+
+        });
+
+
     }
 }

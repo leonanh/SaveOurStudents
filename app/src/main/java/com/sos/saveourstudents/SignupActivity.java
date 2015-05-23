@@ -19,6 +19,8 @@ import com.rey.material.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.provider.Settings.Secure;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -28,7 +30,6 @@ import org.json.JSONObject;
 public class SignupActivity extends Activity implements View.OnClickListener {
 
     Validations validations = new Validations();
-
     Button signUpBtn;
     EditText passInput1, passInput2, emailInput, firstNameInput, lastNameInput;
     Toast prompt;
@@ -88,37 +89,46 @@ public class SignupActivity extends Activity implements View.OnClickListener {
                         "&deviceId=" + android_id;
 
 
-                JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url,
-                        (JSONObject) null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
+                JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
+                        url,(JSONObject)null,
+                        new Response.Listener<JSONObject>()
+                        {
 
-                        try {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                try {
 
-                            if (response.getString("success").equalsIgnoreCase("1")){
-                                Intent mainActivity = new Intent(SignupActivity.this, LoginActivity.class);
-                                startActivity(mainActivity);
-                                finish();
-                            }else{
-                                prompt = Toast.makeText(appContext, R.string.invalidLogin, Toast.LENGTH_SHORT);
-                                prompt.show();
+                                    JSONObject theResponse = new JSONObject(response.toString());
+
+                                    if(!theResponse.getString("success").equalsIgnoreCase("1")){
+                                        //Error getting data
+                                        return;
+                                    }
+                                    if(theResponse.getString("expectResults").equalsIgnoreCase("0")){
+                                        //No results to show (empty array returned)
+                                        theResponse.getJSONObject("result").getJSONArray("myArrayList");
+                                    }
+                                    else{
+
+                                        theResponse.getJSONObject("result").getJSONArray("myArrayList");
+                                    }
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
                             }
-
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
+                        }, new Response.ErrorListener() {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
+
                         System.out.println("Error: " + error.toString());
                     }
                 });
 
-                Singleton.getInstance().addToRequestQueue(jsonObjReq);
+
+                Singleton.getInstance().addToRequestQueue(jsObjRequest);
                 //==================================================================================
             }
         }
