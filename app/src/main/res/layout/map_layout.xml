@@ -35,6 +35,11 @@
 
 
 
+        <TextView
+            android:id="@+id/question_id"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:textColor="@android:color/transparent"/>
 
         <View
             android:id="@+id/divider"

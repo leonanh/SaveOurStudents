@@ -10,12 +10,11 @@
         app:mrl_rippleAlpha="0.5"
         app:mrl_rippleColor="@color/primary_dark"
         app:mrl_rippleDelayClick="true"
-        app:mrl_rippleDimension="10dp"
+        app:mrl_rippleDimension="5dp"
         app:mrl_rippleDuration="300"
-        app:mrl_rippleHover="false"
         app:mrl_rippleOverlay="true"
         app:mrl_ripplePersistent="false"
-    android:layout_marginTop="5dp"
+    android:layout_marginTop="10dp"
     android:background="@android:color/white">
 
 

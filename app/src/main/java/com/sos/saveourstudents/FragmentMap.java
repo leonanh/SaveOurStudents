@@ -15,11 +15,14 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -46,12 +49,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-//import com.android.volley.VolleyLog;
-//import com.android.volley.toolbox.JsonArrayRequest;
 
-/**
- * Created by deamon on 4/21/15.
- */
+
 public class FragmentMap extends Fragment implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, OnInfoWindowClickListener, LocationListener, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener, View.OnClickListener {
@@ -59,12 +58,20 @@ public class FragmentMap extends Fragment implements
     LocationRequest mLocationRequest;
     Location mCurrentLocation;
 
-    static final LatLng UCSD = new LatLng(32.88006, -117.234013);
-    static final LatLng GEISEL = new LatLng(32.881151, -117.23744999999997);
+
+
     private GoogleMap mMap;
     private MapView mMapView;
-    private Bundle mBundle;
     private Context mContext;
+
+    private ImageView userImageDetails;
+    private ImageView groupIcon;
+    private ImageView tutorIcon;
+    private TextView userNameDetails;
+    private TextView topicDetails;
+    private TextView questionDetails;
+    private TextView timestampDetails;
+    private TextView questionId;
 
     private View rootView;
     private GoogleApiClient mGoogleApiClient;
@@ -87,6 +94,21 @@ public class FragmentMap extends Fragment implements
         detailsLayout = (RelativeLayout) rootView.findViewById(R.id.lower_layout);
         detailsLayout.setVisibility(View.GONE);
         detailsLayout.setOnClickListener(this);
+
+        userImageDetails = (ImageView) rootView.findViewById(R.id.user_image);
+        groupIcon = (ImageView) rootView.findViewById(R.id.group_icon);
+        tutorIcon = (ImageView) rootView.findViewById(R.id.tutor_icon);
+
+        userImageDetails = (ImageView) rootView.findViewById(R.id.user_image);
+        userImageDetails.setOnClickListener(this);
+        userNameDetails = (TextView) rootView.findViewById(R.id.name_text);
+        topicDetails = (TextView) rootView.findViewById(R.id.topic_text);
+        questionDetails = (TextView) rootView.findViewById(R.id.question_text);
+        timestampDetails = (TextView) rootView.findViewById(R.id.timestamp_text);
+        questionId = (TextView) rootView.findViewById(R.id.question_id);
+
+
+
         createAndShowMap();
 
         return rootView;
@@ -99,18 +121,20 @@ public class FragmentMap extends Fragment implements
         buildGoogleApiClient();
 
         mMapView = (MapView) rootView.findViewById(R.id.map);
-        mMapView.onCreate(mBundle);
+        mMapView.onCreate(new Bundle());
         mMap = mMapView.getMap();
+
+
+        mMap.setMyLocationEnabled(true);
         mMap.setOnMapClickListener(this);
-        //mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        mMap.setOnMarkerClickListener(this);
+
 
         try {
             MapsInitializer.initialize(mContext);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        //zoomToMyPosition();
 
         /*
         mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
@@ -156,13 +180,13 @@ public class FragmentMap extends Fragment implements
         });
 */
         //mMap.setOnInfoWindowClickListener(this);
-        mMap.setOnMarkerClickListener(this);
+
 
     }
 
     public void getMapData() {
 
-        mMap.clear();
+
 
         SharedPreferences sharedPref = mContext.getSharedPreferences(
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
@@ -263,22 +287,34 @@ public class FragmentMap extends Fragment implements
         if(mMap != null){
 
 
+            mMap.clear();
+
             for (int i = 0; i < mQuestionList.length(); i++){
 
                 try {
-                    System.out.println("overlays: "+mQuestionList.getJSONObject(i).getJSONObject("map"));
 
                     double latitude = Double.parseDouble(mQuestionList.getJSONObject(i).getJSONObject("map").getString("latitude"));
                     double longitude = Double.parseDouble(mQuestionList.getJSONObject(i).getJSONObject("map").getString("longitude"));
 
-
-
+                    String userImageUrl = mQuestionList.getJSONObject(i).getJSONObject("map").getString("image");
 
                     View marker = minflater.inflate(R.layout.info_window_layout, null, false);
+                    ImageView userImage = (ImageView) marker.findViewById(R.id.user_image);
 
-                    //TextView numTxt = (TextView) marker.findViewById(R.id.num_txt);
-                    //numTxt.setText("27");
 
+
+                    if(userImageUrl != null && !userImageUrl.equalsIgnoreCase("")){
+                        getUserImage(userImageUrl, userImage, new LatLng(latitude, longitude));
+                    } else {
+                        mMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(latitude, longitude))
+                                .snippet(i+"")
+                                .icon(BitmapDescriptorFactory.fromBitmap(createDrawableFromView(mContext, marker))));
+
+
+                    }
+
+                    /*
                     mMap.addMarker(new MarkerOptions()
                             .position(new LatLng(latitude, longitude))
                             //.title(mQuestionList.getJSONObject(i).getJSONObject("map").getString("first_name"))
@@ -288,7 +324,7 @@ public class FragmentMap extends Fragment implements
                                     //.icon(BitmapDescriptorFactory.fromResource(R.layout.info_window_layout))
 
                             //.snippet(mQuestionList.getJSONObject(i).getJSONObject("map").getString("topic")));
-
+*/
 
 
 
@@ -329,12 +365,15 @@ public class FragmentMap extends Fragment implements
                 .build();
 
         mGoogleApiClient.connect();
+
+
     }
 
 
     @Override
     public void onResume() {
-        mMapView.onResume();
+        if(mMap != null && mMapView != null)
+            mMapView.onResume();
         super.onResume();
 
     }
@@ -404,8 +443,8 @@ public class FragmentMap extends Fragment implements
     public void onConnected(Bundle bundle) {
         mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
-        mMap.setMyLocationEnabled(true);
-        System.out.println("Connected to GoogleApi: " + mCurrentLocation);
+
+        //System.out.println("Connected to GoogleApi: " + mCurrentLocation);
         getLocationUpdate();
 
     }
@@ -428,7 +467,7 @@ public class FragmentMap extends Fragment implements
     @Override
     public void onLocationChanged(Location location) {
         mCurrentLocation = location;
-        System.out.println("Location: "+location);
+        //System.out.println("Location: "+location);
         //Stop updates after we get a location....
         getMapData();
         stopLocationUpdates();
@@ -466,17 +505,84 @@ public class FragmentMap extends Fragment implements
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        System.out.println("Marker: "+marker.getId());
-        //TODO change dialog info
-        ((MainActivity) getActivity()).hideFab();
-        detailsLayout.setVisibility(View.VISIBLE);
+
+        int position = Integer.parseInt(marker.getSnippet());
+        //System.out.println("position: " + position);
+
+
+        try {
+
+            String name = mQuestionList.getJSONObject(position).getJSONObject("map").getString("first_name")+" "
+                    +mQuestionList.getJSONObject(position).getJSONObject("map").getString("last_name");
+            userNameDetails.setText(name);
+            topicDetails.setText(mQuestionList.getJSONObject(position).getJSONObject("map").getString("topic"));
+            questionDetails.setText(mQuestionList.getJSONObject(position).getJSONObject("map").getString("text"));
+            timestampDetails.setText(Singleton.getInstance().doDateLogic(mQuestionList.getJSONObject(position).getJSONObject("map").getString("date")));
+            questionId.setText(mQuestionList.getJSONObject(position).getJSONObject("map").getString("question_id"));
+
+            ((MainActivity) getActivity()).hideFab();
+            detailsLayout.setVisibility(View.VISIBLE);
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+
         return false;
     }
 
     @Override
     public void onClick(View v) {
-        Intent mIntent = new Intent(mContext, QuestionActivity.class);
-        mIntent.putExtra("type", 0);
-        startActivity(mIntent);
+
+        if(v == userImageDetails){
+
+
+        }
+        else{
+
+            TextView questionId = (TextView) v.findViewById(R.id.question_id);
+            //System.out.println("V:"+questionId.getText().toString());
+            Intent mIntent = new Intent(mContext, QuestionActivity.class);
+            mIntent.putExtra("type", 0);
+            mIntent.putExtra("questionId", questionId.getText().toString());
+            startActivity(mIntent);
+
+        }
+
     }
+
+    private void getUserImage(String imageUrl, final ImageView imageView, final LatLng location){
+
+        ImageLoader imageLoader = Singleton.getInstance().getImageLoader();
+
+        imageLoader.get(imageUrl, new ImageLoader.ImageListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //Log.e(TAG, "Image Load Error: " + error.getMessage());
+            }
+
+            @Override
+            public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
+                if (response.getBitmap() != null) {
+
+                    imageView.setImageBitmap(response.getBitmap());
+                    mMap.addMarker(new MarkerOptions()
+                            .position(location)
+                            .icon(BitmapDescriptorFactory.fromBitmap(createDrawableFromView(mContext, (View) imageView.getParent()))));
+
+                    //TODO
+                } else {
+                    // Default image...
+                    mMap.addMarker(new MarkerOptions()
+                            .position(location)
+                            .icon(BitmapDescriptorFactory.fromBitmap(createDrawableFromView(mContext, (View) imageView.getParent()))));
+                }
+            }
+        });
+
+    }
+
+
 }

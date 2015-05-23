@@ -29,7 +29,7 @@
             android:paddingTop="5dp"
             android:src="@drawable/ic_settings_black_24dp" />
 
-        <com.sos.saveourstudents.supportclasses.CustomTextView
+        <TextView
             android:id="@+id/textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

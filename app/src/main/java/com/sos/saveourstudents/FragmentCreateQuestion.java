@@ -393,7 +393,7 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
     private void getUserImage(String imageUrl, final ImageView imageView){
 
         ImageLoader imageLoader = Singleton.getInstance().getImageLoader();
-        // If you are using normal ImageView
+
         imageLoader.get(imageUrl, new ImageLoader.ImageListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -405,7 +405,7 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
                 if (response.getBitmap() != null) {
 
                     imageView.setImageBitmap(response.getBitmap());
-                    //TODO imageview.setImageBitmap(response.getBitmap());
+
                 } else {
                     // Default image...
                 }

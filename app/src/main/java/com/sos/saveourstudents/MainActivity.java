@@ -70,11 +70,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setSupportActionBar(toolbar);
 
 
-        //FragmentManager manager = getSupportFragmentManager();
-        //android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
-
-
-
         fab = (com.rey.material.widget.FloatingActionButton) findViewById(R.id.fab_image);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public int getIndicatorColor(int position) {
 
-                return MainActivity.this.getResources().getColor(R.color.primary_light);
+                return MainActivity.this.getResources().getColor(R.color.primary_dark);
             }
         });
 
@@ -268,7 +263,6 @@ class MyPagerAdapter extends FragmentPagerAdapter {
 
     FragmentFeed feed = new FragmentFeed();
     FragmentMap map = new FragmentMap();
-
     String[] tabNames = {"Feed", "Map"};
 
 
@@ -284,12 +278,9 @@ class MyPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if(position == 0){
-
-            System.out.println("feed ID : "+feed.getId());
             return feed;
         }
         else{
-            System.out.println("map ID : "+map.getId());
             return map;
         }
 

@@ -64,6 +64,7 @@ public class FragmentFeed extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
+
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -251,6 +252,10 @@ public class FragmentFeed extends Fragment {
                 String topic = mQuestionList.getJSONObject(position).getJSONObject("map").getString("topic");
                 String text = mQuestionList.getJSONObject(position).getJSONObject("map").getString("text");
 
+                //TODO boolean group = mQuestionList.getJSONObject(position).getJSONObject("map").getString("group");
+                //TODO boolean tutor = mQuestionList.getJSONObject(position).getJSONObject("map").getString("tutor");
+
+
                 //System.out.println("Question " + position + ": " + mQuestionList.getJSONObject(position).getJSONObject("map"));
                 viewHolder.nameText.setText(firstName + " " + lastName);
 
@@ -304,11 +309,23 @@ public class FragmentFeed extends Fragment {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                //System.out.println("touched : "+getAdapterPosition());
 
                 if(v == rippleView && event.getAction() == MotionEvent.ACTION_UP){
-                    Intent mIntent = new Intent(mContext, QuestionActivity.class);
-                    mIntent.putExtra("type", 0);
-                    startActivity(mIntent);
+
+                    try {
+                        String questionId = mQuestionList.getJSONObject(getAdapterPosition()).getJSONObject("map").getString("question_id");
+                        Intent mIntent = new Intent(mContext, QuestionActivity.class);
+                        mIntent.putExtra("questionId", questionId);
+                        mIntent.putExtra("type", 0);
+                        startActivity(mIntent);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+
                 }
 
 
@@ -318,9 +335,19 @@ public class FragmentFeed extends Fragment {
 
             @Override
             public void onClick(View v) {
-                //System.out.println("Clicked: "+v);
+
                 if(v == nameText || v == userImage){
-                    startActivity(new Intent(mContext, ProfileActivity.class));
+
+                    try {
+                        String userId = mQuestionList.getJSONObject(getAdapterPosition()).getJSONObject("map").getString("user_id");
+                        Intent intent = new Intent(mContext, ProfileActivity.class);
+                        intent.putExtra("userId", userId);
+                        startActivity(intent);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
 
                 }
             }
