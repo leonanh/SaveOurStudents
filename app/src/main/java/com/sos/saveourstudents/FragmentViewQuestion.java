@@ -95,8 +95,6 @@ public class FragmentViewQuestion extends Fragment implements
      * Helper method to initiate Volley call and refresh UI
      */
     private void getQuestionData() {
-
-
         //TODO turn into server call (volley)
         mQuestionList = new ArrayList<Question>();
         for(int a = 0; a < 6; a++){
