@@ -20,14 +20,8 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
 import com.rey.material.widget.Button;
+import com.rey.material.widget.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,8 +37,6 @@ public class FragmentViewQuestion extends Fragment implements
     RecycleViewAdapter mAdapter;
     RecyclerView mRecyclerView;
 
-    private GoogleMap mMap;
-    private MapView mMapView;
     private Context mContext;
     private GoogleApiClient mGoogleApiClient;
 
@@ -72,7 +64,7 @@ public class FragmentViewQuestion extends Fragment implements
             ((LinearLayout)taglist).addView(tag);
         }
 
-        Button tutorOrMember = (Button) rootView.findViewById(R.id.join_button);
+        FloatingActionButton tutorOrMember = (FloatingActionButton) rootView.findViewById(R.id.group_action);
         tutorOrMember.setOnClickListener(this);
 
         return rootView;
@@ -103,11 +95,9 @@ public class FragmentViewQuestion extends Fragment implements
      * Helper method to initiate Volley call and refresh UI
      */
     private void getQuestionData() {
-
-
         //TODO turn into server call (volley)
         mQuestionList = new ArrayList<Question>();
-        for(int a = 0; a < 5; a++){
+        for(int a = 0; a < 6; a++){
             Question temp = new Question("Question "+a);
             mQuestionList.add(temp);
         }
@@ -119,26 +109,6 @@ public class FragmentViewQuestion extends Fragment implements
         mAdapter = new RecycleViewAdapter(mQuestionList, R.layout.fragment_question_comment, this.getActivity());
         mRecyclerView.setAdapter(mAdapter);
 
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        //TODO temp disable to prevent crash
-        //mMapView.onPause();
-        super.onPause();
-    }
-
-    @Override
-    public void onDestroy() {
-        //TODO temp disable to prevent crash
-        //mMapView.onDestroy();
-        super.onDestroy();
     }
 
 
@@ -188,9 +158,8 @@ public class FragmentViewQuestion extends Fragment implements
 
     public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.ViewHolder>{
 
-        private static final int TYPE_MAP = 0;
-        private static final int TYPE_ITEM = 1;
-        private static final int TYPE_MEMBER = 2;
+        private static final int TYPE_ITEM = 0;
+        private static final int TYPE_MEMBER = 1;
 
         Context context;
         private int rowLayout;
@@ -209,8 +178,6 @@ public class FragmentViewQuestion extends Fragment implements
             public ViewHolder(View itemView, int viewType) {
                 super(itemView);
 
-                System.out.println("ViewType: "+viewType);
-                //0 index should be a map
                 if(viewType == TYPE_ITEM) {
                     //textView = (TextView) itemView.findViewById(R.id.textview);
                     //imageView = (ImageView) itemView.findViewById(R.id.imageview);
@@ -220,12 +187,6 @@ public class FragmentViewQuestion extends Fragment implements
                     memberRecyclerView = (RecyclerView) itemView.findViewById(R.id.my_recycler_view);
                     buildMemberRecyclerView();
                     Holderid = TYPE_MEMBER;
-                }
-                else{
-                    //TODO disabled temporarily to prevent crash
-//                    mMapView = (MapView) itemView.findViewById(R.id.map);
-//                    initializeMap();
-//                    Holderid = TYPE_MAP;
                 }
             }
 
@@ -257,12 +218,7 @@ public class FragmentViewQuestion extends Fragment implements
             View v = null;
             if (viewType == TYPE_ITEM) {
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_question_comment,parent,false);
-            } else if (viewType == TYPE_MAP) {
-                //TODO disabled temporarily to prevent crash -- TEMP: replaced with another comment
-                //v = LayoutInflater.from(parent.getContext()).inflate(R.layout.question_map_item,parent,false);
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_question_comment,parent,false);
-            }
-            if (viewType == TYPE_MEMBER) {
+            } else if (viewType == TYPE_MEMBER) {
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.question_group_item,parent,false);
             }
 
@@ -298,68 +254,10 @@ public class FragmentViewQuestion extends Fragment implements
         // With the following method we check what type of view is being passed
         @Override
         public int getItemViewType(int position) {
-            if (position == 0)
-                return TYPE_MAP;
-            else if (position == 1)
+           if (position == 0)
                 return TYPE_MEMBER;
 
             return TYPE_ITEM;
-        }
-
-    }
-
-
-    private void initializeMap(){
-
-        mMapView.onCreate(new Bundle());
-        mMap = mMapView.getMap();
-
-        try {
-            MapsInitializer.initialize(mContext);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        buildGoogleApiClient();
-
-        mMapView.onResume();
-        mMap.getUiSettings().setScrollGesturesEnabled(false);
-
-        zoomToMyPosition();
-
-    }
-    protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(mContext)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        mGoogleApiClient.connect();
-    }
-
-
-    /**
-     * Magic
-     */
-    private void zoomToMyPosition(){
-
-        LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-
-        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-        if (location != null)
-        {
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                    new LatLng(location.getLatitude(), location.getLongitude()), 13));
-
-            CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
-                    .zoom(17)                   // Sets the zoom
-                    .bearing(90)                // Sets the orientation of the camera to east
-                    .tilt(40)                   // Sets the tilt of the camera to 30 degrees
-                    .build();                   // Creates a CameraPosition from the builder
-            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
         }
 
     }

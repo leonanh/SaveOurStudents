@@ -112,8 +112,6 @@ public class FragmentMap extends Fragment implements
         return rootView;
     }
 
-
-
     public void createAndShowMap(){
 
         buildGoogleApiClient();
