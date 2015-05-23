@@ -87,7 +87,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mTabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
-
                 return MainActivity.this.getResources().getColor(R.color.primary_light);
             }
         });
@@ -150,7 +149,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }; // Drawer Toggle Object Made
         mDrawer.setDrawerListener(mDrawerToggle); // Drawer Listener set to the Drawer toggle
         mDrawerToggle.syncState();               // Finally we set the drawer toggle sync State
-
 
 
     }
