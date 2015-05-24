@@ -13,8 +13,17 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.rey.material.widget.EditText;
 import com.rey.material.widget.FloatingActionButton;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
 
 
 /**
@@ -26,11 +35,12 @@ import com.rey.material.widget.FloatingActionButton;
  * create an instance of this fragment.
  */
 public class EditProfileFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "student";
+    private static final String ARG_CURRSTUDENT = "student";
+    private final String mUserURL =
+            "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/updateProfile?";
+    private final String userIdTag_sharedPreferences = "user_id";
 
-    private Student currStudent;
+    private Student mCurrStudent;
     private OnDoneButtonListener mListener;
 
     private EditText mEditFirstName;
@@ -57,7 +67,7 @@ public class EditProfileFragment extends Fragment {
     public static EditProfileFragment newInstance(Student currStudent) {
         EditProfileFragment fragment = new EditProfileFragment();
         Bundle args = new Bundle();
-        args.putParcelable(ARG_PARAM1, currStudent);
+        args.putParcelable(ARG_CURRSTUDENT, currStudent);
         fragment.setArguments(args);
         return fragment;
     }
@@ -70,7 +80,7 @@ public class EditProfileFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            currStudent = getArguments().getParcelable(ARG_PARAM1);
+            mCurrStudent = getArguments().getParcelable(ARG_CURRSTUDENT);
         } else {
             Log.e("EditProfile Error", "Must be given a student argument!");
         }
@@ -158,11 +168,11 @@ public class EditProfileFragment extends Fragment {
         mEditDescription = (EditText) getActivity().findViewById(R.id.profile_editDescription);
         mEditDescriptionInput = (android.widget.EditText) getActivity().findViewById(R.id.profile_editDescription_inputId);
 
-        mEditFirstNameInput.setText(currStudent.getFirstName());
-        mEditLastNameInput.setText(currStudent.getLastName());
-        mEditSchoolInput.setText(currStudent.getSchool());
-        mEditMajorInput.setText(currStudent.getMajor());
-        mEditDescriptionInput.setText(currStudent.getDescription());
+        mEditFirstNameInput.setText(mCurrStudent.getFirstName());
+        mEditLastNameInput.setText(mCurrStudent.getLastName());
+        mEditSchoolInput.setText(mCurrStudent.getSchool());
+        mEditMajorInput.setText(mCurrStudent.getMajor());
+        mEditDescriptionInput.setText(mCurrStudent.getDescription());
     }
 
     /**
@@ -172,13 +182,44 @@ public class EditProfileFragment extends Fragment {
      */
 
     public Student updateStudent() {
-        currStudent.setFirstName(mEditFirstNameInput.getText().toString());
-        currStudent.setLastName(mEditLastNameInput.getText().toString());
-        currStudent.setSchool(mEditSchoolInput.getText().toString());
-        currStudent.setMajor(mEditMajorInput.getText().toString());
-        currStudent.setDescription(mEditDescriptionInput.getText().toString());
 
-        return currStudent;
+        mCurrStudent.setFirstName(mEditFirstNameInput.getText().toString());
+        mCurrStudent.setLastName(mEditLastNameInput.getText().toString());
+        mCurrStudent.setSchool(mEditSchoolInput.getText().toString());
+        mCurrStudent.setMajor(mEditMajorInput.getText().toString());
+        mCurrStudent.setDescription(mEditDescriptionInput.getText().toString());
+
+        String newFirstName = "";
+        String newLastName = "";
+        String newSchool = "";
+        String newMajor = "";
+        String newDescription = "";
+
+        try {
+            newFirstName = java.net.URLEncoder.encode(mCurrStudent.getFirstName(), "utf-8");
+            newLastName = java.net.URLEncoder.encode(mCurrStudent.getLastName(), "utf-8");
+            newSchool = java.net.URLEncoder.encode(mCurrStudent.getSchool(), "utf-8");
+            newMajor = java.net.URLEncoder.encode(mCurrStudent.getMajor(), "utf-8");
+            newDescription = java.net.URLEncoder.encode(mCurrStudent.getDescription(), "utf-8");
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        String updateProfileUrl = mUserURL + "userId=" +
+                getActivity().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
+                        .getString(userIdTag_sharedPreferences, "")
+                + "&firstName=" + newFirstName + "&lastName=" + newLastName
+                + "&school=" + newSchool + "&major=" + newMajor
+                + "&description=" + newDescription + "&image=" + "";
+
+        JsonObjectRequest studentRequest = new JsonObjectRequest(Request.Method.GET,
+                updateProfileUrl, (JSONObject) null, new EditProfileResponseListener(),
+                new EditProfileErrorListener());
+
+        Singleton.getInstance().addToRequestQueue(studentRequest);
+
+        return mCurrStudent;
     }
 
     private void initializeEditTextWithEnterExit(final EditText editTextWrapper,
@@ -212,7 +253,19 @@ public class EditProfileFragment extends Fragment {
             }
         });
     }
+    class EditProfileResponseListener implements Response.Listener<JSONObject> {
 
+        @Override
+        public void onResponse(JSONObject response) {
+        }
+    }
+    class EditProfileErrorListener implements Response.ErrorListener {
+
+        @Override
+        public void onErrorResponse(VolleyError error) {
+
+        }
+    }
 
 
 
