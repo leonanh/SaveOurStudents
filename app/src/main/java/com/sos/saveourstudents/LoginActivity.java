@@ -410,18 +410,23 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
 
         } else if (v == loginBtn) {
+            boolean error = false;
             if (usernameField.getText().toString().isEmpty()) {
-                prompt = Toast.makeText(appContext, R.string.usernameEmpty, Toast.LENGTH_SHORT);
-                prompt.show();
-                return;
-            } else if (passwordField.getText().toString().isEmpty()) {
-                prompt = Toast.makeText(appContext, R.string.passwordEmpty, Toast.LENGTH_SHORT);
-                prompt.show();
-                return;
+                usernameField.setError("");
+                error = true;
+            }
+            if (passwordField.getText().toString().isEmpty()) {
+                passwordField.setError("");
+                error = true;
             }
 
-            Log.d("Debug", "Logging in");
-            doSOSLogin("SOS", usernameField.getText().toString(), passwordField.getText().toString());
+
+            if(!error) {
+                usernameField.clearError();
+                passwordField.clearError();
+                Log.d("Debug", "Logging in");
+                doSOSLogin("SOS", usernameField.getText().toString(), passwordField.getText().toString());
+            }
 
         } else if (v == signupBtn) {
             startActivity(new Intent(this, SignupActivity.class));
