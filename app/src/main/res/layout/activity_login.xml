@@ -51,6 +51,7 @@
         app:et_supportMode="helper"
         android:gravity="left"
         android:ems="7"
+        android:textCursorDrawable="@null"
         />
 
 
@@ -76,6 +77,7 @@
         android:gravity="left"
         android:ems="7"
         android:inputType="textPassword"
+        android:textCursorDrawable="@null"
         />
 
 
@@ -124,7 +126,7 @@
         android:textSize="@dimen/abc_text_size_body_1_material"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:textStyle="bold"
         android:text="@string/sign_up"
         android:textAppearance="@style/TextAppearance.AppCompat.Button"
         android:layout_alignParentBottom="true"
@@ -137,7 +139,7 @@
         android:textSize="@dimen/abc_text_size_body_1_material"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:textStyle="bold"
         android:text="@string/forgot_login"
         android:textAppearance="@style/TextAppearance.AppCompat.Button"
         android:layout_alignParentRight="true"

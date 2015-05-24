@@ -13,5 +13,5 @@
     <dimen name="login_icon_size">55dp</dimen>
     <dimen name="fb_and_gplus_icon_size">55dp</dimen>
     <dimen name="textview_font_size">30sp</dimen>
-    <dimen name="login_screen_main_logo">200dp</dimen>
+    <dimen name="login_screen_main_logo">150dp</dimen>
 </resources>
