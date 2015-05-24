@@ -73,7 +73,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
     private ProfileTracker profileTracker;
     LoginManager loginManager;
     ImageView fbLogin;
-    String facebookEmail;
+    String facebookEmail = null;
     String userImageUrl = "";
 
     //GCM
@@ -83,6 +83,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
     String SENDER_ID = "862374215545"; //TODO
     GoogleCloudMessaging gcm;
     String regid;
+
     boolean isLogging = false;
 
     Toast prompt;
@@ -148,58 +149,34 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                             public void onCompleted(JSONObject object, GraphResponse response) {
 
                                 try {
-                                    /*
-                                    System.out.println("object: " +object.getString("email"));
 
-                                    System.out.println("Profile changed: " + profile);
-                                    System.out.println("Save: " + profile.getFirstName());
-                                    System.out.println("Save: " + profile.getLastName());
-                                    System.out.println("Save: " + profile.getId());
-                                    System.out.println("Save: " + profile.getProfilePictureUri(100, 100));
-                                    */
                                     Profile profile = Profile.getCurrentProfile();
-                                    facebookEmail = object.getString("email");
 
-                                    //System.out.println("Send sos login");
-                                    /*
-                                    createSOSUser("facebook",
-                                            profile.getFirstName(),
-                                            profile.getLastName(),
-                                            profile.getId(),
-                                            facebookEmail[0]);
-                                    */
+                                    if(profile != null) {
+                                        /*
+                                        System.out.println("object: " + object.getString("email"));
+                                        System.out.println("Profile changed: " + profile);
+                                        System.out.println("Save: " + profile.getFirstName());
+                                        System.out.println("Save: " + profile.getLastName());
+                                        System.out.println("Save: " + profile.getId());
+                                        System.out.println("Save: " + profile.getProfilePictureUri(100, 100));
+                                        */
+
+                                        userImageUrl = profile.getProfilePictureUri(100, 100).toString();
+                                        facebookEmail = object.getString("email");
+
+                                        createSOSUser("facebook",
+                                                profile.getFirstName(),
+                                                profile.getLastName(),
+                                                profile.getId(),
+                                                facebookEmail);
+
+                                    }
+
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-/*
-                                profileTracker = new ProfileTracker() {
-                                    @Override
-                                    protected void onCurrentProfileChanged(Profile oldProfile, Profile currentProfile) {
-
-
-                                        if (currentProfile == null) {
-                                            System.out.println("Profile changed: logged out");
-                                            prompt.setText("Logged out");
-                                        } else {
-                                            System.out.println("Profile changed: " + currentProfile);
-                                            System.out.println("Save: " + currentProfile.getFirstName());
-                                            System.out.println("Save: " + currentProfile.getLastName());
-                                            System.out.println("Save: " + currentProfile.getId());
-                                            System.out.println("Save: " + currentProfile.getProfilePictureUri(100, 100));
-                                            //TODO Send to server and save local info
-                                            prompt.setText("FB logged in as " + Profile.getCurrentProfile().getName());
-
-                                            createSOSUser("facebook",
-                                                    currentProfile.getFirstName(),
-                                                    currentProfile.getLastName(),
-                                                    currentProfile.getId(),
-                                                    facebookEmail[0]);
-
-
-                                        }
-                                    }
-                                };*/
                             }
                         });
                 Bundle parameters = new Bundle();
@@ -226,9 +203,13 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
             protected void onCurrentProfileChanged(Profile oldProfile, Profile currentProfile) {
 
 
+                //System.out.println("userImageUrl: "+userImageUrl);
+                //System.out.println("facebookEmail: "+facebookEmail);
 
-                if(currentProfile != null && !isLogging){
+/*
+                if(currentProfile != null && !isLogging && userImageUrl != null && facebookEmail!=null){
 
+                    System.out.println("Success logging into FB");
                     userImageUrl = currentProfile.getProfilePictureUri(100, 100).toString(); //TODO send with create user
                     isLogging = true;
                     createSOSUser("facebook",
@@ -237,7 +218,14 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                             currentProfile.getId(),
                             facebookEmail);
                 }
+                else{
+                    System.out.println("Tried to do FB, but could not");
+                    System.out.println("isLogging: "+isLogging);
+                    System.out.println("currentProfile: "+currentProfile);
+                    System.out.println("userImageUrl: "+userImageUrl);
 
+                }
+*/
 
             }
         };
@@ -519,11 +507,6 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
             Person currentPerson = Plus.PeopleApi
                     .getCurrentPerson(mGoogleApiClient);
 
-
-            //Need firstName, lastName, password (userId)
-            //Need email, deviceId
-
-
             //System.out.println("getImage: " + );
             userImageUrl = currentPerson.getImage().getUrl();
             String firstName = currentPerson.getName().getGivenName();
@@ -533,8 +516,6 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
 
             //prompt.setText("Welcome, " + firstName + " " + lastName);
-
-
 
 
 
@@ -616,6 +597,8 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
         System.out.println("userImageUrl: "+userImageUrl);
 
+
+
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createUser?" +
                 "firstName=" + firstName +
                 "&lastName=" + lastName +
@@ -625,7 +608,24 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                 "&deviceId=" + deviceId;
 
 
-        System.out.println("URL: "+url);
+/*
+        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        params.add(new BasicNameValuePair("firstName", firstName));
+        params.add(new BasicNameValuePair("lastName", lastName));
+        params.add(new BasicNameValuePair("password", Singleton.get_SHA_1_SecurePassword(password)));
+        params.add(new BasicNameValuePair("email", email));
+        params.add(new BasicNameValuePair("image", userImageUrl));
+        params.add(new BasicNameValuePair("deviceId", deviceId));
+
+
+        String paramString = URLEncodedUtils.format(params, "utf-8");//.replace("+", "%20");
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createUser?"+paramString;
+*/
+
+
+
+        System.out.println("createUser URL: "+url);
+
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url,
                 (JSONObject) null, new Response.Listener<JSONObject>() {
             @Override

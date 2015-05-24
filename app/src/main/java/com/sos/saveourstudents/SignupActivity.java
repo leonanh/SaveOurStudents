@@ -3,24 +3,19 @@ package com.sos.saveourstudents;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.text.Editable;
+import android.provider.Settings.Secure;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.android.gms.drive.realtime.internal.event.ValueChangedDetails;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.rey.material.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.provider.Settings.Secure;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -35,10 +30,22 @@ public class SignupActivity extends Activity implements View.OnClickListener {
     Toast prompt;
     Context appContext;
 
+
+    //GCM
+    public static final String PROPERTY_REG_ID = "registration_id";
+    private static final String PROPERTY_APP_VERSION = "appVersion";
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    String SENDER_ID = "862374215545"; //TODO
+    GoogleCloudMessaging gcm;
+    String regid;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
+
+        //registerInBackground();
 
         passInput1 = (EditText) findViewById(R.id.signup_password_textfield);
         passInput2 = (EditText) findViewById(R.id.signup_password_confirm_textfield);
@@ -85,7 +92,7 @@ public class SignupActivity extends Activity implements View.OnClickListener {
                         "firstName=" + firstName  +
                         "&lastName=" + lastName  +
                         "&password=" + Singleton.get_SHA_1_SecurePassword(passwordInput1) +
-                        "&image=" + null +
+                        "&image=" + "" +
                         "&email=" + emailInput1 +
                         "&deviceId=" + android_id;
 
@@ -97,7 +104,7 @@ public class SignupActivity extends Activity implements View.OnClickListener {
                             public void onResponse(JSONObject response) {
                                 try {
 
-                                    //JSONObject theResponse = new JSONObject(response.toString());
+                                    JSONObject theResponse = new JSONObject(response.toString());
 
                                     if(response.getString("success").equalsIgnoreCase("1")){
                                         // Sign Up successful

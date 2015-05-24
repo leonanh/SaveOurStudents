@@ -134,7 +134,7 @@ public class FragmentFeed extends Fragment implements LocationListener, GoogleAp
     public void getQuestionData() {
 
 
-
+        getLocationUpdate();
 
         Set<String> filterList = new HashSet<String>(sharedPref.getStringSet("filter_list", new HashSet<String>()));
 
@@ -353,25 +353,28 @@ public class FragmentFeed extends Fragment implements LocationListener, GoogleAp
                 //System.out.println("date: " + Singleton.getInstance().doDateLogic(theDate));
                 viewHolder.questionText.setText(text);
 
+
                 viewHolder.dateText.setText(Singleton.getInstance().doDateLogic(theDate));
                 viewHolder.topicText.setText(topic);
 
 
-                //if(sharedPref.getString("distanceType"))
+                String distanceType = sharedPref.getString("distanceType", "MI");
+
 
 
                 if(mCurrentLocation != null){
                     viewHolder.distanceText.setText(
                             Singleton.getInstance().doDistanceLogic(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(),
-                                    latitude, longitude, "MI")+"");
+                                    latitude, longitude, distanceType)+""+distanceType);
                 }
                 else if(lastKnownLocation != null){
                     System.out.println("mCurrentLocation is null, trying lastknown");
                     viewHolder.distanceText.setText(
                             Singleton.getInstance().doDistanceLogic(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude(),
-                                    latitude, longitude, "MI") + "");
+                                    latitude, longitude, distanceType) + ""+distanceType);
                 }
                 else{
+                    viewHolder.distanceText.setVisibility(View.INVISIBLE);
                     System.out.println("mCurrentLocation and lastknown is null");
                 }
 
