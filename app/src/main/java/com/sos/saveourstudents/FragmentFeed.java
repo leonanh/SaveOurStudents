@@ -291,6 +291,7 @@ public class FragmentFeed extends Fragment implements LocationListener, GoogleAp
 
 
     protected synchronized void buildGoogleApiClient() {
+        mSwipeRefreshLayout.setRefreshing(true);
         mGoogleApiClient = new GoogleApiClient.Builder(mContext)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)

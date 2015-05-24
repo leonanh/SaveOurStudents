@@ -2,16 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/container"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent"
+    android:background="@android:color/white">
 
     <ImageView
         android:id="@+id/login_logo"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/login_screen_main_logo"
-        android:layout_alignParentStart="false"
         android:src="@drawable/logo_placeholder"
         android:background="@color/primary"
-        android:layout_alignParentRight="false"
         android:paddingTop="@dimen/container_padding" />
 
     <TextView
@@ -33,36 +32,64 @@
         android:layout_below="@id/login_logo_label"
         android:touchscreenBlocksFocus="false" />
 
-    <EditText
+
+    <com.rey.material.widget.EditText
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        style="@style/Material.Widget.EditText.Light"
         android:id="@+id/username_textfield"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/login_logo_label"
-        android:layout_marginTop="@dimen/abc_edit_text_inset_top_material"
-        android:padding="@dimen/abc_text_size_body_2_material"
-        android:ems="10"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/primary_text"
+        android:textColorHint="@color/hint_text"
         android:hint="@string/username_hint"
-        android:inputType="textPersonName"
+        android:inputType="textCapSentences"
+        app:et_autoCompleteMode="none"
+        app:et_dividerColor="@color/primary"
+        app:et_dividerPadding="4dp"
+        app:et_supportTextErrorColor="#FFFF0000"
+        app:et_dividerErrorColor="#FFFF0000"
+        app:et_supportMode="helper"
         android:gravity="center"
+        android:ems="7"
         />
 
-    <EditText
+
+    <com.rey.material.widget.EditText
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        style="@style/Material.Widget.EditText.Light"
         android:id="@+id/password_textfield"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/username_textfield"
-        android:padding="@dimen/abc_text_size_body_1_material"
-        android:ems="10"
-        android:gravity="center|center_horizontal"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/primary_text"
+        android:textColorHint="@color/hint_text"
         android:hint="@string/password_hint"
+        app:et_autoCompleteMode="none"
+        app:et_dividerColor="@color/primary"
+        app:et_dividerPadding="4dp"
+        app:et_supportTextErrorColor="#FFFF0000"
+        app:et_dividerErrorColor="#FFFF0000"
+        app:et_supportMode="helper"
+        android:gravity="center"
+        android:ems="7"
         android:inputType="textPassword"
         />
+
 
     <Button
         android:id="@+id/login_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/password_textfield"
+
+        android:layout_marginTop="20dp"
         android:paddingTop="@dimen/abc_button_padding_vertical_material"
         android:paddingBottom="@dimen/abc_button_padding_vertical_material"
         android:layout_marginLeft="50dp"
@@ -103,8 +130,6 @@
         android:gravity="center"
         android:text="@string/sign_up"
         android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:layout_alignParentEnd="false"
-        android:layout_alignParentStart="false"
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="@dimen/container_padding"
         android:layout_marginBottom="@dimen/container_padding"
@@ -118,7 +143,7 @@
         android:gravity="center"
         android:text="@string/forgot_login"
         android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:layout_marginRight="@dimen/container_padding"
         android:layout_marginBottom="@dimen/container_padding"

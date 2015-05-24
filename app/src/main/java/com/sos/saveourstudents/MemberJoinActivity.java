@@ -85,9 +85,9 @@ public class MemberJoinActivity extends Activity implements View.OnClickListener
         }
         else if (v == userProfile)
         {
-            //Decline member
+            //Check out member
             startActivity(new Intent(this, ProfileActivity.class));
-            finish();
+            //finish();
         }
     }
 
