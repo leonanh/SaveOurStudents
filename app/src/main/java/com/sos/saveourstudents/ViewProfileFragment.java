@@ -3,21 +3,14 @@ package com.sos.saveourstudents;
 import android.app.Activity;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rey.material.widget.FloatingActionButton;
-
-import org.solovyev.android.views.llm.DividerItemDecoration;
-import org.solovyev.android.views.llm.LinearLayoutManager;
-
-import java.util.ArrayList;
 
 
 /**
@@ -30,9 +23,11 @@ import java.util.ArrayList;
  */
 public class ViewProfileFragment extends Fragment {
     private static final String ARG_PARAM1 = "student";
-    private FloatingActionButton editButton;
+    private static final String ARG_ISCURRENTUSER = "isCurrentUser";
+    private FloatingActionButton mEditButton;
 
-    private Student currStudent;
+    private Student mCurrStudent;
+    private boolean mIsCurrentUser;
 
     private OnEditButtonListener mListener;
 
@@ -43,10 +38,11 @@ public class ViewProfileFragment extends Fragment {
      * @param currStudent The current logged in student
      * @return A new instance of fragment ViewProfileFragment.
      */
-    public static ViewProfileFragment newInstance(Student currStudent) {
+    public static ViewProfileFragment newInstance(Student currStudent, boolean isCurrentUser) {
         ViewProfileFragment fragment = new ViewProfileFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_PARAM1, currStudent); // ARG_PARAM1 key now holds current Student
+        args.putBoolean(ARG_ISCURRENTUSER, isCurrentUser);
         fragment.setArguments(args);
         return fragment;
     }
@@ -60,12 +56,11 @@ public class ViewProfileFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             // Grab the current student from our created Bundle
-            currStudent = getArguments().getParcelable(ARG_PARAM1);
+            mCurrStudent = getArguments().getParcelable(ARG_PARAM1);
+            mIsCurrentUser = getArguments().getBoolean(ARG_ISCURRENTUSER);
+        } else {
+            Log.e("ViewProfile", "Error during transaction!");
         }
-
-        else currStudent = new Student("Brady", "Shi", 0, "UCSD", "Computer Engineering", "Coffee Addict",
-                null); // Unnecessary with FragmentTransaction
-
     }
 
     @Override
@@ -77,9 +72,8 @@ public class ViewProfileFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         updateCurrentStudentView();
 
         LinearLayout aboutMeContents = (LinearLayout) getActivity()
@@ -87,35 +81,48 @@ public class ViewProfileFragment extends Fragment {
         aboutMeContents.setDividerDrawable(getActivity().getResources()
                 .getDrawable(R.drawable.abc_list_divider_mtrl_alpha));
         aboutMeContents.setShowDividers(LinearLayout.SHOW_DIVIDER_BEGINNING);
-
-        // Set the OnClickListener for the edit floating action button
-        editButton = (FloatingActionButton) getActivity().findViewById(R.id.profile_editButton);
-        editButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mListener != null) {
-                    mListener.onEditButton();
+        mEditButton = (FloatingActionButton) getActivity().findViewById(R.id.profile_editButton);
+        if (!mIsCurrentUser) {
+            mEditButton.setVisibility(View.INVISIBLE);
+            mEditButton.setClickable(false);
+        } else {
+            // Set the OnClickListener for the edit floating action button
+            mEditButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mListener != null) {
+                        mListener.onEditButton();
+                    }
                 }
-            }
-        });
+            });
+
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+
     }
 
     /**
      * Update the View with the student's current values
      */
+
     private void updateCurrentStudentView() {
         ((TextView) getActivity().findViewById(R.id.profile_firstName))
-                .setText(currStudent.getFirstName());
+                .setText(mCurrStudent.getFirstName());
         ((TextView) getActivity().findViewById(R.id.profile_lastName))
-                .setText(currStudent.getLastName());
+                .setText(mCurrStudent.getLastName());
         ((TextView) getActivity().findViewById(R.id.profile_myRating))
-                .setText(((Integer) currStudent.getRating()).toString());
+                .setText(((Integer) mCurrStudent.getRating()).toString());
         ((TextView) getActivity().findViewById(R.id.profile_mySchool))
-                .setText(currStudent.getSchool());
+                .setText(mCurrStudent.getSchool());
         ((TextView) getActivity().findViewById(R.id.profile_myMajor))
-                .setText(currStudent.getMajor());
+                .setText(mCurrStudent.getMajor());
         ((TextView) getActivity().findViewById(R.id.profile_myDescription))
-                .setText(currStudent.getDescription());
+                .setText(mCurrStudent.getDescription());
     }
 
     @Override
@@ -145,7 +152,7 @@ public class ViewProfileFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnEditButtonListener{
+    public interface OnEditButtonListener {
         void onEditButton();
     }
 

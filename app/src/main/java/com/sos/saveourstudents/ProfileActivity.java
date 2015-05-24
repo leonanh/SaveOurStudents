@@ -1,7 +1,7 @@
 package com.sos.saveourstudents;
 
 import android.app.FragmentManager;
-import android.content.SharedPreferences;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -28,6 +28,9 @@ public class ProfileActivity extends AppCompatActivity
     private EditProfileFragment mEditProfileFragment;
 
     private final String userIdTag = "userId";
+    private final String userIdTag_sharedPreferences = "user_id";
+    private final String mUserURL =
+            "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getUserById?userId=";
     private String mUserId;
 
     @Override
@@ -37,12 +40,12 @@ public class ProfileActivity extends AppCompatActivity
 
         mUserId = getIntent().getStringExtra(userIdTag);
 
-        String url =
-                "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getUserById?userId="
-                        + mUserId;
+        String url = mUserURL + mUserId;
 
         JsonObjectRequest studentRequest = new JsonObjectRequest(Request.Method.GET,
-                url, new ProfileResponseListener(), new ProfileErrorListener());
+                url, (JSONObject) null, new ProfileResponseListener(), new ProfileErrorListener());
+
+        Singleton.getInstance().addToRequestQueue(studentRequest);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.profile_toolbar);
         if (toolbar != null) {
@@ -56,14 +59,7 @@ public class ProfileActivity extends AppCompatActivity
                 }
             });
         }
-
-        mViewProfileFragment = ViewProfileFragment.newInstance(mCurrStudent);
-        getFragmentManager().beginTransaction()
-                .add(R.id.profile_activity_container, mViewProfileFragment)
-                .addToBackStack(null)
-                .commit();
-
-    }
+   }
 
     /**
      * Overrides onBackPressed()
@@ -88,8 +84,6 @@ public class ProfileActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-
-        // TODO: Check if currStudent is the currently logged in student
     }
 
     @Override
@@ -139,25 +133,40 @@ public class ProfileActivity extends AppCompatActivity
         }
     }
 
+    private boolean isCurrentlyTheUser() {
+        if (getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
+                .getString(userIdTag_sharedPreferences, "").equals(mUserId))
+            return true;
+        else return false;
+    }
+
+    /**
+     * Handles the JSONObject response
+     * Creates the student to be displayed in the ViewProfileFragment
+     * Performs the transaction through the FragmentManager
+     */
     class ProfileResponseListener implements Response.Listener<JSONObject> {
 
         @Override
         public void onResponse(JSONObject response) {
             try {
-                Log.v("ProfileActivity", "Before Response");
                 JSONObject theResponse = new JSONObject(response.toString())
                         .getJSONObject("result")
                         .getJSONArray("myArrayList")
                         .getJSONObject(0)
                         .getJSONObject("map");
-
-                Log.v("ProfileActivity", "How'd I get here?");
                 mCurrStudent = new Student(theResponse.getString("first_name"),
                         theResponse.getString("last_name"), theResponse.getInt("rating"),
-                        theResponse.getString("School"), theResponse.getString("major"),
+                        theResponse.getString("school"), theResponse.getString("major"),
                         theResponse.getString("description"), null);
 
-                Log.v("ProfileActivity", "How'd I get here?2");
+                mViewProfileFragment = ViewProfileFragment.newInstance(mCurrStudent,
+                        isCurrentlyTheUser());
+                getFragmentManager().beginTransaction()
+                        .add(R.id.profile_activity_container, mViewProfileFragment)
+                        .addToBackStack(null)
+                        .commit();
+
             } catch (JSONException e) {
                 Log.e("ProfileActivity", "Error retrieving student from database!");
                 e.printStackTrace();
