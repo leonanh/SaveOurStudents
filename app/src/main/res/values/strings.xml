@@ -24,7 +24,10 @@
     <string name="passwordEmpty">Password field is empty!</string>
     <string name="repeat_password_hint">Repeat Password</string>
     <string name="invalidLogin">Login is invalid!</string>
+    <string name="invalidEmail">Please enter a valid email!</string>
+    <string name="emailSent">Email sent!</string>
     <string name="emailEmpty">Email is empty!</string>
+    <string name="emailTaken">Email is taken</string>
 
 
     <!-- -->

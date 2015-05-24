@@ -19,6 +19,8 @@ import com.rey.material.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.provider.Settings.Secure;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -28,7 +30,6 @@ import org.json.JSONObject;
 public class SignupActivity extends Activity implements View.OnClickListener {
 
     Validations validations = new Validations();
-
     Button signUpBtn;
     EditText passInput1, passInput2, emailInput, firstNameInput, lastNameInput;
     Toast prompt;
@@ -59,7 +60,7 @@ public class SignupActivity extends Activity implements View.OnClickListener {
         String passwordInput2;
         String firstName;
         String lastName;
-        //TODO JSON NOT WORKING!!!
+
         if (v == signUpBtn) {
 
             emailInput1 = emailInput.getText().toString();
@@ -84,44 +85,51 @@ public class SignupActivity extends Activity implements View.OnClickListener {
                         "firstName=" + firstName  +
                         "&lastName=" + lastName  +
                         "&password=" + Singleton.get_SHA_1_SecurePassword(passwordInput1) +
-                        "&email" + emailInput1 +
+                        "&image=" + null +
+                        "&email=" + emailInput1 +
                         "&deviceId=" + android_id;
 
+                System.out.println("ur = " + url);
+                JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
+                        url,(JSONObject)null, new Response.Listener<JSONObject>()
+                        {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                try {
 
-                JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url,
-                        (JSONObject) null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
+                                    //JSONObject theResponse = new JSONObject(response.toString());
 
-                        try {
+                                    if(response.getString("success").equalsIgnoreCase("1")){
+                                        // Sign Up successful
+                                        Intent loginActivity = new Intent(SignupActivity.this, LoginActivity.class);
+                                        startActivity(loginActivity);
+                                        finish();
 
-                            if (response.getString("success").equalsIgnoreCase("1")){
-                                Intent mainActivity = new Intent(SignupActivity.this, LoginActivity.class);
-                                startActivity(mainActivity);
-                                finish();
-                            }else{
-                                prompt = Toast.makeText(appContext, R.string.invalidLogin, Toast.LENGTH_SHORT);
-                                prompt.show();
+                                        return;
+                                    } else {
+                                        //Failed to Sign Up b/c email is taken
+                                        emailInput.setError("Email is taken");
+                                        //response.getJSONObject("result").getJSONArray("myArrayList");
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
                             }
-
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
+                        }, new Response.ErrorListener() {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
+
                         System.out.println("Error: " + error.toString());
                     }
                 });
 
-                Singleton.getInstance().addToRequestQueue(jsonObjReq);
+
+                Singleton.getInstance().addToRequestQueue(jsObjRequest);
                 //==================================================================================
             }
         }
+
     }
 
     private boolean verifyPassword(String incomingPass1, String incomingPass2) {
@@ -169,7 +177,7 @@ public class SignupActivity extends Activity implements View.OnClickListener {
 
 
     private boolean verifyFirstLast(String incomingFirstLast) {
-        boolean firstLastIsValid = validations.testEmailSignUp(incomingFirstLast);
+        boolean firstLastIsValid = validations.testFirstLast(incomingFirstLast);
 
         if (firstLastIsValid == false) {
             return false;
