@@ -20,9 +20,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.sos.saveourstudents.supportclasses.NavDrawerAdapter;
 import com.sos.saveourstudents.supportclasses.RecyclerItemClickListener;
 import com.sos.saveourstudents.supportclasses.SlidingTabLayout;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -31,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ViewPager mViewPager;
     SlidingTabLayout mTabs;
 
-    MyPagerAdapter viewPagerAdapter;
+    ViewPagerAdapter viewPagerAdapter;
     RecyclerView mRecyclerView;                           // Declaring RecyclerView
     RecyclerView.Adapter mAdapter;                        // Declaring Adapter For Recycler View
     RecyclerView.LayoutManager mLayoutManager;            // Declaring Layout Manager as a linear layout manager
@@ -77,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         mViewPager = (ViewPager) this.findViewById(R.id.pager);
-        viewPagerAdapter = new MyPagerAdapter(this.getSupportFragmentManager());
+        viewPagerAdapter = new ViewPagerAdapter(this.getSupportFragmentManager());
         mViewPager.setAdapter(viewPagerAdapter);
         mTabs = (SlidingTabLayout) this.findViewById(R.id.tabs);
         mTabs.setDistributeEvenly(true);
@@ -253,42 +266,113 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void buildFab(){
 
-
         //TODO Does user have active question?
+        getQuestionActiveStatus();
 
-        //TODO Show fab
-        showFab();
+    }
 
-        fab.setOnClickListener(new View.OnClickListener() {
+
+
+    private void getQuestionActiveStatus(){
+
+        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        params.add(new BasicNameValuePair("userId", sharedPref.getString("user_id", "")));
+
+        String paramString = URLEncodedUtils.format(params, "utf-8");
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/hasQuestion?"+paramString;
+
+
+        System.out.println("url: " + url);
+
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
+                (JSONObject)null,
+                new Response.Listener<JSONObject>(){
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+
+                            JSONObject result = new JSONObject(response.toString());
+                            System.out.println("result "+result);
+                            if(!result.getString("success").equalsIgnoreCase("1")){
+
+                                //Error...
+
+                            }
+                            else{
+
+                                //Edit Question
+                                if(result.getString("expectResults").equalsIgnoreCase("1")){
+                                    fab.setIcon(getResources().getDrawable(R.drawable.ic_create_white_18dp), false);
+                                    fab.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            Intent mIntent = new Intent(MainActivity.this, QuestionActivity.class);
+                                            mIntent.putExtra("type", 1);
+                                            startActivity(mIntent);
+                                        }
+                                    });
+                                }
+                                //Add question
+                                else{
+                                    fab.setIcon(getResources().getDrawable(R.drawable.ic_add_white_24dp), false);
+                                    fab.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            Intent mIntent = new Intent(MainActivity.this, QuestionActivity.class);
+                                            mIntent.putExtra("type", 1);
+                                            startActivity(mIntent);
+                                        }
+                                    });
+                                }
+                                showFab();
+
+
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
             @Override
-            public void onClick(View v) {
-                Intent mIntent = new Intent(MainActivity.this, QuestionActivity.class);
-                mIntent.putExtra("type", 1);
-                startActivity(mIntent);
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("Error with connection or url: " + error.toString());
             }
+
         });
 
 
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
 
 
     }
+
+
+
 
 
 }
 
 
 
+
+
+
 /**
  * Handles all work that pertains to the 2 main fragments
  */
-class MyPagerAdapter extends FragmentPagerAdapter {
+class ViewPagerAdapter extends FragmentPagerAdapter {
 
     FragmentFeed feed = new FragmentFeed();
     FragmentMap map = new FragmentMap();
     String[] tabNames = {"Feed", "Map"};
 
 
-    public MyPagerAdapter(FragmentManager fm) {
+    public ViewPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 
