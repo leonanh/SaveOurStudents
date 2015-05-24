@@ -1,7 +1,6 @@
 package com.sos.saveourstudents;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,10 +23,6 @@ public class ForgotLoginActivity extends Activity implements View.OnClickListene
 
     Button sendEmailBtn;
     com.rey.material.widget.EditText emailentry;
-    //TextView errormsg;
-    Toast emailsent;
-    Toast emaildne;
-    Context appContext;
 
 
     @Override
@@ -35,13 +30,8 @@ public class ForgotLoginActivity extends Activity implements View.OnClickListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_login);
 
-        //forgetPrompt = (TextView)findViewById(R.id.forgot_credentials_prompt);
         sendEmailBtn = (Button)findViewById(R.id.send_credentials_to_email_btn);
-        emailentry = (com.rey.material.widget.EditText)findViewById(R.id.forgot_login_email_textfield);
-        //errormsg = (TextView)findViewById(R.id.forgot_login_error_text);
-
-
-
+        emailentry = (com.rey.material.widget.EditText) findViewById(R.id.forgot_login_email_textfield);
         sendEmailBtn.setOnClickListener(this);
 
     }
@@ -51,20 +41,13 @@ public class ForgotLoginActivity extends Activity implements View.OnClickListene
         if(v == sendEmailBtn) {
             if(emailentry.getText().toString().isEmpty()) {
                 Log.d("debug","errmsg empty");
-                //errormsg.setText(R.string.emailEmpty);
-                return;
+                emailentry.setError("");
+            }else{
+
+                emailentry.clearError();
+                doRetrieveInfo(emailentry.getText().toString());
             }
 
-            //TODO: Add database validation
-            doRetrieveInfo(emailentry.getText().toString());
-
-            /*
-            //emailsent = Toast.makeText(appContext, "Email sent!", Toast.LENGTH_SHORT);
-            //emailsent.show();
-
-            Intent loginActivity = new Intent(this, LoginActivity.class);
-            startActivity(loginActivity);
-            finish();*/
         }
     }
 
@@ -84,13 +67,11 @@ public class ForgotLoginActivity extends Activity implements View.OnClickListene
                 try {
 
                     if(response.getString("expectResults").equalsIgnoreCase("0")) {
-                        emaildne = Toast.makeText(appContext, R.string.invalidEmail, Toast.LENGTH_SHORT);
-                        emaildne.show();
+                        Toast.makeText(ForgotLoginActivity.this, R.string.invalidEmail, Toast.LENGTH_SHORT).show();
                         //System.out.println("debug");
                     } else if (response.getString("success").equalsIgnoreCase("1")) {
                         //email exists
-                        emailsent = Toast.makeText(appContext, R.string.emailSent, Toast.LENGTH_SHORT);
-                        emailsent.show();
+                        Toast.makeText(ForgotLoginActivity.this, R.string.emailSent, Toast.LENGTH_SHORT).show();
                         Intent loginActivity = new Intent(ForgotLoginActivity.this, LoginActivity.class);
                         startActivity(loginActivity);
                         finish();

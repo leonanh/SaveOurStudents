@@ -23,9 +23,9 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/user_image"
+            android:id="@+id/user_image_details"
             app:border_color="@color/primary_light"
-            app:border_width="2dp"
+            app:border_width="1dp"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginLeft="15dp"
@@ -35,11 +35,6 @@
 
 
 
-        <TextView
-            android:id="@+id/question_id"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:textColor="@android:color/transparent"/>
 
         <View
             android:id="@+id/divider"
@@ -65,7 +60,9 @@
             android:layout_marginTop="5dp"
             android:ellipsize="end"
             android:text="Max acceleration was 6X gravity, altitude 1187m, lateral distance 1202m and velocity 155 m/s. Main chutes deployed 970m."
-            android:textColor="@color/primary_text" />
+            android:textColor="@color/primary_text"
+            android:maxLines="6"
+            />
 
 
 
@@ -76,12 +73,25 @@
             android:layout_alignParentRight="true"
             android:text="3h"
             android:textColor="@color/secondary_text"
-            android:layout_alignTop="@+id/linear_layout"
-            android:layout_alignBottom="@+id/linear_layout"
+            android:layout_alignTop="@+id/user_image_details"
             android:gravity="right"
             android:layout_marginRight="15dp"
-            android:padding="5dp"
+            android:paddingRight="5dp"
             android:minWidth="40dp"/>
+
+        <TextView
+            android:id="@+id/distance_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="150m"
+            android:textColor="@color/secondary_text"
+            android:layout_alignBottom="@+id/user_image_details"
+            android:gravity="right"
+            android:layout_marginRight="15dp"
+            android:paddingRight="5dp"
+            android:minWidth="40dp"/>
+
 
         <LinearLayout
             android:id="@+id/linear_layout"
@@ -89,9 +99,10 @@
             android:layout_height="match_parent"
             android:weightSum="2"
             android:orientation="vertical"
-            android:layout_alignBottom="@+id/user_image"
-            android:layout_alignTop="@+id/user_image"
-            android:layout_toRightOf="@+id/user_image">
+            android:layout_alignBottom="@+id/user_image_details"
+            android:layout_alignTop="@+id/user_image_details"
+            android:layout_toRightOf="@+id/user_image_details"
+            android:layout_toLeftOf="@+id/group_icon">
 
 
 
@@ -103,7 +114,7 @@
                 android:text="Elon Musk"
                 android:textColor="@color/primary_text"
                 android:gravity="center_vertical"
-                />
+                android:ellipsize="end" />
 
             <TextView
                 android:id="@+id/topic_text"
@@ -112,7 +123,8 @@
                 android:layout_weight="1"
                 android:text="Topic"
                 android:textColor="@color/primary_dark"
-                android:gravity="center_vertical" />
+                android:gravity="center_vertical"
+                android:ellipsize="end" />
 
 
 
@@ -129,7 +141,7 @@
             android:layout_marginRight="20dp"
             android:layout_marginBottom="15dp"
             android:layout_toLeftOf="@+id/tutor_icon"
-            android:tint="@color/primary_light"/>
+            android:tint="@color/hint_text_on_background"/>
 
 
 
@@ -145,34 +157,9 @@
             android:layout_toLeftOf="@+id/timestamp_text"
             android:tint="@color/hint_text_on_background"/>
 
-        <!--
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="@drawable/light_primary_bg"
-            android:layout_below="@+id/question_text"
-            android:layout_marginRight="50dp"
-            android:layout_marginBottom="15dp"
-            android:layout_alignParentRight="true"
-            android:id="@+id/tutor_icon" />
--->
-
-        <!--    MOVE somewhere else
-                    <com.sos.saveourstudents.supportclasses.CustomTextView
-                        android:id="@+id/distance_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="150m"
-                        android:textColor="@color/secondary_text"
-                        android:textSize="12sp"
-                        android:layout_alignBottom="@+id/name_text"
-                        android:layout_toRightOf="@+id/user_image"
-                        />
 
 
 
-    </com.andexert.library.RippleView>
-    -->
     </RelativeLayout>
 
     </RelativeLayout>

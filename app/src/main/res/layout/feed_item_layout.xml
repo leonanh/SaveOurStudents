@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-    <com.balysv.materialripple.MaterialRippleLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/ripple"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:mrl_rippleAlpha="0.5"
-        app:mrl_rippleColor="@color/primary_dark"
-        app:mrl_rippleDelayClick="true"
-        app:mrl_rippleDimension="5dp"
-        app:mrl_rippleDuration="300"
-        app:mrl_rippleOverlay="true"
-        app:mrl_ripplePersistent="false"
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    card_view:cardCornerRadius="2dp"
+    card_view:cardElevation="2dp"
+    card_view:cardUseCompatPadding="false"
     android:layout_marginTop="10dp"
-    android:background="@android:color/white">
+    android:clickable="true">
 
 
 
     <RelativeLayout
+
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
+
+
             <de.hdodenhof.circleimageview.CircleImageView
                 xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/user_image"
+                android:id="@+id/user_image_details"
                 app:border_color="@color/primary_light"
-                app:border_width="2dp"
+                app:border_width="1dp"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginLeft="15dp"
@@ -73,7 +73,7 @@
                 android:layout_alignParentRight="true"
                 android:text="3h"
                 android:textColor="@color/secondary_text"
-                android:layout_alignTop="@+id/user_image"
+                android:layout_alignTop="@+id/user_image_details"
                 android:gravity="right"
                 android:layout_marginRight="15dp"
                 android:paddingRight="5dp"
@@ -86,7 +86,7 @@
             android:layout_alignParentRight="true"
             android:text="150m"
             android:textColor="@color/secondary_text"
-            android:layout_alignBottom="@+id/user_image"
+            android:layout_alignBottom="@+id/user_image_details"
             android:gravity="right"
             android:layout_marginRight="15dp"
             android:paddingRight="5dp"
@@ -99,9 +99,9 @@
             android:layout_height="match_parent"
             android:weightSum="2"
             android:orientation="vertical"
-            android:layout_alignBottom="@+id/user_image"
-            android:layout_alignTop="@+id/user_image"
-            android:layout_toRightOf="@+id/user_image"
+            android:layout_alignBottom="@+id/user_image_details"
+            android:layout_alignTop="@+id/user_image_details"
+            android:layout_toRightOf="@+id/user_image_details"
             android:layout_toLeftOf="@+id/group_icon">
 
 
@@ -141,7 +141,7 @@
             android:layout_marginRight="20dp"
             android:layout_marginBottom="15dp"
             android:layout_toLeftOf="@+id/tutor_icon"
-            android:tint="@color/primary_light"/>
+            android:tint="@color/hint_text_on_background"/>
 
 
 
@@ -183,9 +183,11 @@
 
 
 
-        </com.andexert.library.RippleView>
+
         -->
+
+
+
     </RelativeLayout>
 
-    </com.balysv.materialripple.MaterialRippleLayout>
-
+    </android.support.v7.widget.CardView>

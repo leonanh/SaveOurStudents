@@ -450,8 +450,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onConnected(Bundle arg0) {
-        //mSignInClicked = false;
-        Toast.makeText(this, "User is connected!", Toast.LENGTH_LONG).show();
 
         //Userinfo
         if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
@@ -464,10 +462,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             String lastName = currentPerson.getName().getFamilyName();
             String userId = currentPerson.getId();
             String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
-
-
-            //prompt.setText("Welcome, " + firstName + " " + lastName);
-
 
 
             createSOSUser("google", firstName, lastName, userId, email);

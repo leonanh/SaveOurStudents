@@ -56,7 +56,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
             } else {
                 name = (TextView) itemView.findViewById(R.id.name);         // Creating Text View object from header.xml for name
                 email = (TextView) itemView.findViewById(R.id.email);       // Creating Text View object from header.xml for email
-                profile = (ImageView) itemView.findViewById(R.id.user_image);// Creating Image view object from header.xml for profile pic
+                profile = (ImageView) itemView.findViewById(R.id.user_image_details);// Creating Image view object from header.xml for profile pic
                 holderid = 0;                                                // Setting holder id = 0 as the object being populated are of type header view
             }
 

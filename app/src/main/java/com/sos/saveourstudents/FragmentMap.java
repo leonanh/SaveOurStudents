@@ -40,12 +40,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -69,7 +73,10 @@ public class FragmentMap extends Fragment implements
     private TextView topicDetails;
     private TextView questionDetails;
     private TextView timestampDetails;
-    private TextView questionId;
+    private TextView distanceDetails;
+
+    private String clickedQuestionId;
+    private String clickedUserId;
 
     private View rootView;
     private GoogleApiClient mGoogleApiClient;
@@ -77,6 +84,9 @@ public class FragmentMap extends Fragment implements
 
     private JSONArray mQuestionList;
     private LayoutInflater minflater;
+
+    SharedPreferences sharedPref;
+
     public FragmentMap() {
         this.mContext = this.getActivity();
     }
@@ -93,19 +103,20 @@ public class FragmentMap extends Fragment implements
         detailsLayout.setVisibility(View.GONE);
         detailsLayout.setOnClickListener(this);
 
-        userImageDetails = (ImageView) rootView.findViewById(R.id.user_image);
         groupIcon = (ImageView) rootView.findViewById(R.id.group_icon);
         tutorIcon = (ImageView) rootView.findViewById(R.id.tutor_icon);
 
-        userImageDetails = (ImageView) rootView.findViewById(R.id.user_image);
+        userImageDetails = (ImageView) rootView.findViewById(R.id.user_image_details);
         userImageDetails.setOnClickListener(this);
         userNameDetails = (TextView) rootView.findViewById(R.id.name_text);
         topicDetails = (TextView) rootView.findViewById(R.id.topic_text);
         questionDetails = (TextView) rootView.findViewById(R.id.question_text);
         timestampDetails = (TextView) rootView.findViewById(R.id.timestamp_text);
-        questionId = (TextView) rootView.findViewById(R.id.question_id);
+        distanceDetails  = (TextView) rootView.findViewById(R.id.distance_text);
 
 
+        sharedPref = mContext.getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
         createAndShowMap();
 
@@ -132,78 +143,21 @@ public class FragmentMap extends Fragment implements
             e.printStackTrace();
         }
 
-        /*
-        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-
-            // Use default InfoWindow frame
-            @Override
-            public View getInfoWindow(Marker marker) {
-
-
-                // Getting view from the layout file info_window_layout
-                View v = minflater.inflate(R.layout.info_window_layout, null, false);
-
-                // Getting the position from the marker
-                //LatLng latLng = arg0.getPosition();
-
-                // Getting reference to the TextView to set latitude
-                //TextView tv_lat = (TextView) v.findViewById(R.id.user_name);
-
-                // Getting reference to the TextView to set longitude
-                //TextView tv_lng = (TextView) v.findViewById(R.id.tv_lng);
-
-                // Setting the latitude
-                //tv_lat.setText("Latitude:" +latLng.latitude);
-
-                // Setting the longitude
-                //tv_lng.setText("Longitude:" + latLng.longitude);
-
-                //TextView tvTitle = (TextView) v.findViewById(R.id.title);
-                //tvTitle.setText(marker.getTitle());
-                // TextView tvSnippet = ((TextView) v.findViewById(R.id.snippet));
-                //tvSnippet.setText(arg0.getSnippet());
-
-                // Returning the view containing InfoWindow contents
-                return v;
-            }
-
-            // Defines the contents of the InfoWindow
-            @Override
-            public View getInfoContents(Marker marker) {
-
-                return null;
-            }
-        });
-*/
-        //mMap.setOnInfoWindowClickListener(this);
-
-
     }
 
     public void getMapData() {
 
 
 
-        SharedPreferences sharedPref = mContext.getSharedPreferences(
-                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
         Set<String> filterList = new HashSet<String>(sharedPref.getStringSet("filter_list", new HashSet<String>()));
 
         List<String> myList = new ArrayList<String>();
         myList.addAll(filterList);
 
-        String filterListFix = ""; //TODO not good
-
-        if(myList.size() == 0){
-            //Dont use any filters. Just return all questions in range
-        } else {//Use filters
-            for (int a = 0; a < myList.size(); a++) {
-                filterListFix = filterListFix + "&tags=" + myList.get(a);
-            }
-        }
 
         double latitude = 32.88006;
         double longitude = -117.2340133;
-
 
         if(mCurrentLocation != null){
             latitude = mCurrentLocation.getLatitude();
@@ -214,14 +168,20 @@ public class FragmentMap extends Fragment implements
         }
 
 
-        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getQuestions"+
-                "?latitude="+latitude+
-                "&longitude="+longitude+
-                filterListFix+
-                "&limit="+50; //TODO from settings
+        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        params.add(new BasicNameValuePair("latitude", latitude + ""));
+        params.add(new BasicNameValuePair("longitude", longitude + ""));
+        for (int a = 0; a < myList.size(); a++) {
+            params.add(new BasicNameValuePair("tags", myList.get(a)));
+        }
+        params.add(new BasicNameValuePair("limit", sharedPref.getInt("distance", 10) + ""));
 
 
-        System.out.println("URL: " + url);
+        String paramString = URLEncodedUtils.format(params, "utf-8").replace("+", "%20");
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getQuestions?"+paramString;
+
+
+        //System.out.println("URL: " + url);
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
                 url,
                 (JSONObject)null,
@@ -231,9 +191,6 @@ public class FragmentMap extends Fragment implements
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-
-                            //System.out.println("response: "+response.toString()); //DEBUG
-
 
                             JSONObject theResponse = new JSONObject(response.toString());
 
@@ -247,12 +204,9 @@ public class FragmentMap extends Fragment implements
                                 mQuestionList = theResponse.getJSONObject("result").getJSONArray("myArrayList");
                             }
                             else{
-
                                 mQuestionList = theResponse.getJSONObject("result").getJSONArray("myArrayList");
                             }
 
-
-                            //System.out.println("mQuestionList "+mQuestionList);
                             showOverlays();
 
 
@@ -295,34 +249,19 @@ public class FragmentMap extends Fragment implements
                     String userImageUrl = mQuestionList.getJSONObject(i).getJSONObject("map").getString("image");
 
                     View marker = minflater.inflate(R.layout.info_window_layout, null, false);
-                    ImageView userImage = (ImageView) marker.findViewById(R.id.user_image);
+                    ImageView userImage = (ImageView) marker.findViewById(R.id.user_image_details);
 
 
 
                     if(userImageUrl != null && !userImageUrl.equalsIgnoreCase("")){
-                        getUserImage(userImageUrl, userImage, new LatLng(latitude, longitude));
+                        setMarkerImage(userImageUrl, i, userImage, new LatLng(latitude, longitude));
                     } else {
                         mMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(latitude, longitude))
                                 .snippet(i+"")
                                 .icon(BitmapDescriptorFactory.fromBitmap(createDrawableFromView(mContext, marker))));
 
-
                     }
-
-                    /*
-                    mMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(latitude, longitude))
-                            //.title(mQuestionList.getJSONObject(i).getJSONObject("map").getString("first_name"))
-                            //.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-
-                            .icon(BitmapDescriptorFactory.fromBitmap(createDrawableFromView(mContext, marker))));
-                                    //.icon(BitmapDescriptorFactory.fromResource(R.layout.info_window_layout))
-
-                            //.snippet(mQuestionList.getJSONObject(i).getJSONObject("map").getString("topic")));
-*/
-
-
 
 
 
@@ -504,9 +443,14 @@ public class FragmentMap extends Fragment implements
     @Override
     public boolean onMarkerClick(Marker marker) {
 
-        int position = Integer.parseInt(marker.getSnippet());
+
 
         try {
+            int position = Integer.parseInt(marker.getSnippet());
+
+
+            String userImageUrl = mQuestionList.getJSONObject(position).getJSONObject("map").getString("image");
+            getUserImage(userImageUrl, userImageDetails);
 
             String name = mQuestionList.getJSONObject(position).getJSONObject("map").getString("first_name")+" "
                     +mQuestionList.getJSONObject(position).getJSONObject("map").getString("last_name");
@@ -514,7 +458,47 @@ public class FragmentMap extends Fragment implements
             topicDetails.setText(mQuestionList.getJSONObject(position).getJSONObject("map").getString("topic"));
             questionDetails.setText(mQuestionList.getJSONObject(position).getJSONObject("map").getString("text"));
             timestampDetails.setText(Singleton.getInstance().doDateLogic(mQuestionList.getJSONObject(position).getJSONObject("map").getString("date")));
-            questionId.setText(mQuestionList.getJSONObject(position).getJSONObject("map").getString("question_id"));
+            clickedQuestionId = mQuestionList.getJSONObject(position).getJSONObject("map").getString("question_id");
+            clickedUserId = mQuestionList.getJSONObject(position).getJSONObject("map").getString("user_id");
+
+
+            //Tutor/Group Icons
+            boolean group = mQuestionList.getJSONObject(position).getJSONObject("map").getBoolean("study_group");
+            boolean tutor = mQuestionList.getJSONObject(position).getJSONObject("map").getBoolean("tutor");
+
+            if(group){
+                groupIcon.setColorFilter(getResources().getColor(R.color.primary_dark));
+            }
+            else{
+                groupIcon.setColorFilter(getResources().getColor(R.color.hint_text_on_background));
+            }
+            if(tutor){
+                tutorIcon.setColorFilter(getResources().getColor(R.color.primary_dark));
+            }
+            else{
+                tutorIcon.setColorFilter(getResources().getColor(R.color.hint_text_on_background));
+            }
+
+
+            //Distance data
+            double latitude = Double.parseDouble(mQuestionList.getJSONObject(position).getJSONObject("map").getString("latitude"));
+            double longitude = Double.parseDouble(mQuestionList.getJSONObject(position).getJSONObject("map").getString("longitude"));
+
+
+            String distanceType = sharedPref.getString("distanceType", "MI");
+
+            if(mCurrentLocation != null){
+                distanceDetails.setText(
+                        Singleton.getInstance().doDistanceLogic(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(),
+                                latitude, longitude, distanceType)+""+distanceType);
+            }
+            else{
+                distanceDetails.setVisibility(View.INVISIBLE);
+                System.out.println("mCurrentLocation and lastknown is null");
+            }
+
+
+
 
             showMapToolbar(marker.getPosition());
             ((MainActivity) getActivity()).hideFab();
@@ -534,21 +518,21 @@ public class FragmentMap extends Fragment implements
     public void onClick(View v) {
 
         if(v == userImageDetails){
-
+            Intent mIntent = new Intent(mContext, ProfileActivity.class);
+            mIntent.putExtra("userId", clickedUserId);
+            startActivity(mIntent);
 
         }
         else{
-
-            TextView questionId = (TextView) v.findViewById(R.id.question_id);
             Intent mIntent = new Intent(mContext, ViewGroupActivity.class);
-            mIntent.putExtra("questionId", questionId.getText().toString());
+            mIntent.putExtra("questionId", clickedQuestionId);
             startActivity(mIntent);
 
         }
 
     }
 
-    private void getUserImage(String imageUrl, final ImageView imageView, final LatLng location){
+    private void setMarkerImage(String imageUrl, final int position, final ImageView imageView, final LatLng location){
 
         ImageLoader imageLoader = Singleton.getInstance().getImageLoader();
 
@@ -565,13 +549,14 @@ public class FragmentMap extends Fragment implements
                     imageView.setImageBitmap(response.getBitmap());
                     mMap.addMarker(new MarkerOptions()
                             .position(location)
+                            .snippet(position+"")
                             .icon(BitmapDescriptorFactory.fromBitmap(createDrawableFromView(mContext, (View) imageView.getParent()))));
 
-                    //TODO
                 } else {
                     // Default image...
                     mMap.addMarker(new MarkerOptions()
                             .position(location)
+                            .snippet(position+"")
                             .icon(BitmapDescriptorFactory.fromBitmap(createDrawableFromView(mContext, (View) imageView.getParent()))));
                 }
             }
@@ -579,7 +564,32 @@ public class FragmentMap extends Fragment implements
 
     }
 
-    //TODO directions get covered by fab/details. Future fix
+    private void getUserImage(String imageUrl, final ImageView imageView){
+
+        ImageLoader imageLoader = Singleton.getInstance().getImageLoader();
+
+        imageLoader.get(imageUrl, new ImageLoader.ImageListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //Log.e(TAG, "Image Load Error: " + error.getMessage());
+            }
+
+            @Override
+            public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
+                if (response.getBitmap() != null) {
+
+                    imageView.setImageBitmap(response.getBitmap());
+
+                } else {
+                    // Default image...
+                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.defaultprofile));
+                }
+            }
+        });
+
+    }
+
+    //TODO directions get covered by fab/details. Future fix custom toolbar
     private void showMapToolbar(LatLng location){
 
         /*

@@ -1,6 +1,7 @@
 package com.sos.saveourstudents;
 
 import android.app.FragmentTransaction;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Criteria;
@@ -9,6 +10,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -270,7 +272,7 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
             params.add(new BasicNameValuePair("tags", tagList.get(a)));
         }
         params.add(new BasicNameValuePair("tutor", (tutorToggle.isSelected() ? 1 : 0)+""));
-        params.add(new BasicNameValuePair("studygroup", (groupToggle.isSelected() ? 1 : 0)+""));
+        params.add(new BasicNameValuePair("studyGroup", (groupToggle.isSelected() ? 1 : 0)+""));
         params.add(new BasicNameValuePair("topic", topicEditText.getText().toString()));
         params.add(new BasicNameValuePair("visibleLocation", (showLocation ? 1 : 0)+""));
 
@@ -293,11 +295,13 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
                             JSONObject result = new JSONObject(response.toString());
                             System.out.println("result "+result);
                             if(!result.getString("success").equalsIgnoreCase("1")){
-                                //Error getting data
-                                return;
+
+                                //Error...
+
                             }
                             else{
                                 //TODO Show alert for success
+                                showSuccessNotification();
                             }
 
                         } catch (JSONException e) {
@@ -405,9 +409,9 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
                 if (response.getBitmap() != null) {
 
                     imageView.setImageBitmap(response.getBitmap());
-
                 } else {
                     // Default image...
+                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.defaultprofile));
                 }
             }
         });
@@ -443,6 +447,46 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
         }
 
     }
+
+
+    private void showSuccessNotification() {
+
+
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(mContext)
+                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setContentTitle("My notification")
+                        .setContentText("Hello World!");
+
+        // Creates an explicit intent for an Activity in your app
+        //Intent resultIntent = new Intent(this, MainActivity.class);
+        //resultIntent.putExtra("questionId", )//TODO return QuestionId from result;
+
+        // The stack builder object will contain an artificial back stack for the
+        // started Activity.
+        // This ensures that navigating backward from the Activity leads out of
+        // your application to the Home screen.
+        //TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+
+        // Adds the back stack for the Intent (but not the Intent itself)
+        //stackBuilder.addParentStack(ResultActivity.class);
+
+        // Adds the Intent that starts the Activity to the top of the stack
+        //stackBuilder.addNextIntent(resultIntent);
+        //PendingIntent resultPendingIntent =
+        //        stackBuilder.getPendingIntent(
+        //                0,
+         //               PendingIntent.FLAG_UPDATE_CURRENT
+         //       );
+        //mBuilder.setContentIntent(resultPendingIntent);
+        NotificationManager mNotificationManager =
+                (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+    // mId allows you to update the notification later on.
+        mNotificationManager.notify(0, mBuilder.build());
+
+
+    }
+
 
 
 }

@@ -9,6 +9,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,19 +24,22 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.balysv.materialripple.MaterialRippleLayout;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -141,25 +145,33 @@ public class FragmentFeed extends Fragment implements LocationListener, GoogleAp
         List<String> myList = new ArrayList<String>();
         myList.addAll(filterList);
 
-        String filterListFix = ""; //TODO not good
 
-        if(myList.size() == 0){
-            //Dont use any filters. Just return all questions in range
-        } else {//Use filters
-            for (int a = 0; a < myList.size(); a++) {
-                filterListFix = filterListFix + "&tags=" + myList.get(a);
-            }
+        double latitude = 32.88006;
+        double longitude = -117.2340133;
+
+        if(mCurrentLocation != null){
+            latitude = mCurrentLocation.getLatitude();
+            longitude = mCurrentLocation.getLongitude();
+        }
+        else{
+            System.out.println("Could not get location, using UCSD as default");
         }
 
 
-        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getQuestions"+
-                "?latitude="+32.88006+ //TODO Actual Location
-                "&longitude="+-117.2340133+ //TODO Actual Location
-                filterListFix+
-                "&limit="+sharedPref.getInt("distance", 10);
+        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        params.add(new BasicNameValuePair("latitude", latitude+""));
+        params.add(new BasicNameValuePair("longitude", longitude + ""));
+        for (int a = 0; a < myList.size(); a++) {
+            params.add(new BasicNameValuePair("tags", myList.get(a)));
+        }
+        params.add(new BasicNameValuePair("limit", sharedPref.getInt("distance", 10)+""));
 
 
-        System.out.println("URL: "+url);
+        String paramString = URLEncodedUtils.format(params, "utf-8").replace("+", "%20");
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getQuestions?"+paramString;
+
+
+        //System.out.println("URL: "+url);
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
                 url,
                 (JSONObject)null,
@@ -170,14 +182,10 @@ public class FragmentFeed extends Fragment implements LocationListener, GoogleAp
                     public void onResponse(JSONObject response) {
                         try {
 
-                            //System.out.println("response: "+response.toString()); //DEBUG
-
-
                            JSONObject theResponse = new JSONObject(response.toString());
 
-
                             if(!theResponse.getString("success").equalsIgnoreCase("1")){
-                                //Error getting data
+                                //Error getting data, show dialog?
                                 return;
                             }
                             if(theResponse.getString("expectResults").equalsIgnoreCase("0")){
@@ -197,9 +205,6 @@ public class FragmentFeed extends Fragment implements LocationListener, GoogleAp
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
-
-
 
 
                     }
@@ -327,7 +332,7 @@ public class FragmentFeed extends Fragment implements LocationListener, GoogleAp
             //viewHolder.questionText.setText(mCardManagerInstance.getCounters().get(i).title+"");
             //viewHolder.venueType.setText(mInstance.getCounters().get(i)+"");
             try {
-                System.out.println("question: "+mQuestionList.getJSONObject(position).getJSONObject("map"));
+                //System.out.println("question: "+mQuestionList.getJSONObject(position).getJSONObject("map"));
 
                 String firstName = mQuestionList.getJSONObject(position).getJSONObject("map").getString("first_name");
                 String lastName = mQuestionList.getJSONObject(position).getJSONObject("map").getString("last_name");
@@ -342,10 +347,10 @@ public class FragmentFeed extends Fragment implements LocationListener, GoogleAp
                 double longitude = Double.parseDouble(mQuestionList.getJSONObject(position).getJSONObject("map").getString("longitude"));
 
                 if(group){
-                    viewHolder.groupIcon.setColorFilter(getResources().getColor(R.color.primary_light));
+                    viewHolder.groupIcon.setColorFilter(getResources().getColor(R.color.primary_dark));
                 }
                 if(tutor){
-                    viewHolder.tutorIcon.setColorFilter(getResources().getColor(R.color.primary_light));
+                    viewHolder.tutorIcon.setColorFilter(getResources().getColor(R.color.primary_dark));
                 }
 
                 //System.out.println("Question " + position + ": " + mQuestionList.getJSONObject(position).getJSONObject("map"));
@@ -404,7 +409,7 @@ public class FragmentFeed extends Fragment implements LocationListener, GoogleAp
             public TextView dateText;
             public TextView topicText;
             public TextView distanceText;
-            private MaterialRippleLayout rippleView;
+            private CardView cardView;
 
 
             //Declare views here, dont fill them
@@ -415,12 +420,12 @@ public class FragmentFeed extends Fragment implements LocationListener, GoogleAp
                 dateText = (TextView) itemView.findViewById(R.id.timestamp_text);
                 topicText = (TextView) itemView.findViewById(R.id.topic_text);
                 distanceText = (TextView) itemView.findViewById(R.id.distance_text);
-                userImage = (ImageView) itemView.findViewById(R.id.user_image);
+                userImage = (ImageView) itemView.findViewById(R.id.user_image_details);
 
                 groupIcon = (ImageView) itemView.findViewById(R.id.group_icon);
                 tutorIcon = (ImageView) itemView.findViewById(R.id.tutor_icon);
-                rippleView = (MaterialRippleLayout) itemView.findViewById(R.id.ripple);
-                rippleView.setOnTouchListener(this);
+                cardView = (CardView) itemView.findViewById(R.id.card_view);
+                cardView.setOnTouchListener(this);
                 userImage.setOnClickListener(this);
                 nameText.setOnClickListener(this);
 
@@ -430,7 +435,7 @@ public class FragmentFeed extends Fragment implements LocationListener, GoogleAp
             public boolean onTouch(View v, MotionEvent event) {
                 //System.out.println("touched : "+getAdapterPosition());
 
-                if(v == rippleView && event.getAction() == MotionEvent.ACTION_UP){
+                if(v == cardView && event.getAction() == MotionEvent.ACTION_UP){
 
                     try {
                         String questionId = mQuestionList.getJSONObject(getAdapterPosition()).getJSONObject("map").getString("question_id");

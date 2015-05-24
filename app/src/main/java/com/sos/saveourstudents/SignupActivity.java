@@ -7,7 +7,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.Settings.Secure;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -22,6 +21,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.rey.material.widget.EditText;
+import com.sos.saveourstudents.supportclasses.Validations;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,7 +46,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     String SENDER_ID = "862374215545"; //Unique identifier for our project
     GoogleCloudMessaging gcm;
-    String regid;
+    String regid = null;
 
 
     @Override
@@ -89,11 +89,10 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             boolean firstCheck = verifyFirstLast(firstName);
             boolean lastCheck = verifyFirstLast(lastName);
             //Perform database signup
-            if (passCheck && email && firstCheck && lastCheck) {
+            if (passCheck && email && firstCheck && lastCheck && regid != null) {
 
                 //==================================================================================
-                String android_id = Secure.getString(getApplicationContext().getContentResolver(),
-                        Secure.ANDROID_ID);
+
 
                 //http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createUser
                 String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createUser?" +
@@ -102,7 +101,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                         "&password=" + Singleton.get_SHA_1_SecurePassword(passwordInput1) +
                         "&image=" + "" +
                         "&email=" + emailInput1 +
-                        "&deviceId=" + android_id;
+                        "&deviceId=" + regid;
 
                 System.out.println("ur = " + url);
                 JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
