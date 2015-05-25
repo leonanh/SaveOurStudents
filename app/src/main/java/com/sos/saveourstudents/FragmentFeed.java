@@ -332,7 +332,7 @@ public class FragmentFeed extends Fragment implements LocationListener, GoogleAp
             //viewHolder.questionText.setText(mCardManagerInstance.getCounters().get(i).title+"");
             //viewHolder.venueType.setText(mInstance.getCounters().get(i)+"");
             try {
-                //System.out.println("question: "+mQuestionList.getJSONObject(position).getJSONObject("map"));
+                System.out.println("question: "+mQuestionList.getJSONObject(position).getJSONObject("map"));
 
                 String firstName = mQuestionList.getJSONObject(position).getJSONObject("map").getString("first_name");
                 String lastName = mQuestionList.getJSONObject(position).getJSONObject("map").getString("last_name");

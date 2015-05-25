@@ -39,11 +39,16 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -542,18 +547,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         System.out.println("userImageUrl: "+userImageUrl);
 
-
-
-        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createUser?" +
-                "firstName=" + firstName +
-                "&lastName=" + lastName +
-                "&password=" + Singleton.get_SHA_1_SecurePassword(password) +
-                "&email=" + email +
-                "&image=" + userImageUrl +
-                "&deviceId=" + deviceId;
-
-
-/*
         List<NameValuePair> params = new LinkedList<NameValuePair>();
         params.add(new BasicNameValuePair("firstName", firstName));
         params.add(new BasicNameValuePair("lastName", lastName));
@@ -565,7 +558,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         String paramString = URLEncodedUtils.format(params, "utf-8");//.replace("+", "%20");
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createUser?"+paramString;
-*/
+
 
 
 
@@ -628,7 +621,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                     if (response.getString("success").equalsIgnoreCase("1") && response.getString("expectResults").equalsIgnoreCase("1")) {
                         System.out.println("Login success Response: " + response.toString());
-                        //TODO we still "success = 1" here even from wrong password. FIX this
                         SharedPreferences sharedPref = getSharedPreferences(
                                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPref.edit();

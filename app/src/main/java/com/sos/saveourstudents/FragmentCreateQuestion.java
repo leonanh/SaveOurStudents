@@ -1,8 +1,11 @@
 package com.sos.saveourstudents;
 
 import android.app.FragmentTransaction;
+import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Criteria;
 import android.location.Location;
@@ -297,11 +300,17 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
                             if(!result.getString("success").equalsIgnoreCase("1")){
 
                                 //Error...
+                                if(result.getString("result").startsWith("Duplicate")){
+                                    Toast.makeText(mContext, "You already have an active post", Toast.LENGTH_SHORT).show();
+                                }
+                                else{
+                                    Toast.makeText(mContext, "Error creating question", Toast.LENGTH_SHORT).show();
+                                }
 
                             }
                             else{
-                                //TODO Show alert for success
-                                showSuccessNotification();
+                                sendNotification("Successfully Created Question");
+                                getActivity().finish();
                             }
 
                         } catch (JSONException e) {
@@ -449,44 +458,28 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
     }
 
 
-    private void showSuccessNotification() {
+    private void sendNotification(String msg) {
+        NotificationManager mNotificationManager = (NotificationManager)
+                mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
+        PendingIntent contentIntent = PendingIntent.getActivity(mContext, 0,
+                new Intent(mContext, ViewGroupActivity.class), 0);
+
+        //Add question ID to intent
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(mContext)
-                        .setSmallIcon(R.drawable.ic_launcher)
-                        .setContentTitle("My notification")
-                        .setContentText("Hello World!");
+                        .setAutoCancel(true)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentTitle("SaveOurStudents")
+                        .setStyle(new NotificationCompat.BigTextStyle()
+                                .bigText(msg))
+                        .setTicker(msg)
+                        .setContentText(msg);
 
-        // Creates an explicit intent for an Activity in your app
-        //Intent resultIntent = new Intent(this, MainActivity.class);
-        //resultIntent.putExtra("questionId", )//TODO return QuestionId from result;
-
-        // The stack builder object will contain an artificial back stack for the
-        // started Activity.
-        // This ensures that navigating backward from the Activity leads out of
-        // your application to the Home screen.
-        //TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-
-        // Adds the back stack for the Intent (but not the Intent itself)
-        //stackBuilder.addParentStack(ResultActivity.class);
-
-        // Adds the Intent that starts the Activity to the top of the stack
-        //stackBuilder.addNextIntent(resultIntent);
-        //PendingIntent resultPendingIntent =
-        //        stackBuilder.getPendingIntent(
-        //                0,
-         //               PendingIntent.FLAG_UPDATE_CURRENT
-         //       );
-        //mBuilder.setContentIntent(resultPendingIntent);
-        NotificationManager mNotificationManager =
-                (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-    // mId allows you to update the notification later on.
-        mNotificationManager.notify(0, mBuilder.build());
-
-
+        mBuilder.setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_LIGHTS|Notification.DEFAULT_VIBRATE);
+        mBuilder.setContentIntent(contentIntent);
+        mNotificationManager.notify(12345, mBuilder.build());
     }
-
-
 
 }

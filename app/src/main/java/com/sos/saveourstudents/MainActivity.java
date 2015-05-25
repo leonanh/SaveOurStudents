@@ -294,9 +294,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         try {
 
                             JSONObject result = new JSONObject(response.toString());
-                            System.out.println("result "+result);
+                            System.out.println("has questions result "+result);
                             if(!result.getString("success").equalsIgnoreCase("1")){
-
                                 //Error...
 
                             }
