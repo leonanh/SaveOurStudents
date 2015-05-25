@@ -1,4 +1,4 @@
-package com.sos.saveourstudents;
+package com.sos.saveourstudents.supportclasses;
 
 import android.app.Activity;
 import android.os.Bundle;

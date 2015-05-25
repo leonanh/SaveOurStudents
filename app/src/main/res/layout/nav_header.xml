@@ -4,7 +4,9 @@
     android:layout_height="178dp"
     android:background="@drawable/materialwallpaperdefault"
     android:orientation="vertical"
-    android:weightSum="1">
+    android:weightSum="1"
+    android:elevation="2dp"
+    >
 
 
 
@@ -44,7 +46,7 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/user_image"
+        android:id="@+id/user_image_details"
         app:border_color="@color/primary_light"
         app:border_width="1dp"
         android:layout_width="70dp"

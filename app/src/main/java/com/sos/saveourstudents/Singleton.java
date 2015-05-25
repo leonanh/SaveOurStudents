@@ -15,6 +15,8 @@ import com.android.volley.toolbox.Volley;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -219,7 +221,7 @@ public class Singleton {
 
 
 
-	public double doDistanceLogic(double lat1, double lon1, double lat2, double lon2, String unit) {
+	public String doDistanceLogic(double lat1, double lon1, double lat2, double lon2, String unit) {
 		double theta = lon1 - lon2;
 		double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
 		dist = Math.acos(dist);
@@ -230,10 +232,14 @@ public class Singleton {
 		} else if (unit.equalsIgnoreCase("N")){ //Nautical miles - WAT
 			dist = dist * 0.8684;
 		}
-		else if(unit.equalsIgnoreCase("ME")){ //Meters
+		else if(unit.equalsIgnoreCase("M")){ //Meters
 			dist = (dist * 1.609344) * 1000;
+            NumberFormat formatter = new DecimalFormat("####");
+            return (formatter.format(dist));
 		}
-		return (dist);
+
+        NumberFormat formatter = new DecimalFormat("##.0#");
+		return (formatter.format(dist));
 	}
 
 

@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rey.material.widget.Slider;
+import com.sos.saveourstudents.supportclasses.Validations;
 
 /**
  * Created by Xian on 5/19/2015.
