@@ -64,7 +64,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
         toolbar.setTitle(R.string.app_name);
         setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_18dp);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

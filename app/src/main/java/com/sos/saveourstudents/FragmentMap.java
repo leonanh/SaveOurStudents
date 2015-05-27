@@ -31,7 +31,6 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -57,7 +56,7 @@ import java.util.Set;
 
 public class FragmentMap extends Fragment implements
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, OnInfoWindowClickListener, LocationListener, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener, View.OnClickListener {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener, View.OnClickListener {
 
     LocationRequest mLocationRequest;
     Location mCurrentLocation;
@@ -136,6 +135,7 @@ public class FragmentMap extends Fragment implements
         mMap.setOnMapClickListener(this);
         mMap.setOnMarkerClickListener(this);
         mMap.getUiSettings().setMapToolbarEnabled(false);
+        mMap.getUiSettings().setIndoorLevelPickerEnabled(true);
 
         try {
             MapsInitializer.initialize(mContext);
@@ -243,10 +243,15 @@ public class FragmentMap extends Fragment implements
 
                 try {
 
+                    //System.out.println("question: "+mQuestionList.getJSONObject(i).getJSONObject("map"));
                     double latitude = Double.parseDouble(mQuestionList.getJSONObject(i).getJSONObject("map").getString("latitude"));
                     double longitude = Double.parseDouble(mQuestionList.getJSONObject(i).getJSONObject("map").getString("longitude"));
 
-                    String userImageUrl = mQuestionList.getJSONObject(i).getJSONObject("map").getString("image");
+                    String userImageUrl = "";
+                    if(mQuestionList.getJSONObject(i).getJSONObject("map").has("image")){
+                        userImageUrl = mQuestionList.getJSONObject(i).getJSONObject("map").getString("image");
+                    }
+
 
                     View marker = minflater.inflate(R.layout.info_window_layout, null, false);
                     ImageView userImage = (ImageView) marker.findViewById(R.id.user_image_details);
@@ -448,9 +453,16 @@ public class FragmentMap extends Fragment implements
         try {
             int position = Integer.parseInt(marker.getSnippet());
 
+            String userImageUrl = "";
+            if(mQuestionList.getJSONObject(position).getJSONObject("map").has("image")){
+                userImageUrl = mQuestionList.getJSONObject(position).getJSONObject("map").getString("image");
+            }
 
-            String userImageUrl = mQuestionList.getJSONObject(position).getJSONObject("map").getString("image");
-            getUserImage(userImageUrl, userImageDetails);
+            if(!userImageUrl.equalsIgnoreCase("")){
+                getUserImage(userImageUrl, userImageDetails);
+            }
+
+
 
             String name = mQuestionList.getJSONObject(position).getJSONObject("map").getString("first_name")+" "
                     +mQuestionList.getJSONObject(position).getJSONObject("map").getString("last_name");

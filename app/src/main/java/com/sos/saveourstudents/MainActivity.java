@@ -204,18 +204,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        int id = item.getItemId();
-
-
-        if (id == R.id.action_filter) {
-
+        if (item.getItemId() == R.id.action_filter) {
             TagDialogFragment newFragment = new TagDialogFragment(this, 0);
             newFragment.show(getSupportFragmentManager(), "");
 
         }
 
-        else if (id == R.id.add_member) {
-
+        else if (item.getItemId() == R.id.add_member) {
             Intent mIntent = new Intent(this, MemberJoinActivity.class);
             startActivity(mIntent);
         }
@@ -265,10 +260,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     private void buildFab(){
-
-        //TODO Does user have active question?
         getQuestionActiveStatus();
-
     }
 
 
@@ -293,22 +285,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void onResponse(JSONObject response) {
                         try {
 
-                            JSONObject result = new JSONObject(response.toString());
-                            System.out.println("has questions result "+result);
+                            final JSONObject result = new JSONObject(response.toString());
+                            //System.out.println("has questions result "+result);
+
                             if(!result.getString("success").equalsIgnoreCase("1")){
                                 //Error...
 
                             }
                             else{
-
+                                final String questionId = result.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("question_id");
+                                //System.out.println("QuestionID = " +questionId);
                                 //Edit Question
                                 if(result.getString("expectResults").equalsIgnoreCase("1")){
                                     fab.setIcon(getResources().getDrawable(R.drawable.ic_create_white_18dp), false);
                                     fab.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
-                                            Intent mIntent = new Intent(MainActivity.this, QuestionActivity.class);
-                                            mIntent.putExtra("type", 1);
+                                            Intent mIntent = new Intent(MainActivity.this, EditQuestionActivity.class);
+                                            mIntent.putExtra("questionId", questionId);
                                             startActivity(mIntent);
                                         }
                                     });
@@ -319,9 +313,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     fab.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
-                                            Intent mIntent = new Intent(MainActivity.this, QuestionActivity.class);
-                                            mIntent.putExtra("type", 1);
-                                            startActivity(mIntent);
+                                            Intent mIntent = new Intent(MainActivity.this, QuestionActivity.class); //TODO rename, dialogize
+                                            //mIntent.putExtra("type", CREATE_QUESTION);
+                                            //startActivity(mIntent);
                                         }
                                     });
                                 }

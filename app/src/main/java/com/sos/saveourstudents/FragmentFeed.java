@@ -19,10 +19,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -58,7 +60,6 @@ public class FragmentFeed extends Fragment implements LocationListener, GoogleAp
     private final String TAG = "SOS Tag";
     private RecycleViewAdapter mAdapter;
 
-    static CardManager mCardManagerInstance;
     RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     Context mContext;
@@ -79,6 +80,7 @@ public class FragmentFeed extends Fragment implements LocationListener, GoogleAp
         if(!Singleton.hasBeenInitialized()){
             Singleton.initialize(mContext);
         }
+
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.my_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -105,40 +107,11 @@ public class FragmentFeed extends Fragment implements LocationListener, GoogleAp
 
 
 
-
-
-        /**
-         * Image Request Example
-         */
-/*
-        String urlimage = "http://i01.i.aliimg.com/img/pb/487/830/416/416830487_639.jpg";
-        ImageLoader imageLoader = Singleton.getInstance().getImageLoader();
-        // If you are using normal ImageView
-        imageLoader.get(urlimage, new ImageLoader.ImageListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Image Load Error: " + error.getMessage());
-            }
-            @Override
-            public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
-                if (response.getBitmap() != null) {
-                    // load image into imageview
-                    //TODO imageview.setImageBitmap(response.getBitmap());
-                }
-            }
-        });
-*/
-
-
-
-
         return rootView;
     }
 
     public void getQuestionData() {
 
-
-        getLocationUpdate();
 
         Set<String> filterList = new HashSet<String>(sharedPref.getStringSet("filter_list", new HashSet<String>()));
 
@@ -155,16 +128,17 @@ public class FragmentFeed extends Fragment implements LocationListener, GoogleAp
         }
         else{
             System.out.println("Could not get location, using UCSD as default");
+            Toast.makeText(mContext, "Could not get location" ,Toast.LENGTH_SHORT).show();
         }
 
 
         List<NameValuePair> params = new LinkedList<NameValuePair>();
-        params.add(new BasicNameValuePair("latitude", latitude+""));
+        params.add(new BasicNameValuePair("latitude", latitude + ""));
         params.add(new BasicNameValuePair("longitude", longitude + ""));
         for (int a = 0; a < myList.size(); a++) {
             params.add(new BasicNameValuePair("tags", myList.get(a)));
         }
-        params.add(new BasicNameValuePair("limit", sharedPref.getInt("distance", 10)+""));
+        params.add(new BasicNameValuePair("limit", sharedPref.getInt("distance", 10) + ""));
 
 
         String paramString = URLEncodedUtils.format(params, "utf-8").replace("+", "%20");
@@ -185,7 +159,7 @@ public class FragmentFeed extends Fragment implements LocationListener, GoogleAp
                            JSONObject theResponse = new JSONObject(response.toString());
 
                             if(!theResponse.getString("success").equalsIgnoreCase("1")){
-                                //Error getting data, show dialog?
+                                showConnectionIssueDialog();
                                 return;
                             }
                             if(theResponse.getString("expectResults").equalsIgnoreCase("0")){
@@ -212,7 +186,7 @@ public class FragmentFeed extends Fragment implements LocationListener, GoogleAp
 
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                showConnectionIssueDialog();
                 System.out.println("Error: " + error.toString());
                 mSwipeRefreshLayout.setRefreshing(false);
             }
@@ -235,39 +209,31 @@ public class FragmentFeed extends Fragment implements LocationListener, GoogleAp
     @Override
     public void onLocationChanged(Location location) {
         mCurrentLocation = location;
-
         getQuestionData();
         stopLocationUpdates();
     }
 
     @Override
     public void onConnected(Bundle bundle) {
+        getQuestionData();
         getLocationUpdate();
 
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        showConnectionIssueDialog();
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-
+        showConnectionIssueDialog();
     }
 
-
-    public static class CardManager {
-
-        public static CardManager getInstance() {
-            if (mCardManagerInstance == null) {
-                mCardManagerInstance = new CardManager();
-            }
-
-            return mCardManagerInstance;
-        }
-
+    private void showConnectionIssueDialog(){
+        Toast.makeText(mContext, "Connection error, try again" ,Toast.LENGTH_SHORT).show();
     }
+
 
     public void getLocationUpdate(){
         createLocationRequest();
@@ -309,7 +275,29 @@ public class FragmentFeed extends Fragment implements LocationListener, GoogleAp
     }
 
 
+    private void getUserImage(String imageUrl, final ImageView imageView){
 
+        ImageLoader imageLoader = Singleton.getInstance().getImageLoader();
+
+        imageLoader.get(imageUrl, new ImageLoader.ImageListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //Log.e(TAG, "Image Load Error: " + error.getMessage());
+            }
+
+            @Override
+            public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
+                if (response.getBitmap() != null) {
+
+                    imageView.setImageBitmap(response.getBitmap());
+                } else {
+                    // Default image...
+                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.defaultprofile));
+                }
+            }
+        });
+
+    }
 
 
 
@@ -332,7 +320,7 @@ public class FragmentFeed extends Fragment implements LocationListener, GoogleAp
             //viewHolder.questionText.setText(mCardManagerInstance.getCounters().get(i).title+"");
             //viewHolder.venueType.setText(mInstance.getCounters().get(i)+"");
             try {
-                System.out.println("question: "+mQuestionList.getJSONObject(position).getJSONObject("map"));
+                //System.out.println("question: "+mQuestionList.getJSONObject(position).getJSONObject("map"));
 
                 String firstName = mQuestionList.getJSONObject(position).getJSONObject("map").getString("first_name");
                 String lastName = mQuestionList.getJSONObject(position).getJSONObject("map").getString("last_name");
@@ -352,6 +340,16 @@ public class FragmentFeed extends Fragment implements LocationListener, GoogleAp
                 if(tutor){
                     viewHolder.tutorIcon.setColorFilter(getResources().getColor(R.color.primary_dark));
                 }
+
+                String userImageUrl = "";
+                if(mQuestionList.getJSONObject(position).getJSONObject("map").has("image")){
+                    userImageUrl = mQuestionList.getJSONObject(position).getJSONObject("map").getString("image");
+                }
+
+                if(!userImageUrl.equalsIgnoreCase("")){
+                    getUserImage(userImageUrl, viewHolder.userImage);
+                }
+
 
                 //System.out.println("Question " + position + ": " + mQuestionList.getJSONObject(position).getJSONObject("map"));
                 viewHolder.nameText.setText(firstName + " " + lastName);
@@ -471,4 +469,8 @@ public class FragmentFeed extends Fragment implements LocationListener, GoogleAp
         }
 
     }
+
+
+
+
 }

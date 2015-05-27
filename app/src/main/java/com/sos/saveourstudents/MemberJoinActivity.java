@@ -1,10 +1,10 @@
 package com.sos.saveourstudents;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -18,7 +18,7 @@ import com.rey.material.widget.FloatingActionButton;
 /**
  * Created by Xian on 5/16/2015.
  */
-public class MemberJoinActivity extends Activity implements View.OnClickListener{
+public class MemberJoinActivity extends AppCompatActivity implements View.OnClickListener{
 
     FloatingActionButton acceptButton;
     FloatingActionButton declineButton;

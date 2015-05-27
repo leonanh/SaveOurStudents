@@ -5,7 +5,6 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,11 +21,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ViewGroupLocationFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class ViewGroupLocationFragment extends android.support.v4.app.Fragment implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
@@ -39,14 +34,10 @@ public class ViewGroupLocationFragment extends android.support.v4.app.Fragment i
     private GoogleApiClient mGoogleApiClient;
     private View rootView;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @return A new instance of fragment ViewGroupLocationFragment.
-     */
-    // TODO: Rename and change types and number of parameters
+
+
+
+
     public static ViewGroupLocationFragment newInstance(LatLng param1) {
         ViewGroupLocationFragment fragment = new ViewGroupLocationFragment();
         Bundle args = new Bundle();

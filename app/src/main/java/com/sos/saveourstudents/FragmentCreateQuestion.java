@@ -269,7 +269,7 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
         params.add(new BasicNameValuePair("latitude", latitude+""));
         params.add(new BasicNameValuePair("longitude", longitude + ""));
         params.add(new BasicNameValuePair("text", questionEditText.getText().toString()));
-        params.add(new BasicNameValuePair("tags", topicEditText.getText().toString()));
+        //params.add(new BasicNameValuePair("tags", topicEditText.getText().toString()));
 
         for (int a = 0; a < tagList.size(); a++) {
             params.add(new BasicNameValuePair("tags", tagList.get(a)));

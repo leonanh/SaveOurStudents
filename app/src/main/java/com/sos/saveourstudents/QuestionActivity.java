@@ -9,6 +9,9 @@ import android.view.MenuItem;
 
 public class QuestionActivity extends AppCompatActivity {
 
+    final int EDIT_QUESTION = 1;
+    final int CREATE_QUESTION = 0;
+
     //int a = 0;
     Fragment theFragToShow;
     @Override
@@ -25,16 +28,18 @@ public class QuestionActivity extends AppCompatActivity {
                 return;
             }
 
+            theFragToShow = new FragmentCreateQuestion();
+            /*
             if(getIntent().hasExtra("type")){
                 if(getIntent().getExtras().getInt("type") == 0){
-                    theFragToShow = new FragmentViewQuestion();
+                    //theFragToShow = new FragmentViewQuestion();
                 }
                 else{
                     theFragToShow = new FragmentCreateQuestion();
                 }
 
             }
-
+*/
             // Add the fragment to the 'fragment_container' FrameLayout
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, theFragToShow).commit();

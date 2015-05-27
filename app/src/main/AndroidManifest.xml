@@ -68,13 +68,11 @@
         <activity android:name=".QuestionActivity"
             android:windowSoftInputMode="stateHidden|adjustResize"/>
 
-
         <activity android:name=".MemberJoinActivity"/>
 
         <activity android:name=".SettingsActivity"/>
 
-
-
+        <activity android:name=".EditQuestionActivity"/>
 
 
 

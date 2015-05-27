@@ -51,7 +51,7 @@ public class ProfileActivity extends AppCompatActivity
         if (toolbar != null) {
             toolbar.setTitle(R.string.app_name);
             setSupportActionBar(toolbar);
-            toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_18dp);
+            toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
