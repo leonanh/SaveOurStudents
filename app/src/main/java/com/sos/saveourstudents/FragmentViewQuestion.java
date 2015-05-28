@@ -89,10 +89,12 @@ public class FragmentViewQuestion extends Fragment implements GoogleApiClient.Co
 
 
 
+        if (getArguments() != null) {
+            mQuestionId = getArguments().getString("questionId");
+            if(mQuestionId.equalsIgnoreCase(""))
+                Toast.makeText(mContext, "QuestionId empty in viewQuestiomFrag" , Toast.LENGTH_SHORT).show();
+        }
 
-        mQuestionId = getArguments().getString("questionId");
-        if(mQuestionId.equalsIgnoreCase(""))
-            Toast.makeText(mContext, "QuestionId empty in viewQuestiomFrag" , Toast.LENGTH_SHORT).show();
 
 
         userName = (TextView) rootView.findViewById(R.id.question_name_text);

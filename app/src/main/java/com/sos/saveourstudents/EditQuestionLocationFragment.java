@@ -6,9 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -21,6 +19,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -34,6 +34,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 
 public class EditQuestionLocationFragment extends android.support.v4.app.Fragment implements
+        LocationListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMarkerDragListener {
 
@@ -43,18 +44,19 @@ public class EditQuestionLocationFragment extends android.support.v4.app.Fragmen
 
     private LayoutInflater mInflater;
 
+    private LocationRequest mLocationRequest;
     private GoogleMap mMap;
     private MapView mMapView;
     private Context mContext;
     private GoogleApiClient mGoogleApiClient;
     private View rootView;
 
-    private LatLng currentLocation;
-    private LatLng newLocation;
+    private Location mCurrentLocation;
+    private Location newLocation;
     private String userImageUrl;
     private boolean mEditable;
 
-    public static EditQuestionLocationFragment newInstance(LatLng location, String userImageUrl, boolean isEditable) {
+    public static EditQuestionLocationFragment newInstance(Location location, String userImageUrl, boolean isEditable) {
         EditQuestionLocationFragment fragment = new EditQuestionLocationFragment();
         Bundle args = new Bundle();
         args.putParcelable(QUESTION_LOCATION, location);
@@ -72,7 +74,7 @@ public class EditQuestionLocationFragment extends android.support.v4.app.Fragmen
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            currentLocation = getArguments().getParcelable(QUESTION_LOCATION);
+            mCurrentLocation = getArguments().getParcelable(QUESTION_LOCATION);
             userImageUrl = getArguments().getString(USER_IMAGE);
             mEditable = getArguments().getBoolean("isEditable");
         }
@@ -86,6 +88,9 @@ public class EditQuestionLocationFragment extends android.support.v4.app.Fragmen
         rootView =  inflater.inflate(R.layout.fragment_view_group_location, container, false);
         mMapView = (MapView) rootView.findViewById(R.id.view_group_location_map);
         initializeMap();
+
+
+
         return rootView;
     }
 
@@ -110,7 +115,6 @@ public class EditQuestionLocationFragment extends android.support.v4.app.Fragmen
 
         showCustomMarker();
 
-        zoomToMyPosition();
 
     }
 
@@ -123,34 +127,15 @@ public class EditQuestionLocationFragment extends android.support.v4.app.Fragmen
         mGoogleApiClient.connect();
     }
 
-    /**
-     * Zooms to the question's location
-     */
-    private void zoomToMyPosition(){
 
-        LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-
-        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-        if (location != null)
-        {
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                    currentLocation, 13));
-
-            CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(currentLocation)      // Sets the center of the map to location user
-                    .zoom(17)                   // Sets the zoom
-                    .bearing(90)                // Sets the orientation of the camera to east
-                    .tilt(40)                   // Sets the tilt of the camera to 30 degrees
-                    .build();                   // Creates a CameraPosition from the builder
-            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-        }
-
-    }
 
     @Override
     public void onConnected(Bundle bundle) {
+        mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
 
+        //System.out.println("Connected to GoogleApi: " + mCurrentLocation);
+        //getLocationUpdate();
     }
 
     @Override
@@ -161,6 +146,39 @@ public class EditQuestionLocationFragment extends android.support.v4.app.Fragmen
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
+    }
+
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+        //System.out.println("Location: "+location);
+        //Stop updates after we get a location....
+        //showCustomMarker();
+        stopLocationUpdates();
+
+    }
+
+    protected void stopLocationUpdates() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(
+                mGoogleApiClient, this);
+    }
+
+    protected void createLocationRequest() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(10000);
+        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+    protected void startLocationUpdates() {
+        LocationServices.FusedLocationApi.requestLocationUpdates(
+                mGoogleApiClient, mLocationRequest, this);
+    }
+
+    public void getLocationUpdate(){
+        createLocationRequest();
+        startLocationUpdates();
     }
 
     @Override
@@ -191,9 +209,23 @@ public class EditQuestionLocationFragment extends android.support.v4.app.Fragmen
     @Override
     public void onMarkerDragEnd(Marker marker) {
         //System.out.println("On marker drag end");
-        newLocation = marker.getPosition();
+        newLocation = new Location("new");
+        newLocation.setLatitude(marker.getPosition().latitude);
+        newLocation.setLongitude(marker.getPosition().longitude);
         showChangeLocationDialog();
 
+    }
+
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+
+        }
+        else {
+
+        }
     }
 
 
@@ -205,7 +237,7 @@ public class EditQuestionLocationFragment extends android.support.v4.app.Fragmen
 
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                currentLocation = newLocation;
+                mCurrentLocation = newLocation;
                 mMap.clear();
                 showCustomMarker();
 
@@ -230,15 +262,25 @@ public class EditQuestionLocationFragment extends android.support.v4.app.Fragmen
         View markerLayout = mInflater.inflate(R.layout.custom_map_marker, null, false);
         ImageView userImage = (ImageView) markerLayout.findViewById(R.id.user_image_details);
         if(userImageUrl != null && !userImageUrl.equalsIgnoreCase("")){
-            setMarkerImage(userImageUrl, userImage, currentLocation);
+            setMarkerImage(userImageUrl, userImage, new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()));
+
         } else {
             MarkerOptions markerOptions = new MarkerOptions()
-                    .position(currentLocation)
+
+                    .position(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()))
                     .icon(BitmapDescriptorFactory.fromBitmap(createDrawableFromView(mContext, markerLayout)));
+
 
             if(mEditable)
                 markerOptions.draggable(true);
 
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()))      // Sets the center of the map to location user
+                    .zoom(16)                   // Sets the zoom
+                    .bearing(0)                // Sets the orientation of the camera to east
+                    .tilt(40)                   // Sets the tilt of the camera to 30 degrees
+                    .build();                   // Creates a CameraPosition from the builder
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             mMap.addMarker(markerOptions);
 
 
@@ -272,28 +314,39 @@ public class EditQuestionLocationFragment extends android.support.v4.app.Fragmen
         imageLoader.get(imageUrl, new ImageLoader.ImageListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                //Log.e(TAG, "Image Load Error: " + error.getMessage());
             }
 
             @Override
             public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
                 if (response.getBitmap() != null) {
-
                     imageView.setImageBitmap(response.getBitmap());
-                    mMap.addMarker(new MarkerOptions()
-                            .position(location)
-                            .icon(BitmapDescriptorFactory.fromBitmap(createDrawableFromView(mContext, (View) imageView.getParent()))));
 
                 } else {
                     // Default image...
-                    mMap.addMarker(new MarkerOptions()
-                            .position(location)
-                            .icon(BitmapDescriptorFactory.fromBitmap(createDrawableFromView(mContext, (View) imageView.getParent()))));
                 }
+
+                MarkerOptions markerOptions = new MarkerOptions()
+                        .position(location)
+                        .icon(BitmapDescriptorFactory.fromBitmap(createDrawableFromView(mContext, (View) imageView.getParent())));
+                if(mEditable)
+                    markerOptions.draggable(true);
+                mMap.addMarker(markerOptions);
+
+
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(new LatLng(location.latitude, location.longitude))
+                        .zoom(16)
+                        .bearing(0)
+                        .tilt(40)
+                        .build();
+                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+
             }
         });
 
     }
+
 
 
 

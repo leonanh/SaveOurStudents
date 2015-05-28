@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -20,7 +21,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.android.gms.maps.model.LatLng;
 import com.sos.saveourstudents.supportclasses.SlidingTabLayout;
 
 import org.apache.http.NameValuePair;
@@ -134,8 +134,9 @@ public class EditQuestionActivity extends AppCompatActivity {
                                 String latitude = mQuestionInfo.getString("latitude");
                                 String longitude = mQuestionInfo.getString("longitude");
 
-                                LatLng location = new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
-                                //Send latlng
+                                Location location = new Location("new");
+                                location.setLongitude(Double.parseDouble(longitude));
+                                location.setLatitude(Double.parseDouble(latitude));
 
                                 SharedPreferences sharedPref = getSharedPreferences(
                                         getString(R.string.preference_file_key), Context.MODE_PRIVATE);
@@ -173,7 +174,7 @@ public class EditQuestionActivity extends AppCompatActivity {
 
 
 
-    private void buildFragments(LatLng location, String userImageUrl, boolean isEditable){
+    private void buildFragments(Location location, String userImageUrl, boolean isEditable){
 
 
         mViewGroupPagerAdapter = new ViewGroupPagerAdapter(getSupportFragmentManager(), location, userImageUrl, isEditable);
@@ -311,7 +312,7 @@ public class EditQuestionActivity extends AppCompatActivity {
 
         private boolean isEditable;
 
-        public ViewGroupPagerAdapter(FragmentManager fm, LatLng location, String userImageUrl, boolean isEditable) {
+        public ViewGroupPagerAdapter(FragmentManager fm, Location location, String userImageUrl, boolean isEditable) {
             super(fm);
             this.isEditable = isEditable;
             mFragmentViewQuestion = EditQuestionFragment.newInstance(mQuestionId, isEditable);

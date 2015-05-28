@@ -9,7 +9,7 @@
     <string name="username_hint">Email</string>
     <string name="password_hint">Password</string>
     <string name="confirm_password_hint">Confirm password</string>
-    <string name="forgot_login">Forgot login?</string>
+    <string name="forgot_login">Forgot login</string>
     <string name="sign_up">Sign Up</string>
     <string name="first_name_hint">First Name</string>
     <string name="last_name_hint">Last Name</string>

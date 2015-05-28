@@ -424,6 +424,8 @@ public class FragmentMap extends Fragment implements
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             //System.out.println("Map is visible");
+
+            //Update map?
         }
         else {
             //System.out.println("Map not visible");
@@ -440,10 +442,6 @@ public class FragmentMap extends Fragment implements
         ((MainActivity) getActivity()).showFab();
     }
 
-    public void onInfoWindowClick(Marker marker) {
-        ((MainActivity) getActivity()).hideFab();
-        detailsLayout.setVisibility(View.VISIBLE);
-    }
 
     @Override
     public boolean onMarkerClick(Marker marker) {

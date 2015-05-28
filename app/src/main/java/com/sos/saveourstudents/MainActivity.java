@@ -39,6 +39,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private final int CREATE_QUESTION = 987;
+    private final int EDIT_QUESTION = 567;
     private boolean fabShowing = false;
 
     ViewPager mViewPager;
@@ -284,24 +286,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         try {
 
                             final JSONObject result = new JSONObject(response.toString());
-                            //System.out.println("has questions result "+result);
+                            System.out.println("has questions result "+result);
 
                             if(!result.getString("success").equalsIgnoreCase("1")){
                                 //Error...
 
                             }
                             else{
-                                final String questionId = result.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("question_id");
-                                //System.out.println("QuestionID = " +questionId);
-                                //Edit Question
+
                                 if(result.getString("expectResults").equalsIgnoreCase("1")){
+                                    final String questionId = result.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("question_id");
                                     fab.setIcon(getResources().getDrawable(R.drawable.ic_create_white_18dp), false);
                                     fab.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
                                             Intent mIntent = new Intent(MainActivity.this, EditQuestionActivity.class);
                                             mIntent.putExtra("questionId", questionId);
-                                            startActivity(mIntent);
+                                            startActivityForResult(mIntent, EDIT_QUESTION);
                                         }
                                     });
                                 }
@@ -313,7 +314,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         public void onClick(View v) {
                                             Intent mIntent = new Intent(MainActivity.this, CreateQuestionActivity.class); //TODO rename, dialogize
                                             mIntent.putExtra("questionId", "");
-                                            startActivity(mIntent);
+                                            startActivityForResult(mIntent, CREATE_QUESTION);
                                         }
                                     });
                                 }
@@ -343,6 +344,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == EDIT_QUESTION) {
+            System.out.println("Returned from create Question");
+            if (resultCode == RESULT_OK) {
+                System.out.println("Returned from edit Question ok");
+            }
+        }
+
+        else if (requestCode == CREATE_QUESTION) {
+            // Make sure the request was successful
+            buildFab();
+            System.out.println("Returned from create Question");
+            if (resultCode == RESULT_OK) {
+                System.out.println("Returned from create Question ok");
+            }
+        }
+
+    }
 
 
 
