@@ -36,12 +36,21 @@ public class FragmentViewQuestion extends Fragment implements
 
     RecycleViewAdapter mAdapter;
     RecyclerView mRecyclerView;
+    private Question mCurrQuestion;
 
     private Context mContext;
     private GoogleApiClient mGoogleApiClient;
 
     static List mQuestionList;
     View rootView;
+
+    public FragmentViewQuestion() {
+
+    }
+
+    public FragmentViewQuestion(Question pQuestion) {
+        mCurrQuestion = pQuestion;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -306,5 +315,6 @@ class MemberListAdapter extends RecyclerView.Adapter<MemberListAdapter.ViewHolde
     public int getItemCount() {
         return mDataset.length;
     }
+
 }
 

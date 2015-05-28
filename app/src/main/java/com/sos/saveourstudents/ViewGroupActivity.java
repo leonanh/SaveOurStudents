@@ -12,8 +12,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.maps.model.LatLng;
 import com.sos.saveourstudents.supportclasses.SlidingTabLayout;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -29,49 +37,47 @@ public class ViewGroupActivity extends AppCompatActivity
     private static FragmentPagerAdapter mViewGroupPagerAdapter;
     private static ViewPager mViewPager;
 
-    private boolean mTutorsAllowed;
-    private boolean mStudentsAllowed;
+    private Question mCurrQuestion;
 
     private ArrayList<Student> mStudents;
     private ArrayList<Student> mTutors;
+
+    public boolean isCurrViewerIsInGroup() {
+        return mCurrViewerIsInGroup;
+    }
+
+    private boolean mCurrViewerIsInGroup;
+
+    private static final String mQuestionIdIntentsTag = "questionId";
+    private static final String mQuestionUrl =
+            "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/" +
+                    "viewQuestion?questionId=";
+    private String mQuestionId;
+
+    private static final String mUserURL =
+            "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getUserById?userId=";
+    private String mUserId;
+
+    private static final String mMembersUrl =
+            "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/viewMembers?questionId=";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_group);
 
+        mCurrViewerIsInGroup = false; // Will be checked in JSON parsing
+
+        mQuestionId = getIntent().getStringExtra(mQuestionIdIntentsTag);
         mStudents = new ArrayList<>();
         mTutors = new ArrayList<>();
 
-        // TODO: Populate mStudents and mTutors with students from database
-        mStudents.add(new Student("Brady", "Shi", 0, "UCSD", "Computer Engineering",
-                "Coffee Addict", null));
-        mStudents.add(new Student("Brady", "Shi", 0, "UCSD", "Computer Engineering",
-                "Coffee Addict", null));
-        mTutors.add(new Student("Brady", "Shi", 0, "UCSD", "Computer Engineering",
-                "Coffee Addict", null));
-        mTutors.add(new Student("Brady", "Shi", 0, "UCSD", "Computer Engineering",
-                "Coffee Addict", null));
+        String url = mQuestionUrl + mQuestionId;
 
-        // Assigning private variables to correct ViewGroups
-        // TODO: Move initializations to separate method when all views are situated
-        mFragmentViewQuestion = new FragmentViewQuestion();
+        JsonObjectRequest questionRequest = new JsonObjectRequest(Request.Method.GET,
+                url, (JSONObject) null, new QuestionResponseListener(), new QuestionErrorListener());
 
-        // TODO: Grab actual location from database
-        mViewGroupLocationFragment = ViewGroupLocationFragment.newInstance(
-                new LatLng(32.881151, -117.23744999999997));
-
-        mViewGroupMembersFragment = ViewGroupMembersFragment.newInstance(
-                mStudents, mTutors);
-
-
-        mViewGroupPagerAdapter = new ViewGroupPagerAdapter(getSupportFragmentManager());
-        mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.view_group_tabPage);
-        mViewPager = (ViewPager) findViewById(R.id.view_group_viewPager);
-
-        // TODO: Grab boolean values from database for group settings
-        mTutorsAllowed = true;
-        mStudentsAllowed = true;
+        Singleton.getInstance().addToRequestQueue(questionRequest);
 
         // Setting up toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.view_group_toolbar);
@@ -87,18 +93,7 @@ public class ViewGroupActivity extends AppCompatActivity
             });
         }
 
-        // Setting up sliding tabs feature
-        mViewPager.setAdapter(mViewGroupPagerAdapter);
 
-        mSlidingTabLayout.setDistributeEvenly(true);
-        mSlidingTabLayout.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
-            @Override
-            public int getIndicatorColor(int position) {
-                return getResources().getColor(R.color.primary_light);
-            }
-        });
-
-        mSlidingTabLayout.setViewPager(mViewPager);
     }
 
     @Override
@@ -158,7 +153,7 @@ public class ViewGroupActivity extends AppCompatActivity
         @Override
         public Fragment getItem(int position) {
             if(position == 0) {
-                return mFragmentViewQuestion; // TODO: Change to our own implementation
+                return mFragmentViewQuestion;
             }
             else if(position == 1) {
                 return mViewGroupLocationFragment;
@@ -175,6 +170,152 @@ public class ViewGroupActivity extends AppCompatActivity
         @Override
         public int getCount() {
             return numPages;
+        }
+    }
+
+    private void initializeAllViews() {
+        // Assigning private variables to correct ViewGroups
+        mFragmentViewQuestion = new FragmentViewQuestion(mCurrQuestion);
+
+        mViewGroupLocationFragment = ViewGroupLocationFragment.newInstance(mCurrQuestion
+                .getmLocation());
+
+        mViewGroupMembersFragment = ViewGroupMembersFragment.newInstance(
+                mStudents, mTutors);
+
+
+        mViewGroupPagerAdapter = new ViewGroupPagerAdapter(getSupportFragmentManager());
+        mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.view_group_tabPage);
+        mViewPager = (ViewPager) findViewById(R.id.view_group_viewPager);
+
+        // Setting up sliding tabs feature
+        mViewPager.setAdapter(mViewGroupPagerAdapter);
+
+        mSlidingTabLayout.setDistributeEvenly(true);
+        mSlidingTabLayout.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+            @Override
+            public int getIndicatorColor(int position) {
+                return getResources().getColor(R.color.primary_light);
+            }
+        });
+
+        mSlidingTabLayout.setViewPager(mViewPager);
+    }
+
+    /**
+     * Begins parsing through the Question and creating the Group Leader Student object
+     */
+    class QuestionResponseListener implements Response.Listener<JSONObject> {
+
+        @Override
+        public void onResponse(JSONObject response) {
+            try {
+                JSONObject theResponse = new JSONObject(response.toString())
+                        .getJSONObject("result")
+                        .getJSONArray("myArrayList")
+                        .getJSONObject(0)
+                        .getJSONObject("map");
+
+                mUserId = theResponse.getString("user_id");
+                String getStudentUrl = mUserURL + mUserId;
+
+                mCurrQuestion = new Question(theResponse.getBoolean("study_group"),
+                        theResponse.getBoolean("tutor"), new LatLng(
+                        theResponse.getDouble("latitude"), theResponse.getDouble("longitude")),
+                        theResponse.getBoolean("active"), null, theResponse.getString("text"));
+                mCurrQuestion.setmQuestionId(mQuestionId);
+
+                JsonObjectRequest studentRequest = new JsonObjectRequest(Request.Method.GET,
+                        getStudentUrl, (JSONObject) null,
+                        new ProfileResponseListener(), new ProfileErrorListener());
+                Singleton.getInstance().addToRequestQueue(studentRequest);
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    class QuestionErrorListener implements Response.ErrorListener {
+
+        @Override
+        public void onErrorResponse(VolleyError error) {
+
+        }
+    }
+
+    class ProfileResponseListener implements Response.Listener<JSONObject> {
+
+        @Override
+        public void onResponse(JSONObject response) {
+            try {
+                JSONObject theResponse = new JSONObject(response.toString())
+                        .getJSONObject("result")
+                        .getJSONArray("myArrayList")
+                        .getJSONObject(0)
+                        .getJSONObject("map");
+                mCurrQuestion.setmGroupOwner(new Student(theResponse.getString("first_name"),
+                        theResponse.getString("last_name"), theResponse.getInt("rating"),
+                        theResponse.getString("school"), theResponse.getString("major"),
+                        theResponse.getString("description"), null));
+
+                String getMembersTableUrl = mMembersUrl + mQuestionId;
+
+                JsonObjectRequest membersRequest = new JsonObjectRequest(Request.Method.GET,
+                        getMembersTableUrl, (JSONObject) null,
+                        new MembersTableResponseListener(), new MembersTableErrorListener());
+                Singleton.getInstance().addToRequestQueue(membersRequest);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    class ProfileErrorListener implements Response.ErrorListener {
+
+        @Override
+        public void onErrorResponse(VolleyError error) {
+
+        }
+    }
+
+    class MembersTableResponseListener implements Response.Listener<JSONObject> {
+
+        @Override
+        public void onResponse(JSONObject response) {
+            try {
+                JSONArray membersArray = new JSONObject(response.toString())
+                        .getJSONObject("result").getJSONArray("myArrayList");
+
+                for (int i = 0; i < membersArray.length(); i++) {
+                    JSONObject currMember = membersArray.getJSONObject(i).getJSONObject("map");
+                    Student currStudent = new Student(currMember.getString("first_name"),
+                            currMember.getString("last_name"), currMember.getString("user_id"));
+
+                    if (currMember.getBoolean("tutor")) {
+                        mTutors.add(currStudent);
+                    } else mStudents.add(currStudent);
+
+                    if (currStudent.getUserId() == mUserId) {
+                        mCurrViewerIsInGroup = true;
+                    }
+
+                }
+
+                initializeAllViews();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+    }
+
+    class MembersTableErrorListener implements Response.ErrorListener {
+
+        @Override
+        public void onErrorResponse(VolleyError error) {
+
         }
     }
 }

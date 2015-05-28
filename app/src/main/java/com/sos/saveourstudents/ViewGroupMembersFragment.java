@@ -224,6 +224,12 @@ public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
         // TODO: Set up Thumbs Up/Down functionality for database rating updates
         private void setUpThumbsUpButton(final ImageButton mThumbsUpButton,
                                          final ImageButton mThumbsDownButton) {
+            if (!((ViewGroupActivity) getActivity()).isCurrViewerIsInGroup()) {
+                mThumbsUpButton.setClickable(false);
+                mThumbsUpButton.setVisibility(View.INVISIBLE);
+                return;
+            }
+
             mThumbsUpButton.setTag(false);
             mThumbsUpButton.setImageResource(mThumbsUpButtonGreyId);
             mThumbsUpButton.setOnClickListener(new View.OnClickListener() {
@@ -256,6 +262,13 @@ public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
 
         private void setUpThumbsDownButton(final ImageButton mThumbsUpButton,
                                            final ImageButton mThumbsDownButton) {
+
+            if (!((ViewGroupActivity) getActivity()).isCurrViewerIsInGroup()) {
+                mThumbsDownButton.setClickable(false);
+                mThumbsDownButton.setVisibility(View.INVISIBLE);
+                return;
+            }
+
             mThumbsDownButton.setTag(false);
             mThumbsDownButton.setImageResource(mThumbsDownButtonGreyId);
             mThumbsDownButton.setOnClickListener(new View.OnClickListener() {
