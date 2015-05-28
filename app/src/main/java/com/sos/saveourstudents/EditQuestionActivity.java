@@ -97,7 +97,7 @@ public class EditQuestionActivity extends AppCompatActivity {
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/viewQuestion?"+paramString;
 
 
-        System.out.println("url: " + url);
+        //System.out.println("url: " + url);
 
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
@@ -109,7 +109,7 @@ public class EditQuestionActivity extends AppCompatActivity {
                         try {
 
                             JSONObject result = new JSONObject(response.toString());
-                            System.out.println("edit questions result "+result);
+                            //System.out.println("edit questions result "+result);
                             if(result.getString("success").equalsIgnoreCase("1")){
 
                                 JSONArray questionAndTags = result.getJSONObject("result").getJSONArray("myArrayList");
