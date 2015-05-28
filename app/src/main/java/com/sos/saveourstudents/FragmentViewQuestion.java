@@ -234,7 +234,7 @@ public class FragmentViewQuestion extends Fragment implements GoogleApiClient.Co
 
 
 
-                                mAdapter = new RecycleViewAdapter(commentList, R.layout.fragment_question_comment);
+                                mAdapter = new RecycleViewAdapter(commentList, R.layout.question_comment_item);
                                 mRecyclerView.setAdapter(mAdapter);
 
                             }

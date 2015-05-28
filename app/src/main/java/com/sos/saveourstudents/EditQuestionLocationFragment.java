@@ -104,25 +104,6 @@ public class EditQuestionLocationFragment extends android.support.v4.app.Fragmen
 
 
         showCustomMarker();
-        /*
-        View markerLayout = mInflater.inflate(R.layout.info_window_layout, null, false);
-        ImageView userImage = (ImageView) markerLayout.findViewById(R.id.user_image_details);
-        if(userImageUrl != null && !userImageUrl.equalsIgnoreCase("")){
-            setMarkerImage(userImageUrl, userImage, currentLocation);
-        } else {
-            mMap.addMarker(new MarkerOptions()
-                    .position(currentLocation)
-                    .draggable(true)
-                    .icon(BitmapDescriptorFactory.fromBitmap(createDrawableFromView(mContext, markerLayout))));
-
-        }
-*/
-
-        /*
-        mMap.addMarker(new MarkerOptions()
-                .draggable(true)
-                .position(currentLocation));
-*/
 
         zoomToMyPosition();
 
@@ -244,7 +225,7 @@ public class EditQuestionLocationFragment extends android.support.v4.app.Fragmen
 
     private void showCustomMarker(){
 
-        View markerLayout = mInflater.inflate(R.layout.info_window_layout, null, false);
+        View markerLayout = mInflater.inflate(R.layout.custom_map_marker, null, false);
         ImageView userImage = (ImageView) markerLayout.findViewById(R.id.user_image_details);
         if(userImageUrl != null && !userImageUrl.equalsIgnoreCase("")){
             setMarkerImage(userImageUrl, userImage, currentLocation);

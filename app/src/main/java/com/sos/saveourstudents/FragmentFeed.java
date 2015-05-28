@@ -71,7 +71,7 @@ public class FragmentFeed extends Fragment implements LocationListener, GoogleAp
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.feed_layout, container,
+        View rootView = inflater.inflate(R.layout.fragment_feed_layout, container,
                 false);
 
 
@@ -437,7 +437,7 @@ public class FragmentFeed extends Fragment implements LocationListener, GoogleAp
 
                     try {
                         String questionId = mQuestionList.getJSONObject(getAdapterPosition()).getJSONObject("map").getString("question_id");
-                        Intent mIntent = new Intent(mContext, ViewGroupActivity.class);
+                        Intent mIntent = new Intent(mContext, EditQuestionActivity.class);
                         mIntent.putExtra("questionId", questionId);
                         startActivity(mIntent);
 

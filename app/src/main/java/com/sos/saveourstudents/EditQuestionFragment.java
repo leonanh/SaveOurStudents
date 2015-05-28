@@ -94,9 +94,12 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
         taglist = (LinearLayout) rootView.findViewById(R.id.tag_list_layout);
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.my_recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
+        //TODO show fab after question data is retrieved
+        fabButton = (FloatingActionButton) rootView.findViewById(R.id.group_action);
+        fabButton.setVisibility(View.INVISIBLE);
 
 
         if(((EditQuestionActivity) getActivity()).mQuestionInfo == null) {
@@ -109,15 +112,14 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
             try {
                 showQuestionDetails(mQuestionInfo);
                 showQuestionTags(tags);
+                buildFab(mQuestionInfo.getString("user_id"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
 
-        //TODO show fab after question data is retrieved
-        fabButton = (FloatingActionButton) rootView.findViewById(R.id.group_action);
-        fabButton.setVisibility(View.GONE);
+
 
 
         return rootView;
@@ -227,7 +229,7 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
 
 
 
-                                mAdapter = new RecycleViewAdapter(commentList, R.layout.fragment_question_comment);
+                                mAdapter = new RecycleViewAdapter(commentList, R.layout.question_comment_item);
                                 mRecyclerView.setAdapter(mAdapter);
 
                             }
@@ -334,10 +336,10 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
                     }
                 });
             }
-            fabButton.setVisibility(View.VISIBLE);
+
 
         }
-
+        fabButton.setVisibility(View.VISIBLE);
 
     }
 

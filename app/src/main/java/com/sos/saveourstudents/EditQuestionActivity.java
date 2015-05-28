@@ -77,8 +77,7 @@ public class EditQuestionActivity extends AppCompatActivity {
         }
 
 
-        //buildFragments(); //Call this from first frag?
-
+        //Need to pass location/userImage to map frag, could be moved to service call?
         getQuestionData();
 
 
@@ -216,7 +215,7 @@ public class EditQuestionActivity extends AppCompatActivity {
 
         public ViewGroupPagerAdapter(FragmentManager fm, LatLng location, String userImageUrl) {
             super(fm);
-            mFragmentViewQuestion = FragmentViewQuestion.newInstance(mQuestionId);
+            mFragmentViewQuestion = EditQuestionFragment.newInstance(mQuestionId);
             mViewGroupLocationFragment = EditQuestionLocationFragment.newInstance(location, userImageUrl);
             mViewGroupMembersFragment = EditQuestionMembersFragment.newInstance(mQuestionId);
         }

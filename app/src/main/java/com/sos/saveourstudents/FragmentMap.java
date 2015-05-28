@@ -95,7 +95,7 @@ public class FragmentMap extends Fragment implements
                              Bundle savedInstanceState) {
         minflater = inflater;
         mContext = this.getActivity();
-        rootView = inflater.inflate(R.layout.map_layout, container,
+        rootView = inflater.inflate(R.layout.fragment_map_layout, container,
                 false);
 
         detailsLayout = (RelativeLayout) rootView.findViewById(R.id.lower_layout);
@@ -253,7 +253,7 @@ public class FragmentMap extends Fragment implements
                     }
 
 
-                    View marker = minflater.inflate(R.layout.info_window_layout, null, false);
+                    View marker = minflater.inflate(R.layout.custom_map_marker, null, false);
                     ImageView userImage = (ImageView) marker.findViewById(R.id.user_image_details);
 
 

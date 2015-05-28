@@ -4,9 +4,6 @@
     android:layout_height="wrap_content"
     >
 
-
-
-
     <ImageView
         android:id="@+id/test"
         android:layout_width="40dp"
@@ -30,33 +27,4 @@
         android:layout_marginBottom="10dp"
         android:scaleType="fitXY"/>
 
-
-<!--
-        <TextView
-            android:id="@+id/user_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Elon Musk"
-            android:textStyle="bold"
-            android:layout_toRightOf="@+id/user_image"
-            android:textColor="@color/primary_text"/>
-
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/user_name"
-            android:layout_toRightOf="@+id/user_image"
-            android:text="title"
-            />
-
-            -->
-<!--
-        <TextView
-            android:id="@+id/snippet"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/user_image"/>
--->
 </RelativeLayout>
