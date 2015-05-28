@@ -29,6 +29,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,14 +41,15 @@ public class EditQuestionMembersFragment extends Fragment {
 
     private String mQuestionId;
     private Context mContext;
+    private boolean mEditable;
 
 
 
-
-    public static EditQuestionMembersFragment newInstance(String questionId) {
+    public static EditQuestionMembersFragment newInstance(String questionId, boolean editable) {
         EditQuestionMembersFragment fragment = new EditQuestionMembersFragment();
         Bundle args = new Bundle();
         args.putString("questionId", questionId);
+        args.putBoolean("editable", editable);
         fragment.setArguments(args);
         return fragment;
     }
@@ -61,6 +63,7 @@ public class EditQuestionMembersFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mQuestionId = getArguments().getString("questionId");
+            mEditable = getArguments().getBoolean("editable");
         }
     }
 
@@ -102,8 +105,7 @@ public class EditQuestionMembersFragment extends Fragment {
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/viewMembers?"+paramString;
 
 
-        System.out.println("view member url: " + url);
-
+        //System.out.println("view member url: " + url);
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
                 (JSONObject)null,
@@ -114,43 +116,67 @@ public class EditQuestionMembersFragment extends Fragment {
                     @Override
                     public void onResponse(JSONObject response) {
 
-                        JSONArray tutorList = new JSONArray();
-                        tutorList.put(new JSONObject());
-                        tutorList.put(new JSONObject());
-                        tutorList.put(new JSONObject());
+                        ArrayList<JSONObject> tutorList = null;
+                        ArrayList<JSONObject> studentList = null;
 
-                        JSONArray studentList = new JSONArray();
-                        studentList.put(new JSONObject());
-                        studentList.put(new JSONObject());
-                        studentList.put(new JSONObject());
 
                         try {
 
                             JSONObject result = new JSONObject(response.toString());
-                            System.out.println("Members result "+result);
+                            //System.out.println("Members result "+result);
                             if(result.getString("success").equalsIgnoreCase("1")){
 
 
 
                                 JSONArray memberList = result.getJSONObject("result").getJSONArray("myArrayList");
                                 for(int a = 0; a < memberList.length();a++){
-                                    if(memberList.getJSONObject(a).getString("user_id").equalsIgnoreCase(currentUserId)){
 
+                                    System.out.println("adding: "+memberList.getJSONObject(a).getJSONObject("map"));
+                                    if(memberList.getJSONObject(a).getJSONObject("map").getBoolean("tutor")){
+                                        if(tutorList == null){
+                                            tutorList = new ArrayList<JSONObject>();
+                                            tutorList.add(memberList.getJSONObject(a).getJSONObject("map"));
+                                        }
+                                        else{
+                                            tutorList.add(memberList.getJSONObject(a).getJSONObject("map"));
+                                        }
+                                    }else{
+                                        if(studentList == null){
+                                            studentList = new ArrayList<JSONObject>();
+                                            studentList.add(memberList.getJSONObject(a).getJSONObject("map"));
+                                        }
+                                        else{
+                                            studentList.add(memberList.getJSONObject(a).getJSONObject("map"));
+                                        }
                                     }
 
+                                }
 
+
+                                //Placeholders
+                                if(tutorList == null){
+                                    tutorList = new ArrayList<JSONObject>();
+                                    tutorList.add(new JSONObject());
+                                    tutorList.add(new JSONObject());
+                                    tutorList.add(new JSONObject());
+                                }
+                                if(studentList == null){
+                                    studentList = new ArrayList<JSONObject>();
+                                    studentList.add(new JSONObject());
+                                    studentList.add(new JSONObject());
+                                    studentList.add(new JSONObject());
                                 }
 
 
 
 
-                                if(tutorList != null && tutorList.length() > 0) {
-                                    mTutorAdapter = new RecycleViewAdapter(tutorList, R.layout.view_group_members_student_layout); //view_group_members_tutors_layout
+                                if(tutorList != null && tutorList.size() > 0) {
+                                    mTutorAdapter = new RecycleViewAdapter(tutorList, R.layout.question_member_item, mEditable); //view_group_members_tutors_layout
                                     mTutorRecyclerView.setAdapter(mTutorAdapter);
                                 }
 
-                                if(studentList != null && studentList.length() > 1) {
-                                    mStudentAdapter = new RecycleViewAdapter(studentList, R.layout.view_group_members_student_layout);
+                                if(studentList != null && studentList.size() > 0) {
+                                    mStudentAdapter = new RecycleViewAdapter(studentList, R.layout.question_member_item, false);
                                     mStudentRecyclerView.setAdapter(mStudentAdapter);
                                 }
 
@@ -183,12 +209,14 @@ public class EditQuestionMembersFragment extends Fragment {
 
     public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.ViewHolder>{
 
-        private JSONArray dataList;
+        private ArrayList<JSONObject> dataList;
         private int rowLayout;
+        private boolean isEditable;
 
-        public RecycleViewAdapter(JSONArray commentList, int rowLayout) {
+        public RecycleViewAdapter(ArrayList<JSONObject> commentList, int rowLayout, boolean isEditable) {
             this.dataList = commentList;
             this.rowLayout = rowLayout;
+            this.isEditable = isEditable;
         }
 
         @Override
@@ -199,36 +227,49 @@ public class EditQuestionMembersFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(ViewHolder viewHolder, int position) {
-            System.out.println("member: ");
-/*
+
+
             try {
-                System.out.println("member: ");//+dataList.getJSONObject(position).getJSONObject("map"));
+                System.out.println("member: "+dataList.get(position));
 
-                //String firstName = dataList.getJSONObject(position).getJSONObject("map").getString("first_name");
-                //String lastName = dataList.getJSONObject(position).getJSONObject("map").getString("last_name");
-
-
-                if(dataList.getJSONObject(position).getJSONObject("map").has("image") &&
-                        !dataList.getJSONObject(position).getJSONObject("map").getString("image").equalsIgnoreCase("")){
-                    String userImageUrl = dataList.getJSONObject(position).getJSONObject("map").getString("image");
-                    getUserImage(userImageUrl, viewHolder.userImage);
+                if(dataList.get(position).has("first_name") && dataList.get(position).has("last_name")){
+                    String firstName = dataList.get(position).getString("first_name");
+                    String lastName = dataList.get(position).getString("last_name");
+                    viewHolder.nameText.setText(firstName + " " + lastName);
+                }else{
+                    viewHolder.nameText.setVisibility(View.INVISIBLE);
                 }
 
-                //viewHolder.nameText.setText(firstName + " " + lastName);
+                if(dataList.get(position).has("image")){
+                    String userImageUrl = dataList.get(position).getString("image");
+                    getUserImage(userImageUrl, viewHolder.userImage);
+                }else{
+                    //viewHolder.userImage.setVisibility(View.INVISIBLE);
+                }
 
+
+                if(isEditable){
+                    viewHolder.thumbUp.setVisibility(View.VISIBLE);
+                    viewHolder.thumbDown.setVisibility(View.VISIBLE);
+                }
+                else{
+                    //SHOW tutor rating?
+                    viewHolder.thumbUp.setVisibility(View.GONE);
+                    viewHolder.thumbDown.setVisibility(View.GONE);
+                }
 
 
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-*/
+
 
         }
 
         @Override
         public int getItemCount() {
-            return dataList.length();
+            return dataList.size();
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -236,18 +277,22 @@ public class EditQuestionMembersFragment extends Fragment {
 
             public ImageView userImage;
             public TextView nameText;
+            public ImageView thumbUp;
+            public ImageView thumbDown;
 
             public ViewHolder(View itemView) {
                 super(itemView);
                 nameText = (TextView) itemView.findViewById(R.id.user_name);
                 userImage = (ImageView) itemView.findViewById(R.id.user_image);
 
-                nameText.setVisibility(View.INVISIBLE);
-                userImage.setVisibility(View.INVISIBLE);
+                thumbUp = (ImageView) itemView.findViewById(R.id.view_group_members_thumbs_up);
+                thumbDown = (ImageView) itemView.findViewById(R.id.view_group_members_thumbs_down);
+
 
                 userImage.setOnClickListener(this);
                 nameText.setOnClickListener(this);
-
+                thumbDown.setOnClickListener(this);
+                thumbUp.setOnClickListener(this);
             }
 
 
@@ -257,7 +302,7 @@ public class EditQuestionMembersFragment extends Fragment {
                 if((v == nameText || v == userImage)){
 
                     try {
-                        String userId = dataList.getJSONObject(getAdapterPosition()).getJSONObject("map").getString("user_id");
+                        String userId = dataList.get(getAdapterPosition()).getJSONObject("map").getString("user_id");
                         Intent intent = new Intent(mContext, ProfileActivity.class);
                         intent.putExtra("userId", userId);
                         startActivity(intent);
@@ -265,6 +310,20 @@ public class EditQuestionMembersFragment extends Fragment {
                         e.printStackTrace();
                     }
                 }
+
+                else if(v == thumbDown){
+
+                    //TODO
+
+                }
+                else if(v == thumbUp){
+
+                    //TODO
+
+                }
+
+
+
             }
 
 

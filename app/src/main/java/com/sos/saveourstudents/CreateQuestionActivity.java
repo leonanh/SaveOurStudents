@@ -7,45 +7,23 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class QuestionActivity extends AppCompatActivity {
+public class CreateQuestionActivity extends AppCompatActivity {
 
-    final int EDIT_QUESTION = 1;
-    final int CREATE_QUESTION = 0;
 
-    //int a = 0;
-    Fragment theFragToShow;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question);
 
 
-
-
         if (findViewById(R.id.fragment_container) != null) {
 
-            if (savedInstanceState != null) {
-                return;
-            }
+            Fragment theFragToShow = new FragmentCreateQuestion();
 
-            theFragToShow = new FragmentCreateQuestion();
-            /*
-            if(getIntent().hasExtra("type")){
-                if(getIntent().getExtras().getInt("type") == 0){
-                    //theFragToShow = new FragmentViewQuestion();
-                }
-                else{
-                    theFragToShow = new FragmentCreateQuestion();
-                }
-
-            }
-*/
             // Add the fragment to the 'fragment_container' FrameLayout
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, theFragToShow).commit();
         }
-
-
 
     }
 

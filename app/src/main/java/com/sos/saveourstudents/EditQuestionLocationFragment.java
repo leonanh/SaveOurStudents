@@ -52,13 +52,14 @@ public class EditQuestionLocationFragment extends android.support.v4.app.Fragmen
     private LatLng currentLocation;
     private LatLng newLocation;
     private String userImageUrl;
+    private boolean mEditable;
 
-
-    public static EditQuestionLocationFragment newInstance(LatLng location, String userImageUrl) {
+    public static EditQuestionLocationFragment newInstance(LatLng location, String userImageUrl, boolean isEditable) {
         EditQuestionLocationFragment fragment = new EditQuestionLocationFragment();
         Bundle args = new Bundle();
         args.putParcelable(QUESTION_LOCATION, location);
         args.putString(USER_IMAGE, userImageUrl);
+        args.putBoolean("isEditable", isEditable);
         fragment.setArguments(args);
         return fragment;
     }
@@ -73,6 +74,7 @@ public class EditQuestionLocationFragment extends android.support.v4.app.Fragmen
         if (getArguments() != null) {
             currentLocation = getArguments().getParcelable(QUESTION_LOCATION);
             userImageUrl = getArguments().getString(USER_IMAGE);
+            mEditable = getArguments().getBoolean("isEditable");
         }
     }
 
@@ -90,7 +92,10 @@ public class EditQuestionLocationFragment extends android.support.v4.app.Fragmen
     private void initializeMap(){
         mMapView.onCreate(new Bundle());
         mMap = mMapView.getMap();
-        mMap.setOnMarkerDragListener(this);
+
+        if(mEditable)
+            mMap.setOnMarkerDragListener(this);
+
         mMap.setMyLocationEnabled(true);
 
         try {
@@ -227,10 +232,17 @@ public class EditQuestionLocationFragment extends android.support.v4.app.Fragmen
         if(userImageUrl != null && !userImageUrl.equalsIgnoreCase("")){
             setMarkerImage(userImageUrl, userImage, currentLocation);
         } else {
-            mMap.addMarker(new MarkerOptions()
+            MarkerOptions markerOptions = new MarkerOptions()
                     .position(currentLocation)
-                    .draggable(true)
-                    .icon(BitmapDescriptorFactory.fromBitmap(createDrawableFromView(mContext, markerLayout))));
+                    .icon(BitmapDescriptorFactory.fromBitmap(createDrawableFromView(mContext, markerLayout)));
+
+            if(mEditable)
+                markerOptions.draggable(true);
+
+            mMap.addMarker(markerOptions);
+
+
+
 
         }
 

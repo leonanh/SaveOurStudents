@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ViewPagerAdapter viewPagerAdapter;
     RecyclerView mRecyclerView;                           // Declaring RecyclerView
     RecyclerView.Adapter mAdapter;                        // Declaring Adapter For Recycler View
-    RecyclerView.LayoutManager mLayoutManager;            // Declaring Layout Manager as a linear layout manager
     DrawerLayout mDrawer;                                 // Declaring DrawerLayout
 
     ActionBarDrawerToggle mDrawerToggle;
@@ -107,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mRecyclerView = (RecyclerView) findViewById(R.id.RecyclerView); // Assigning the RecyclerView Object to the xml View
 
-        mRecyclerView.setHasFixedSize(true);                            // Letting the system know we wont change the size of the list
+        //mRecyclerView.setHasFixedSize(true);                            // Letting the system know we wont change the size of the list
 
         String name = sharedPref.getString("first_name", "") + " "+ sharedPref.getString("last_name", "");
         mAdapter = new NavDrawerAdapter(TITLES, ICONS, name, sharedPref.getString("email", "email"), sharedPref.getString("image", "image"));//PROFILEIMAGE
@@ -116,8 +115,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRecyclerView.setAdapter(mAdapter);                              // Setting the adapter to RecyclerView
 
 
-        mLayoutManager = new LinearLayoutManager(this);                 // Creating a layout Manager
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
                     //Nav drawer listener
@@ -313,9 +311,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     fab.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
-                                            Intent mIntent = new Intent(MainActivity.this, QuestionActivity.class); //TODO rename, dialogize
-                                            //mIntent.putExtra("type", CREATE_QUESTION);
-                                            //startActivity(mIntent);
+                                            Intent mIntent = new Intent(MainActivity.this, CreateQuestionActivity.class); //TODO rename, dialogize
+                                            //mIntent.putExtra("type");
+                                            startActivity(mIntent);
                                         }
                                     });
                                 }

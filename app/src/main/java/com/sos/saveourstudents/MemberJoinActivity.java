@@ -70,7 +70,7 @@ public class MemberJoinActivity extends AppCompatActivity implements View.OnClic
         if(v == acceptButton)
         {
             //Accept member
-            Intent questionActivity = new Intent(this, QuestionActivity.class);
+            Intent questionActivity = new Intent(this, CreateQuestionActivity.class);
             questionActivity.putExtra("type", 0);
             startActivity(questionActivity);
             finish();

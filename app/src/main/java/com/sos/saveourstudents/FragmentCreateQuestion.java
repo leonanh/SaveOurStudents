@@ -67,6 +67,20 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
     View rootView;
 
 
+    public static FragmentCreateQuestion newInstance() {
+        FragmentCreateQuestion fragment = new FragmentCreateQuestion();
+        Bundle args = new Bundle();
+        //args.putParcelable(QUESTION_LOCATION, location);
+        //args.putString(USER_IMAGE, userImageUrl);
+        //args.putBoolean("isEditable", isEditable);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public FragmentCreateQuestion() {
+        // Required empty public constructor
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

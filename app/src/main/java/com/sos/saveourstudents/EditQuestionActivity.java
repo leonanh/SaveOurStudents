@@ -1,5 +1,7 @@
 package com.sos.saveourstudents;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -132,7 +134,13 @@ public class EditQuestionActivity extends AppCompatActivity {
 
                                 LatLng location = new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
                                 //Send latlng
-                                buildFragments(location, userImageUrl);
+
+                                SharedPreferences sharedPref = getSharedPreferences(
+                                        getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+                                String currentUserId = sharedPref.getString("user_id", "");
+                                boolean isEditable = mQuestionInfo.getString("user_id").equalsIgnoreCase(currentUserId);
+
+                                buildFragments(location, userImageUrl, isEditable);
 
                             }
                             else{
@@ -163,10 +171,10 @@ public class EditQuestionActivity extends AppCompatActivity {
 
 
 
-    private void buildFragments(LatLng location, String userImageUrl){
+    private void buildFragments(LatLng location, String userImageUrl, boolean isEditable){
 
 
-        mViewGroupPagerAdapter = new ViewGroupPagerAdapter(getSupportFragmentManager(), location, userImageUrl);
+        mViewGroupPagerAdapter = new ViewGroupPagerAdapter(getSupportFragmentManager(), location, userImageUrl, isEditable);
 
         // Setting up sliding tabs feature
         mViewPager.setAdapter(mViewGroupPagerAdapter);
@@ -209,15 +217,21 @@ public class EditQuestionActivity extends AppCompatActivity {
 
     class ViewGroupPagerAdapter extends FragmentPagerAdapter {
 
-        private Fragment mFragmentViewQuestion,
+
+        private Fragment mFragmentViewQuestion;
+
+        private Fragment
                 mViewGroupLocationFragment,
                 mViewGroupMembersFragment;
 
-        public ViewGroupPagerAdapter(FragmentManager fm, LatLng location, String userImageUrl) {
+        private boolean isEditable;
+
+        public ViewGroupPagerAdapter(FragmentManager fm, LatLng location, String userImageUrl, boolean isEditable) {
             super(fm);
-            mFragmentViewQuestion = EditQuestionFragment.newInstance(mQuestionId);
-            mViewGroupLocationFragment = EditQuestionLocationFragment.newInstance(location, userImageUrl);
-            mViewGroupMembersFragment = EditQuestionMembersFragment.newInstance(mQuestionId);
+            this.isEditable = isEditable;
+            mFragmentViewQuestion = EditQuestionFragment.newInstance(mQuestionId, isEditable);
+            mViewGroupLocationFragment = EditQuestionLocationFragment.newInstance(location, userImageUrl, isEditable);
+            mViewGroupMembersFragment = EditQuestionMembersFragment.newInstance(mQuestionId, isEditable);
         }
 
         @Override

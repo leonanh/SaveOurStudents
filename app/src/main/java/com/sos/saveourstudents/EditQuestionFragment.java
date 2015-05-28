@@ -43,6 +43,8 @@ import java.util.List;
 
 public class EditQuestionFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
+    private final int EDIT_QUESTION = 2345;
+
     private RecycleViewAdapter mAdapter;
     private RecyclerView mRecyclerView;
     private View rootView;
@@ -56,7 +58,7 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
     private TextView questionText;
     private ImageView userImage;
 
-
+    private boolean mEditable;
     private Context mContext;
     private String mQuestionId;
 
@@ -64,10 +66,11 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
     private ArrayList tags;
 
 
-    public static EditQuestionFragment newInstance(String questionId) {
+    public static EditQuestionFragment newInstance(String questionId, boolean isEditable) {
         EditQuestionFragment fragment = new EditQuestionFragment();
         Bundle args = new Bundle();
         args.putString("questionId", questionId);
+        args.putBoolean("isEditable", isEditable);
         fragment.setArguments(args);
         return fragment;
     }
@@ -80,12 +83,15 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        mContext = this.getActivity();
+        mContext = getActivity();
         rootView = inflater.inflate(R.layout.fragment_view_question, container, false);
 
-        mQuestionId = getArguments().getString("questionId");
-        if(mQuestionId.equalsIgnoreCase(""))
+        if (getArguments() != null) {
+            mQuestionId = getArguments().getString("questionId");
+            mEditable = getArguments().getBoolean("isEditable");
+        }else{
             Toast.makeText(mContext, "QuestionId empty in viewQuestiomFrag" , Toast.LENGTH_SHORT).show();
+        }
 
 
         userImage = (ImageView) rootView.findViewById(R.id.question_image);
@@ -312,6 +318,9 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
                     @Override
                     public void onClick(View v) {
                         //Do edit dialog??
+                        Intent mIntent = new Intent(mContext, CreateQuestionActivity.class); //TODO rename, dialogize
+                        mIntent.putExtra("questionId", mQuestionId);
+                        startActivityForResult(mIntent, EDIT_QUESTION);
                     }
                 });
             }else{
@@ -562,6 +571,17 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
     }
 
 
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == EDIT_QUESTION) {
+            // Make sure the request was successful
+            if (resultCode == getActivity().RESULT_OK) {
+                System.out.println("Returned from edit Question ok");
+            }
+        }
+    }
 
 }
 

@@ -65,7 +65,7 @@
 
         <activity android:name=".ForgotLoginActivity"/>
 
-        <activity android:name=".QuestionActivity"
+        <activity android:name=".CreateQuestionActivity"
             android:windowSoftInputMode="stateHidden|adjustResize"/>
 
         <activity android:name=".MemberJoinActivity"/>
