@@ -312,7 +312,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         @Override
                                         public void onClick(View v) {
                                             Intent mIntent = new Intent(MainActivity.this, CreateQuestionActivity.class); //TODO rename, dialogize
-                                            //mIntent.putExtra("type");
+                                            mIntent.putExtra("questionId", "");
                                             startActivity(mIntent);
                                         }
                                     });

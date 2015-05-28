@@ -1,6 +1,8 @@
 package com.sos.saveourstudents;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -194,8 +196,9 @@ public class EditQuestionActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+
         getMenuInflater().inflate(R.menu.menu_edit_question, menu);
+
         return true;
     }
 
@@ -207,12 +210,94 @@ public class EditQuestionActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_settings) {
+
+        if (item.getItemId() == R.id.action_close_question) {
+
+            showCloseGroupDialog();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+
+
+    private void showCloseGroupDialog(){
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure you want to delete this question?");
+
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+                deleteQuestion();
+
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                //dont do shit...
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+    }
+
+
+
+    private void deleteQuestion() {
+
+        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        params.add(new BasicNameValuePair("questionId", mQuestionId));
+
+        String paramString = URLEncodedUtils.format(params, "utf-8");
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/removeGroup?"+paramString;
+
+
+        System.out.println("url: " + url);
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
+                (JSONObject)null,
+                new Response.Listener<JSONObject>(){
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+
+                            JSONObject result = new JSONObject(response.toString());
+                            System.out.println("remove group result: "+result);
+                            if(result.getString("success").equalsIgnoreCase("1")){
+
+
+
+                            }
+                            else{
+
+                                //Error...
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("Error with connection or url: " + error.toString());
+            }
+
+        });
+
+
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+
+    }
+
 
 
     class ViewGroupPagerAdapter extends FragmentPagerAdapter {

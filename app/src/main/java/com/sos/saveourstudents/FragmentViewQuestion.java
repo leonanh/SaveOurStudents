@@ -88,6 +88,8 @@ public class FragmentViewQuestion extends Fragment implements GoogleApiClient.Co
                 false);
 
 
+
+
         mQuestionId = getArguments().getString("questionId");
         if(mQuestionId.equalsIgnoreCase(""))
             Toast.makeText(mContext, "QuestionId empty in viewQuestiomFrag" , Toast.LENGTH_SHORT).show();

@@ -536,7 +536,7 @@ public class FragmentMap extends Fragment implements
 
         }
         else{
-            Intent mIntent = new Intent(mContext, ViewGroupActivity.class);
+            Intent mIntent = new Intent(mContext, EditQuestionActivity.class);
             mIntent.putExtra("questionId", clickedQuestionId);
             startActivity(mIntent);
 

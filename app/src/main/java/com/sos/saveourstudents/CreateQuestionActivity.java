@@ -17,9 +17,14 @@ public class CreateQuestionActivity extends AppCompatActivity {
 
 
         if (findViewById(R.id.fragment_container) != null) {
-            Fragment theFragToShow = new FragmentCreateQuestion();
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, theFragToShow).commit();
+            String questionId ="";
+            if(getIntent().getExtras().containsKey("questionId")){
+                questionId = getIntent().getExtras().getString("questionId");
+            }
+            Fragment theFragToShow = FragmentCreateQuestion.newInstance(questionId);
+            getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, theFragToShow).commit();
+
+
         }
 
     }

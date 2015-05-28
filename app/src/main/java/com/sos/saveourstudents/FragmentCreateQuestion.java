@@ -567,6 +567,37 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
 
         System.out.println("ShowQuestionDetails: " +mQuestionInfo);
 
+        try {
+
+
+
+            boolean studyBool = mQuestionInfo.getBoolean("study_group");
+            boolean tutorBool = mQuestionInfo.getBoolean("tutor");
+
+            if(tutorBool)
+                clickTutorButton();
+
+            if(studyBool)
+                clickGroupButton();
+
+
+            questionEditText.setText(mQuestionInfo.getString("text"));
+            topicEditText.setText(mQuestionInfo.getString("topic"));
+
+
+            if(tagList.size() > 0){
+                addTagsButton.setColorFilter(getResources().getColor(R.color.primary_dark));
+            }
+
+
+
+            //TODO need visibility bool
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
 
 
 
