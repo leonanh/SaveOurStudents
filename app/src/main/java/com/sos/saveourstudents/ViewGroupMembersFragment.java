@@ -157,10 +157,6 @@ public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
                         .inflate(R.layout.view_group_members_student_layout, parent, false);
             }
 
-            ((TextView) convertView.findViewById(R.id.student_firstName))
-                    .setText(currStudentMember.getFirstName());
-            ((TextView) convertView.findViewById(R.id.student_lastName))
-                    .setText(currStudentMember.getLastName());
 
             return convertView;
         }

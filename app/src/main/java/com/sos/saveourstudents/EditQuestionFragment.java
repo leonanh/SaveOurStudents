@@ -12,7 +12,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -27,6 +26,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.rey.material.widget.EditText;
 import com.rey.material.widget.FloatingActionButton;
 
 import org.apache.http.NameValuePair;
@@ -41,13 +41,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-public class EditQuestionFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class EditQuestionFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
     private RecycleViewAdapter mAdapter;
     private RecyclerView mRecyclerView;
     private View rootView;
     private LinearLayout taglist;
     private FloatingActionButton fabButton;
+    private ImageView sendButton;
+    private EditText commentEditText;
     private TextView userName;
     private TextView questionDate;
     private TextView questionDistance;
@@ -86,6 +88,7 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
             Toast.makeText(mContext, "QuestionId empty in viewQuestiomFrag" , Toast.LENGTH_SHORT).show();
 
 
+        userImage = (ImageView) rootView.findViewById(R.id.question_image);
         userName = (TextView) rootView.findViewById(R.id.question_name_text);
         questionText = (TextView) rootView.findViewById(R.id.question_text);
         questionDate = (TextView) rootView.findViewById(R.id.question_timestamp);
@@ -101,14 +104,19 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
         fabButton = (FloatingActionButton) rootView.findViewById(R.id.group_action);
         fabButton.setVisibility(View.INVISIBLE);
 
+        sendButton = (ImageView) rootView.findViewById(R.id.send_button);
+        sendButton.setOnClickListener(this);
+
+        commentEditText = (EditText) rootView.findViewById(R.id.comment_edittext);
+
+        getCommentsData();
 
         if(((EditQuestionActivity) getActivity()).mQuestionInfo == null) {
             getQuestionData();
-            getCommentsData();
         }
         else{
-            this.mQuestionInfo = ((EditQuestionActivity) getActivity()).mQuestionInfo;
-            this.tags = ((EditQuestionActivity) getActivity()).tags;
+            mQuestionInfo = ((EditQuestionActivity) getActivity()).mQuestionInfo;
+            tags = ((EditQuestionActivity) getActivity()).tags;
             try {
                 showQuestionDetails(mQuestionInfo);
                 showQuestionTags(tags);
@@ -117,10 +125,6 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
                 e.printStackTrace();
             }
         }
-
-
-
-
 
         return rootView;
     }
@@ -136,8 +140,7 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/viewQuestion?"+paramString;
 
 
-        System.out.println("url: " + url);
-
+        //System.out.println("url: " + url);
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
                 (JSONObject)null,
@@ -148,7 +151,7 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
                         try {
 
                             JSONObject result = new JSONObject(response.toString());
-                            System.out.println("edit questions result "+result);
+                            //System.out.println("edit questions result "+result);
                             if(result.getString("success").equalsIgnoreCase("1")){
 
 
@@ -175,12 +178,6 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
                                 //Error...
                             }
 
-
-
-
-
-
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -203,7 +200,6 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
 
     private void getCommentsData() {
 
-
         List<NameValuePair> params = new LinkedList<NameValuePair>();
         params.add(new BasicNameValuePair("questionId", mQuestionId));
 
@@ -211,7 +207,7 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getComments?"+paramString;
 
 
-        System.out.println("getComments url: " + url);
+        //System.out.println("getComments url: " + url);
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
                 (JSONObject)null,
@@ -222,27 +218,18 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
                         try {
 
                             JSONObject result = new JSONObject(response.toString());
-                            System.out.println("comments result "+result);
+                            //System.out.println("comments result "+result);
                             if(result.getString("success").equalsIgnoreCase("1")){
 
                                 JSONArray commentList = result.getJSONObject("result").getJSONArray("myArrayList");
-
-
 
                                 mAdapter = new RecycleViewAdapter(commentList, R.layout.question_comment_item);
                                 mRecyclerView.setAdapter(mAdapter);
 
                             }
                             else{
-
                                 //Error...
                             }
-
-
-
-
-
-
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -268,7 +255,7 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
 
     private void showQuestionDetails(JSONObject details) throws JSONException {
 
-        System.out.println("Details:" + details);
+        //System.out.println("Details:" + details);
         String userNameText = details.getString("first_name")+ " "+details.getString("last_name");
         String topicText = details.getString("topic");
         String question = details.getString("text");
@@ -356,7 +343,6 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
             @Override
             public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
                 if (response.getBitmap() != null) {
-
                     imageView.setImageBitmap(response.getBitmap());
                 } else {
                     // Default image...
@@ -386,10 +372,17 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
 
     }
 
+    @Override
+    public void onClick(View v) {
+        if(v == sendButton){
+            if(!commentEditText.getText().toString().equalsIgnoreCase(""))
+                addComment();
+            else
+                System.out.println("Edit text empty");
 
+        }
 
-
-
+    }
 
 
     public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.ViewHolder>{
@@ -410,40 +403,27 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
 
         @Override
         public void onBindViewHolder(ViewHolder viewHolder, int position) {
-            //viewHolder.questionText.setText(mCardManagerInstance.getCounters().get(i).title+"");
-            //viewHolder.venueType.setText(mInstance.getCounters().get(i)+"");
+
             try {
-                //System.out.println("question: "+mQuestionList.getJSONObject(position).getJSONObject("map"));
+                System.out.println("question: "+commentList.getJSONObject(position).getJSONObject("map"));
 
                 String firstName = commentList.getJSONObject(position).getJSONObject("map").getString("first_name");
                 String lastName = commentList.getJSONObject(position).getJSONObject("map").getString("last_name");
-                String text = commentList.getJSONObject(position).getJSONObject("map").getString("text");
-
-                boolean group = commentList.getJSONObject(position).getJSONObject("map").getBoolean("study_group");
-                boolean tutor = commentList.getJSONObject(position).getJSONObject("map").getBoolean("tutor");
+                String text = commentList.getJSONObject(position).getJSONObject("map").getString("comment");
+                String date = commentList.getJSONObject(position).getJSONObject("map").getString("posted");
 
 
-
-                String userImageUrl = "";
-                if(commentList.getJSONObject(position).getJSONObject("map").has("image")){
-                    userImageUrl = commentList.getJSONObject(position).getJSONObject("map").getString("image");
+                if(commentList.getJSONObject(position).getJSONObject("map").has("image") &&
+                        !commentList.getJSONObject(position).getJSONObject("map").getString("image").equalsIgnoreCase("")){
+                    String userImageUrl = commentList.getJSONObject(position).getJSONObject("map").getString("image");
+                    getUserImage(userImageUrl, viewHolder.userImage);
                 }
 
-                /*
-                if(!userImageUrl.equalsIgnoreCase("")){
-                    commentList(userImageUrl, viewHolder.userImage);
-                }
-*/
 
-                //System.out.println("Question " + position + ": " + mQuestionList.getJSONObject(position).getJSONObject("map"));
                 viewHolder.nameText.setText(firstName + " " + lastName);
 
-                //System.out.println("date: " + Singleton.getInstance().doDateLogic(theDate));
                 viewHolder.questionText.setText(text);
-
-
-                //viewHolder.dateText.setText(Singleton.getInstance().doDateLogic(theDate));
-
+                viewHolder.dateText.setText(Singleton.getInstance().doDateLogic(date));
 
 
 
@@ -459,7 +439,7 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
             return commentList.length();
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder implements View.OnTouchListener, View.OnClickListener {
+        public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
 
             public ImageView userImage;
@@ -472,46 +452,23 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
             //Declare views here, dont fill them
             public ViewHolder(View itemView) {
                 super(itemView);
-                questionText = (TextView) itemView.findViewById(R.id.question_text);
-                nameText = (TextView) itemView.findViewById(R.id.name_text);
-                dateText = (TextView) itemView.findViewById(R.id.timestamp_text);
-
-                userImage = (ImageView) itemView.findViewById(R.id.user_image_details);
+                questionText = (TextView) itemView.findViewById(R.id.comment_text);
+                nameText = (TextView) itemView.findViewById(R.id.comment_name_text);
+                dateText = (TextView) itemView.findViewById(R.id.comment_timestamp);
+                userImage = (ImageView) itemView.findViewById(R.id.comment_user_image);
 
 
                 cardView = (CardView) itemView.findViewById(R.id.card_view);
-                cardView.setOnTouchListener(this);
                 userImage.setOnClickListener(this);
                 nameText.setOnClickListener(this);
 
             }
 
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                //System.out.println("touched : "+getAdapterPosition());
-
-                /*
-                if(v == cardView && event.getAction() == MotionEvent.ACTION_UP){
-
-                    try {
-                        String questionId = commentList.getJSONObject(getAdapterPosition()).getJSONObject("map").getString("question_id");
-                        Intent mIntent = new Intent(mContext, ViewGroupActivity.class);
-                        mIntent.putExtra("questionId", questionId);
-                        startActivity(mIntent);
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-*/
-                return false;
-            }
 
             @Override
             public void onClick(View v) {
 
-                if(v == nameText || v == userImage){
+                if((v == nameText || v == userImage)){
 
                     try {
                         String userId = commentList.getJSONObject(getAdapterPosition()).getJSONObject("map").getString("user_id");
@@ -523,6 +480,8 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
                     }
 
                 }
+
+
             }
         }
 
@@ -531,6 +490,7 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
 
 
     private void showJoinDialog(){
+
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage("Would you like to join as a tutor or a group member?");
@@ -549,9 +509,55 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
         AlertDialog dialog = builder.create();
         dialog.show();
 
+    }
 
+    private void addComment() {
+        SharedPreferences sharedPref = mContext.getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
+        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        params.add(new BasicNameValuePair("questionId", mQuestionId));
+        params.add(new BasicNameValuePair("userId", sharedPref.getString("user_id", "")));
+        params.add(new BasicNameValuePair("comment", commentEditText.getText().toString()));
 
+        String paramString = URLEncodedUtils.format(params, "utf-8").replace("+", "%20");
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/addComment?"+paramString;
+
+        //System.out.println("add comment url: " + url);
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
+                (JSONObject)null,
+                new Response.Listener<JSONObject>(){
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+
+                            JSONObject result = new JSONObject(response.toString());
+                            //System.out.println("comments result "+result);
+                            if(result.getString("success").equalsIgnoreCase("1")){
+                                commentEditText.setText("");
+                                getCommentsData();
+                            }
+                            else{
+                                Toast.makeText(mContext, "Error posting comment", Toast.LENGTH_SHORT).show();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("Error with connection or url: " + error.toString());
+            }
+
+        });
+
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
 
     }
 

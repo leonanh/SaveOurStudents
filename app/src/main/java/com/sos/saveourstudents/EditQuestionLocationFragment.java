@@ -181,8 +181,6 @@ public class EditQuestionLocationFragment extends android.support.v4.app.Fragmen
 
     @Override
     public void onMarkerDrag(Marker marker) {
-        System.out.println("On marker drag: " + marker.getPosition());
-
     }
 
     @Override
@@ -190,7 +188,6 @@ public class EditQuestionLocationFragment extends android.support.v4.app.Fragmen
         //System.out.println("On marker drag end");
         newLocation = marker.getPosition();
         showChangeLocationDialog();
-
 
     }
 

@@ -145,11 +145,12 @@
                 android:layout_toLeftOf="@+id/send_button"
                 android:autoText="true"
                 android:hint="Add a comment"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
+                android:minHeight="30dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="2dp"
                 app:et_dividerColor="@color/primary"
                 app:et_dividerHeight="2dp"
-                app:et_dividerPadding="2dp" />
+                app:et_dividerPadding="0dp" />
 
 
 
