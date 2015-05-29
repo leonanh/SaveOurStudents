@@ -1,7 +1,9 @@
 package com.sos.saveourstudents;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -14,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -45,6 +48,7 @@ public class ViewQuestionMembersFragment extends Fragment {
     private StudentsArrayAdapter mStudentsListViewArrayAdapter;
     private TutorsArrayAdapter mTutorsListViewArrayAdapter;
 
+    private SharedPreferences sharedPref;
 
     private String mQuestionId;
     private Context mContext;
@@ -85,6 +89,9 @@ public class ViewQuestionMembersFragment extends Fragment {
         mContext = this.getActivity();
         View rootView = inflater.inflate(R.layout.fragment_view_group_members, container, false);
 
+        sharedPref = mContext.getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
         mStudentsListView = (ListView) rootView.findViewById(R.id.view_group_members_students_listView);
         mTutorsListView = (ListView) rootView.findViewById(R.id.view_group_members_tutors_listView);
 
@@ -96,9 +103,8 @@ public class ViewQuestionMembersFragment extends Fragment {
 
     private void getMemberData() {
 
-        SharedPreferences sharedPref = mContext.getSharedPreferences(
-                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-        final String currentUserId = sharedPref.getString("user_id", "");
+
+        //final String currentUserId = sharedPref.getString("user_id", "");
 
 
         List<NameValuePair> params = new LinkedList<NameValuePair>();
@@ -235,11 +241,24 @@ public class ViewQuestionMembersFragment extends Fragment {
                     getUserImage(currStudentMember.getString("image"), ((ImageView) convertView.findViewById(R.id.user_image)));
 
 
+                final String userId = currStudentMember.getString("user_id");
 
+                if (!userId.equalsIgnoreCase(sharedPref.getString("user_id", "")) && mEditable) {
+                    convertView.setOnLongClickListener(new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(View v) {
+                            showRemoveUserDialog(userId);
+                            return true;
+                        }
+                    });
+
+                }
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+
 
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -298,6 +317,25 @@ public class ViewQuestionMembersFragment extends Fragment {
                     getUserImage(currStudentMember.getString("image"), ((ImageView) convertView.findViewById(R.id.tutor_profile_image)));
 
 
+                final String userId = currStudentMember.getString("user_id");
+
+
+
+                if (!userId.equalsIgnoreCase(sharedPref.getString("user_id", "")) && mEditable) {
+                    convertView.setOnLongClickListener(new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(View v) {
+                            showRemoveUserDialog(userId);
+
+                            return true;
+                        }
+                    });
+
+                }
+
+
+
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -318,8 +356,20 @@ public class ViewQuestionMembersFragment extends Fragment {
 
             ImageView mThumbsUpButton = ((ImageView) convertView.findViewById(R.id.view_group_members_thumbs_up));
             ImageView mThumbsDownButton = ((ImageView) convertView.findViewById(R.id.view_group_members_thumbs_down));
-            setUpThumbsUpButton(mThumbsUpButton, mThumbsDownButton);
-            setUpThumbsDownButton(mThumbsUpButton, mThumbsDownButton);
+
+            if(mEditable){
+                mThumbsUpButton.setVisibility(View.VISIBLE);
+                mThumbsDownButton.setVisibility(View.VISIBLE);
+                setUpThumbsUpButton(mThumbsUpButton, mThumbsDownButton);
+                setUpThumbsDownButton(mThumbsUpButton, mThumbsDownButton);
+
+            }
+            else{
+                mThumbsUpButton.setVisibility(View.GONE);
+                mThumbsDownButton.setVisibility(View.GONE);
+            }
+
+
 
             return convertView;
         }
@@ -398,6 +448,79 @@ public class ViewQuestionMembersFragment extends Fragment {
                 }
             }
         });
+
+    }
+
+
+
+    private void showRemoveUserDialog(final String userId){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setCancelable(false);
+        builder.setMessage("Would you like to remove this user from your group?");
+
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                removeUser(userId);
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+    }
+
+
+    private void removeUser(String userId){
+
+        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        params.add(new BasicNameValuePair("userId", userId));
+
+        String paramString = URLEncodedUtils.format(params, "utf-8");
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/removeUser?"+paramString;
+
+
+        System.out.println("removeUser url: " + url);
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
+                (JSONObject)null,
+                new Response.Listener<JSONObject>(){
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+
+                            JSONObject result = new JSONObject(response.toString());
+                            System.out.println("removeUser result "+result);
+                            if(result.getString("success").equalsIgnoreCase("1")){
+
+                                Toast.makeText(mContext, "User removed", Toast.LENGTH_SHORT);
+                                getMemberData();
+                            }
+                            else{
+                                Toast.makeText(mContext, "Error removing user", Toast.LENGTH_SHORT);
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("Error with connection or url: " + error.toString());
+            }
+
+        });
+
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
 
     }
 

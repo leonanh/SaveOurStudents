@@ -198,20 +198,25 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
     }
 
     @Override
-    public void onDestroy() {
-        mMapView.onDestroy();
-        super.onDestroy();
-    }
-
-    @Override
     public void onResume() {
+        if(mMap != null && mMapView != null)
+            mMapView.onResume();
         super.onResume();
+
     }
 
     @Override
     public void onPause() {
+        stopLocationUpdates();
         mMapView.onPause();
         super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        stopLocationUpdates();
+        mMapView.onDestroy();
+        super.onDestroy();
     }
 
     @Override
@@ -369,8 +374,6 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
 
     private void editQuestionLocation(Location newLocation){
 
-
-
         List<NameValuePair> params = new LinkedList<NameValuePair>();
         params.add(new BasicNameValuePair("questionId", mQuestionId));
         params.add(new BasicNameValuePair("latitude", newLocation.getLatitude()+""));
@@ -416,17 +419,6 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
         });
 
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
-
-
-
-
-
-
-
-
-
-
-
 
     }
 

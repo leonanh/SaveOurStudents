@@ -267,6 +267,7 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
         params.add(new BasicNameValuePair("questionId", mQuestionId));
 
         String paramString = URLEncodedUtils.format(params, "utf-8");
+
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/viewQuestion?"+paramString;
 
 
@@ -323,7 +324,6 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
 
     private void sendQuestionToServer(){
 
-
         double latitude = 0.0;
         double longitude = 0.0;
 
@@ -334,7 +334,7 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
                 latitude = mCurrentLocation.getLatitude();
                 longitude = mCurrentLocation.getLongitude();
             } else {
-                if (showLocation) {
+                if (showLocation && !isInEditMode) {
                     //System.out.println("Error getting current or last known location. Unable to send this post");
                     Toast.makeText(mContext, "Unable to send this post", Toast.LENGTH_SHORT).show();
                     return;
@@ -352,8 +352,12 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
 
         List<NameValuePair> params = new LinkedList<NameValuePair>();
         params.add(new BasicNameValuePair("userId", sharedPref.getString("user_id", "")));
-        params.add(new BasicNameValuePair("latitude", latitude+""));
-        params.add(new BasicNameValuePair("longitude", longitude + ""));
+
+        if(!isInEditMode){
+            params.add(new BasicNameValuePair("latitude", latitude+""));
+            params.add(new BasicNameValuePair("longitude", longitude + ""));
+        }
+
         params.add(new BasicNameValuePair("text", questionEditText.getText().toString()));
 
         for (int a = 0; a < tagList.size(); a++) {
@@ -366,10 +370,15 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
 
 
         String paramString = URLEncodedUtils.format(params, "utf-8").replace("+", "%20");
-        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createQuestion?"+paramString;
+
+        String url;
+        if(isInEditMode)
+            url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/editQuestion?"+paramString;
+        else
+            url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createQuestion?"+paramString;
 
 
-        //System.out.println("url: " + url);
+        System.out.println("create/edit url: " + url);
 
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
@@ -381,7 +390,7 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
                         try {
 
                             JSONObject result = new JSONObject(response.toString());
-                            //System.out.println("result "+result);
+                            System.out.println("result "+result);
                             if(!result.getString("success").equalsIgnoreCase("1")){
 
                                 //Error...
@@ -394,7 +403,11 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
 
                             }
                             else{
-                                sendNotification("Successfully Created Question");
+                                if(isInEditMode)
+                                    sendNotification("Successfully Edited Question");
+                                else
+                                    sendNotification("Successfully Created Question");
+
                                 getActivity().finishActivity(getActivity().RESULT_OK);
                             }
 
@@ -408,14 +421,12 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
             @Override
             public void onErrorResponse(VolleyError error) {
 
-                System.out.println("Error: " + error.toString());
             }
 
         });
 
 
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
-
 
     }
 
