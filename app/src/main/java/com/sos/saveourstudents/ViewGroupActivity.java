@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -27,7 +28,7 @@ import java.util.ArrayList;
 
 
 public class ViewGroupActivity extends AppCompatActivity
-        implements ViewGroupMembersFragment.OnTutorRatingListener{
+        implements ViewGroupMembersFragment.OnTutorRatingListener {
 
     private static final int numPages = 3;
     private static FragmentViewQuestion mFragmentViewQuestion;
@@ -42,10 +43,8 @@ public class ViewGroupActivity extends AppCompatActivity
     private ArrayList<Student> mStudents;
     private ArrayList<Student> mTutors;
 
-    public boolean isCurrViewerIsInGroup() {
-        return mCurrViewerIsInGroup;
-    }
-
+    private static final String mUserIdIntentsTag = "userId";
+    private String mViewerUserId;
     private boolean mCurrViewerIsInGroup;
 
     private static final String mQuestionIdIntentsTag = "questionId";
@@ -57,9 +56,13 @@ public class ViewGroupActivity extends AppCompatActivity
     private static final String mUserURL =
             "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getUserById?userId=";
     private String mUserId;
-
     private static final String mMembersUrl =
             "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/viewMembers?questionId=";
+
+    private static final String mRatingUrl =
+            "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/rateTutor?userId=";
+    private static final String mRatingParameter =
+            "&like=";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +70,7 @@ public class ViewGroupActivity extends AppCompatActivity
         setContentView(R.layout.activity_view_group);
 
         mCurrViewerIsInGroup = false; // Will be checked in JSON parsing
+        mViewerUserId = getIntent().getStringExtra(mUserIdIntentsTag);
 
         mQuestionId = getIntent().getStringExtra(mQuestionIdIntentsTag);
         mStudents = new ArrayList<>();
@@ -124,10 +128,42 @@ public class ViewGroupActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Updates the Student's rating in the database
+     * @param rating If true, increment, else decrement
+     */
     @Override
-    public void onTutorRatingInteraction(boolean rating) {
+    public void onTutorRatingInteraction(boolean rating, String currUserId) {
+        String rateTutorRequest = mRatingUrl + currUserId;
+
+        if (rating) {
+            rateTutorRequest = rateTutorRequest + mRatingParameter + "true";
+        } else {
+            rateTutorRequest = rateTutorRequest + mRatingParameter + "false";
+        }
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,
+                rateTutorRequest, (JSONObject) null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+
+        Singleton.getInstance().addToRequestQueue(request);
     }
 
+    /**
+     * Pager adapter for setting up the Sliding Tabs feature
+     * Dictates titles and positions
+     */
     class ViewGroupPagerAdapter extends FragmentPagerAdapter {
 
         public ViewGroupPagerAdapter(FragmentManager fm) {
@@ -136,32 +172,27 @@ public class ViewGroupActivity extends AppCompatActivity
 
         @Override
         public CharSequence getPageTitle(int position) {
-            if(position == 0) {
+            if (position == 0) {
                 return getResources().getString(R.string.view_group_question);
-            }
-            else if(position == 1) {
+            } else if (position == 1) {
                 return getResources().getString(R.string.view_group_location);
-            }
-            else if(position == 2) {
+            } else if (position == 2) {
                 return getResources().getString(R.string.view_group_members);
-            }
-            else {
+            } else {
                 Log.e("ViewGroup", "ERROR: Nonexistent Position!");
                 return null;
             }
         }
+
         @Override
         public Fragment getItem(int position) {
-            if(position == 0) {
+            if (position == 0) {
                 return mFragmentViewQuestion;
-            }
-            else if(position == 1) {
+            } else if (position == 1) {
                 return mViewGroupLocationFragment;
-            }
-            else if(position == 2) {
+            } else if (position == 2) {
                 return mViewGroupMembersFragment;
-            }
-            else {
+            } else {
                 Log.e("ViewGroup", "ERROR: Nonexistent Position!");
                 return new Fragment();
             }
@@ -173,9 +204,12 @@ public class ViewGroupActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Initializes all views, to be used after Volley calls have finished
+     */
     private void initializeAllViews() {
         // Assigning private variables to correct ViewGroups
-        mFragmentViewQuestion = new FragmentViewQuestion(mCurrQuestion);
+        mFragmentViewQuestion = new FragmentViewQuestion();
 
         mViewGroupLocationFragment = ViewGroupLocationFragment.newInstance(mCurrQuestion
                 .getmLocation());
@@ -203,6 +237,14 @@ public class ViewGroupActivity extends AppCompatActivity
     }
 
     /**
+     * Checks to see if the current viewer of the activity is in the group
+     * @return True if the viewer is in the group, false otherwise
+     */
+    public boolean isCurrViewerIsInGroup() {
+        return mCurrViewerIsInGroup;
+    }
+
+    /**
      * Begins parsing through the Question and creating the Group Leader Student object
      */
     class QuestionResponseListener implements Response.Listener<JSONObject> {
@@ -218,6 +260,7 @@ public class ViewGroupActivity extends AppCompatActivity
 
                 mUserId = theResponse.getString("user_id");
                 String getStudentUrl = mUserURL + mUserId;
+
 
                 mCurrQuestion = new Question(theResponse.getBoolean("study_group"),
                         theResponse.getBoolean("tutor"), new LatLng(
@@ -237,6 +280,9 @@ public class ViewGroupActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Error listener for the Question query
+     */
     class QuestionErrorListener implements Response.ErrorListener {
 
         @Override
@@ -245,6 +291,9 @@ public class ViewGroupActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Retrieves the current owner of the question to populate FragmentViewQuestion
+     */
     class ProfileResponseListener implements Response.Listener<JSONObject> {
 
         @Override
@@ -271,6 +320,7 @@ public class ViewGroupActivity extends AppCompatActivity
             }
         }
     }
+
     class ProfileErrorListener implements Response.ErrorListener {
 
         @Override
@@ -296,7 +346,7 @@ public class ViewGroupActivity extends AppCompatActivity
                         mTutors.add(currStudent);
                     } else mStudents.add(currStudent);
 
-                    if (currStudent.getUserId() == mUserId) {
+                    if (currStudent.getUserId().equals(mViewerUserId)) {
                         mCurrViewerIsInGroup = true;
                     }
 

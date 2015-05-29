@@ -78,9 +78,9 @@ public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
     }
 
     // TODO: Hook method into UI event
-    public void onTutorRating(boolean rating) {
+    public void onTutorRating(boolean rating, String currUserId) {
         if (mListener != null) {
-            mListener.onTutorRatingInteraction(rating);
+            mListener.onTutorRatingInteraction(rating, currUserId);
         }
     }
 
@@ -130,7 +130,11 @@ public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnTutorRatingListener {
-        public void onTutorRatingInteraction(boolean rating);
+        void onTutorRatingInteraction(boolean rating, String currUserId);
+    }
+
+    public interface OnMemberRemoveListener {
+        void onMemberRemoveInteraction(String memberUserId);
     }
 
     /**
@@ -211,20 +215,28 @@ public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
             ((TextView) convertView.findViewById(R.id.tutor_lastName))
                     .setText(currStudentMember.getLastName());
 
+            convertView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    return false;
+                }
+            });
+
             ImageButton mThumbsUpButton =
                     ((ImageButton) convertView.findViewById(R.id.view_group_members_thumbs_up));
             ImageButton mThumbsDownButton =
                     ((ImageButton) convertView.findViewById(R.id.view_group_members_thumbs_down));
-            setUpThumbsUpButton(mThumbsUpButton, mThumbsDownButton);
-            setUpThumbsDownButton(mThumbsUpButton, mThumbsDownButton);
+            setUpThumbsUpButton(mThumbsUpButton, mThumbsDownButton, currStudentMember.getUserId());
+            setUpThumbsDownButton(mThumbsUpButton, mThumbsDownButton,
+                    currStudentMember.getUserId());
 
             return convertView;
         }
 
         // TODO: Set up Thumbs Up/Down functionality for database rating updates
         private void setUpThumbsUpButton(final ImageButton mThumbsUpButton,
-                                         final ImageButton mThumbsDownButton) {
-            if (!((ViewGroupActivity) getActivity()).isCurrViewerIsInGroup()) {
+                                         final ImageButton mThumbsDownButton, final String currUserId) {
+            if (!(((ViewGroupActivity) getActivity()).isCurrViewerIsInGroup())) {
                 mThumbsUpButton.setClickable(false);
                 mThumbsUpButton.setVisibility(View.INVISIBLE);
                 return;
@@ -235,35 +247,37 @@ public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
             mThumbsUpButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.v("ThumbsUp", "onClick");
                     // Thumbs Up Button is not clicked
                     if ((Boolean) mThumbsUpButton.getTag() == false) {
                         Log.v("ThumbsUp", "SettingLightBlue");
                         mThumbsUpButton
                                 .setImageResource(mThumbsUpButtonBlueId);
                         mThumbsUpButton.setTag(true);
+                        onTutorRating(true, currUserId);
                         // Case 2 - Thumbs down button is currently clicked
                         if ((Boolean) mThumbsDownButton.getTag() == true) {
                             mThumbsDownButton
                                     .setImageResource(mThumbsDownButtonGreyId);
                             mThumbsDownButton.setTag(false);
+                            onTutorRating(true, currUserId);
                         }
                     }
                     // Thumbs Up Button is currently clicked
                     else {
-                        Log.v("ThumbsUp", "SettingGrayUp");
                         mThumbsUpButton
                                 .setImageResource(mThumbsUpButtonGreyId);
                         mThumbsUpButton.setTag(false);
+                        onTutorRating(false, currUserId);
                     }
+
                 }
             });
         }
 
         private void setUpThumbsDownButton(final ImageButton mThumbsUpButton,
-                                           final ImageButton mThumbsDownButton) {
+                                           final ImageButton mThumbsDownButton, final String currUserId) {
 
-            if (!((ViewGroupActivity) getActivity()).isCurrViewerIsInGroup()) {
+            if (!(((ViewGroupActivity) getActivity()).isCurrViewerIsInGroup())) {
                 mThumbsDownButton.setClickable(false);
                 mThumbsDownButton.setVisibility(View.INVISIBLE);
                 return;
@@ -279,11 +293,13 @@ public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
                         mThumbsDownButton
                                 .setImageResource(mThumbsDownButtonRedId);
                         mThumbsDownButton.setTag(true);
+                        onTutorRating(false, currUserId);
                         // Case 2 - Thumbs Up Button is currently clicked
                         if ((Boolean) mThumbsUpButton.getTag() == true) {
                             mThumbsUpButton
                                     .setImageResource(mThumbsUpButtonGreyId);
                             mThumbsUpButton.setTag(false);
+                            onTutorRating(false, currUserId);
                         }
                     }
                     // Thumbs Down Button is currently clicked
@@ -291,6 +307,7 @@ public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
                         mThumbsDownButton
                                 .setImageResource(mThumbsDownButtonGreyId);
                         mThumbsDownButton.setTag(false);
+                        onTutorRating(true, currUserId);
                     }
                 }
             });
