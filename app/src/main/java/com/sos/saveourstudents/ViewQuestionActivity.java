@@ -39,6 +39,7 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
     private final int numPages = 3;
 
+    private Menu menu;
     private SlidingTabLayout mSlidingTabLayout;
     private FragmentPagerAdapter mViewGroupPagerAdapter;
     private ViewPager mViewPager;
@@ -46,7 +47,7 @@ public class ViewQuestionActivity extends AppCompatActivity {
     private String mQuestionId;
     public JSONObject mQuestionInfo;
     public ArrayList tags;
-
+    private boolean isEditable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,7 +142,7 @@ public class ViewQuestionActivity extends AppCompatActivity {
                                 SharedPreferences sharedPref = getSharedPreferences(
                                         getString(R.string.preference_file_key), Context.MODE_PRIVATE);
                                 String currentUserId = sharedPref.getString("user_id", "");
-                                boolean isEditable = mQuestionInfo.getString("user_id").equalsIgnoreCase(currentUserId);
+                                isEditable = mQuestionInfo.getString("user_id").equalsIgnoreCase(currentUserId);
 
                                 buildFragments(location, userImageUrl, isEditable);
 
@@ -177,6 +178,10 @@ public class ViewQuestionActivity extends AppCompatActivity {
     private void buildFragments(Location location, String userImageUrl, boolean isEditable){
 
 
+
+        onCreateOptionsMenu(menu);
+
+
         mViewGroupPagerAdapter = new ViewGroupPagerAdapter(getSupportFragmentManager(), location, userImageUrl, isEditable);
 
         // Setting up sliding tabs feature
@@ -198,8 +203,11 @@ public class ViewQuestionActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        getMenuInflater().inflate(R.menu.menu_edit_question, menu);
-
+        if(menu != null) {
+            this.menu = menu;
+            if (isEditable)
+                getMenuInflater().inflate(R.menu.menu_edit_question, menu);
+        }
         return true;
     }
 
@@ -212,8 +220,9 @@ public class ViewQuestionActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        if (item.getItemId() == R.id.action_close_question) {
 
+
+        if (item.getItemId() == R.id.action_close_question) {
             showCloseGroupDialog();
             return true;
         }
