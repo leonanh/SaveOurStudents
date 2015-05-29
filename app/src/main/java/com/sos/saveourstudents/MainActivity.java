@@ -348,7 +348,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
         if (requestCode == EDIT_QUESTION) {
-            System.out.println("Returned from create Question");
+            System.out.println("Returned from edit Question");
+            updateFragments();
             if (resultCode == RESULT_OK) {
                 System.out.println("Returned from edit Question ok");
             }

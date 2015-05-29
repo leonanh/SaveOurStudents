@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -106,7 +107,6 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        //TODO show fab after question data is retrieved
         fabButton = (FloatingActionButton) rootView.findViewById(R.id.group_action);
         fabButton.setVisibility(View.INVISIBLE);
 
@@ -318,7 +318,7 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
                     @Override
                     public void onClick(View v) {
                         //Do edit dialog??
-                        Intent mIntent = new Intent(mContext, CreateQuestionActivity.class); //TODO rename, dialogize
+                        Intent mIntent = new Intent(mContext, CreateQuestionActivity.class);
                         mIntent.putExtra("questionId", mQuestionId);
                         startActivityForResult(mIntent, EDIT_QUESTION);
                     }
@@ -384,8 +384,12 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
     @Override
     public void onClick(View v) {
         if(v == sendButton){
-            if(!commentEditText.getText().toString().equalsIgnoreCase(""))
+            if(!commentEditText.getText().toString().equalsIgnoreCase("")) {
+                InputMethodManager imm = (InputMethodManager) mContext.getSystemService(
+                        Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(commentEditText.getWindowToken(), 0);
                 addComment();
+            }
             else
                 System.out.println("Edit text empty");
 
@@ -506,12 +510,14 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
 
         builder.setPositiveButton("Member", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                // User clicked the tutor button
+
+                sendAskToJoinGroup(0);
             }
         });
         builder.setNegativeButton("Tutor", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                // User clicked the member button
+
+                sendAskToJoinGroup(1);
             }
         });
 
@@ -570,6 +576,55 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
 
     }
 
+
+    private void sendAskToJoinGroup(int type) {
+        SharedPreferences sharedPref = mContext.getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
+        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        params.add(new BasicNameValuePair("questionId", mQuestionId));
+        params.add(new BasicNameValuePair("userId", sharedPref.getString("user_id", "")));
+        params.add(new BasicNameValuePair("tutor", type+"")); //TODO what type of invite
+
+        String paramString = URLEncodedUtils.format(params, "utf-8");
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/askToJoinGroup?"+paramString;
+
+        System.out.println("sending group url: " + url);
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
+                (JSONObject)null,
+                new Response.Listener<JSONObject>(){
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+
+                            JSONObject result = new JSONObject(response.toString());
+                            System.out.println("sending group result "+result);
+                            if(result.getString("success").equalsIgnoreCase("1")){
+
+                            }
+                            else{
+                                Toast.makeText(mContext, "Error sending group request", Toast.LENGTH_SHORT).show();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("Error with connection or url: " + error.toString());
+            }
+
+        });
+
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+
+    }
 
 
     @Override

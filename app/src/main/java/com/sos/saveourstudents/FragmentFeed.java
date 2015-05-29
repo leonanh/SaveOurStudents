@@ -3,6 +3,7 @@ package com.sos.saveourstudents;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -93,6 +94,9 @@ public class FragmentFeed extends Fragment implements LocationListener, GoogleAp
             }
         });
 
+        mSwipeRefreshLayout.setColorSchemeColors(
+                Color.RED, Color.GREEN, Color.BLUE, Color.CYAN);
+
         sharedPref = mContext.getSharedPreferences(
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
@@ -144,7 +148,7 @@ public class FragmentFeed extends Fragment implements LocationListener, GoogleAp
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getQuestions?"+paramString;
 
 
-        //System.out.println("URL: "+url);
+        System.out.println("URL: "+url);
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
                 url,
                 (JSONObject)null,

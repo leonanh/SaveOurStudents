@@ -458,6 +458,8 @@ public class FragmentMap extends Fragment implements
 
             if(!userImageUrl.equalsIgnoreCase("")){
                 getUserImage(userImageUrl, userImageDetails);
+            }else{
+                userImageDetails.setImageDrawable(getResources().getDrawable(R.drawable.defaultprofile));
             }
 
 

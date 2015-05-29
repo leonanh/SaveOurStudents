@@ -14,9 +14,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -31,6 +35,15 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.LinkedList;
+import java.util.List;
 
 
 public class EditQuestionLocationFragment extends android.support.v4.app.Fragment implements
@@ -55,13 +68,15 @@ public class EditQuestionLocationFragment extends android.support.v4.app.Fragmen
     private Location newLocation;
     private String userImageUrl;
     private boolean mEditable;
+    private String mQuestionId;
 
-    public static EditQuestionLocationFragment newInstance(Location location, String userImageUrl, boolean isEditable) {
+    public static EditQuestionLocationFragment newInstance(String questionId, Location location, String userImageUrl, boolean isEditable) {
         EditQuestionLocationFragment fragment = new EditQuestionLocationFragment();
         Bundle args = new Bundle();
         args.putParcelable(QUESTION_LOCATION, location);
         args.putString(USER_IMAGE, userImageUrl);
         args.putBoolean("isEditable", isEditable);
+        args.putString("questionId", questionId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -77,6 +92,7 @@ public class EditQuestionLocationFragment extends android.support.v4.app.Fragmen
             mCurrentLocation = getArguments().getParcelable(QUESTION_LOCATION);
             userImageUrl = getArguments().getString(USER_IMAGE);
             mEditable = getArguments().getBoolean("isEditable");
+            mQuestionId = getArguments().getString("questionId");
         }
     }
 
@@ -240,6 +256,7 @@ public class EditQuestionLocationFragment extends android.support.v4.app.Fragmen
                 mCurrentLocation = newLocation;
                 mMap.clear();
                 showCustomMarker();
+                editQuestionLocation(mCurrentLocation);
 
             }
         });
@@ -328,7 +345,7 @@ public class EditQuestionLocationFragment extends android.support.v4.app.Fragmen
                 MarkerOptions markerOptions = new MarkerOptions()
                         .position(location)
                         .icon(BitmapDescriptorFactory.fromBitmap(createDrawableFromView(mContext, (View) imageView.getParent())));
-                if(mEditable)
+                if (mEditable)
                     markerOptions.draggable(true);
                 mMap.addMarker(markerOptions);
 
@@ -346,6 +363,79 @@ public class EditQuestionLocationFragment extends android.support.v4.app.Fragmen
         });
 
     }
+
+
+
+
+    private void editQuestionLocation(Location newLocation){
+
+
+
+        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        params.add(new BasicNameValuePair("questionId", mQuestionId));
+        params.add(new BasicNameValuePair("latitude", newLocation.getLatitude()+""));
+        params.add(new BasicNameValuePair("longitude", newLocation.getLongitude()+""));
+
+        String paramString = URLEncodedUtils.format(params, "utf-8");
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/editLocation?"+paramString;
+
+
+        System.out.println("url: " + url);
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
+                (JSONObject)null,
+                new Response.Listener<JSONObject>(){
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+
+                            JSONObject result = new JSONObject(response.toString());
+                            System.out.println("edit questions result "+result);
+                            if(result.getString("success").equalsIgnoreCase("1")){
+
+                                Toast.makeText(mContext, "Location updated", Toast.LENGTH_SHORT);
+
+                            }
+                            else{
+                                Toast.makeText(mContext, "Error updating location", Toast.LENGTH_SHORT);
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("Error with connection or url: " + error.toString());
+            }
+
+        });
+
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
 
 
 

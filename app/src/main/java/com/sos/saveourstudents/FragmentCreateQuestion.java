@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Set;
 
 
+
 public class FragmentCreateQuestion extends Fragment implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener,
         Response.Listener, Response.ErrorListener,TagDialogFragment.NoticeDialogListener {
 
@@ -66,6 +67,7 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
     private ImageView sendButton, addTagsButton, locationToggle, groupToggle, tutorToggle;
     private TextView userName, requestGroupText, requestTutorText;
     private boolean showLocation = true;
+    private boolean isInEditMode = false; //For response back to edit question frag
     LayoutInflater inflater;
     View rootView;
 
@@ -131,8 +133,11 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
 
         if (getArguments() != null) {
             mQuestionId = getArguments().getString("questionId");
-            if(!mQuestionId.equalsIgnoreCase(""))
+            if(!mQuestionId.equalsIgnoreCase("")){
                 getQuestionData();
+                isInEditMode = true;
+            }
+
         }
 
 
@@ -187,7 +192,7 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
     public void onClick(View v) {
 
         if(v == sendButton){
-            System.out.println("Location: " + mCurrentLocation);
+            //System.out.println("Location: " + mCurrentLocation);
 
             InputMethodManager imm = (InputMethodManager)mContext.getSystemService(
                     Context.INPUT_METHOD_SERVICE);
@@ -322,13 +327,13 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
 
         if (mCurrentLocation == null) {
             if (getLastKnownLocation() != null) {
-                System.out.println("Using last known location, which is not current. So its probably wrong.");
+                //System.out.println("Using last known location, which is not current. So its probably wrong.");
                 mCurrentLocation = getLastKnownLocation();
                 latitude = mCurrentLocation.getLatitude();
                 longitude = mCurrentLocation.getLongitude();
             } else {
                 if (showLocation) {
-                    System.out.println("Error getting current or last known location. Unable to send this post");
+                    //System.out.println("Error getting current or last known location. Unable to send this post");
                     Toast.makeText(mContext, "Unable to send this post", Toast.LENGTH_SHORT).show();
                     return;
                 } else {
@@ -362,7 +367,7 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createQuestion?"+paramString;
 
 
-        System.out.println("url: " + url);
+        //System.out.println("url: " + url);
 
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
@@ -374,7 +379,7 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
                         try {
 
                             JSONObject result = new JSONObject(response.toString());
-                            System.out.println("result "+result);
+                            //System.out.println("result "+result);
                             if(!result.getString("success").equalsIgnoreCase("1")){
 
                                 //Error...
@@ -388,7 +393,7 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
                             }
                             else{
                                 sendNotification("Successfully Created Question");
-                                getActivity().finish();
+                                getActivity().finishActivity(getActivity().RESULT_OK);
                             }
 
                         } catch (JSONException e) {

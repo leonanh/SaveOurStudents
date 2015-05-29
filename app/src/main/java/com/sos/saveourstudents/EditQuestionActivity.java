@@ -272,7 +272,7 @@ public class EditQuestionActivity extends AppCompatActivity {
                             System.out.println("remove group result: "+result);
                             if(result.getString("success").equalsIgnoreCase("1")){
 
-
+                                EditQuestionActivity.this.finishActivity(EditQuestionActivity.this.RESULT_OK);
 
                             }
                             else{
@@ -316,7 +316,7 @@ public class EditQuestionActivity extends AppCompatActivity {
             super(fm);
             this.isEditable = isEditable;
             mFragmentViewQuestion = EditQuestionFragment.newInstance(mQuestionId, isEditable);
-            mViewGroupLocationFragment = EditQuestionLocationFragment.newInstance(location, userImageUrl, isEditable);
+            mViewGroupLocationFragment = EditQuestionLocationFragment.newInstance(mQuestionId, location, userImageUrl, isEditable);
             mViewGroupMembersFragment = EditQuestionMembersFragment.newInstance(mQuestionId, isEditable);
         }
 
