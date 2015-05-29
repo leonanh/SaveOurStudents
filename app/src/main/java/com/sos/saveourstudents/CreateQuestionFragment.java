@@ -51,7 +51,7 @@ import java.util.Set;
 public class CreateQuestionFragment extends Fragment implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener,
         Response.Listener, Response.ErrorListener,TagDialogFragment.NoticeDialogListener {
 
-    //TODO turn fragment into Activity.
+
 
     public final int DIALOG_FRAGMENT = 1;
     private String mQuestionId;
@@ -398,7 +398,11 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
                                     Toast.makeText(mContext, "You already have an active post", Toast.LENGTH_SHORT).show();
                                 }
                                 else{
-                                    Toast.makeText(mContext, "Error creating question", Toast.LENGTH_SHORT).show();
+                                    if(isInEditMode)
+                                        Toast.makeText(mContext, "Error editing question", Toast.LENGTH_SHORT).show();
+                                    else
+                                        Toast.makeText(mContext, "Error creating question", Toast.LENGTH_SHORT).show();
+
                                 }
 
                             }

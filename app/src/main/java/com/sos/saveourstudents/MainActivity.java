@@ -249,7 +249,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ((MapFragment) viewPagerAdapter.getItem(1)).getLocationUpdate();
     }
     private void updateFeedFragment(){
-        ((FeedFragment) viewPagerAdapter.getItem(0)).getQuestionData();
+        ((FeedFragment) viewPagerAdapter.getItem(0)).getLocationUpdate();
     }
 
 

@@ -611,7 +611,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 "email=" + email +
                 "&password=" + Singleton.get_SHA_1_SecurePassword(password);
 
-
+        System.out.println("Login url: " + url);
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url,
                 (JSONObject) null, new Response.Listener<JSONObject>() {
             @Override

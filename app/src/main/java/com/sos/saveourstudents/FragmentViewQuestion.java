@@ -482,10 +482,10 @@ public class FragmentViewQuestion extends Fragment implements GoogleApiClient.Co
             public ViewHolder(View itemView) {
                 super(itemView);
                 questionText = (TextView) itemView.findViewById(R.id.question_text);
-                nameText = (TextView) itemView.findViewById(R.id.name_text);
-                dateText = (TextView) itemView.findViewById(R.id.timestamp_text);
+                nameText = (TextView) itemView.findViewById(R.id.question_name_text);
+                dateText = (TextView) itemView.findViewById(R.id.question_timestamp);
 
-                userImage = (ImageView) itemView.findViewById(R.id.user_image_details);
+                userImage = (ImageView) itemView.findViewById(R.id.question_image);
 
 
                 cardView = (CardView) itemView.findViewById(R.id.card_view);

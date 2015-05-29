@@ -105,13 +105,13 @@ public class MapFragment extends Fragment implements
         groupIcon = (ImageView) rootView.findViewById(R.id.group_icon);
         tutorIcon = (ImageView) rootView.findViewById(R.id.tutor_icon);
 
-        userImageDetails = (ImageView) rootView.findViewById(R.id.user_image_details);
+        userImageDetails = (ImageView) rootView.findViewById(R.id.question_image);
         userImageDetails.setOnClickListener(this);
-        userNameDetails = (TextView) rootView.findViewById(R.id.name_text);
+        userNameDetails = (TextView) rootView.findViewById(R.id.question_name_text);
         topicDetails = (TextView) rootView.findViewById(R.id.topic_text);
         questionDetails = (TextView) rootView.findViewById(R.id.question_text);
-        timestampDetails = (TextView) rootView.findViewById(R.id.timestamp_text);
-        distanceDetails  = (TextView) rootView.findViewById(R.id.distance_text);
+        timestampDetails = (TextView) rootView.findViewById(R.id.question_timestamp);
+        distanceDetails  = (TextView) rootView.findViewById(R.id.question_distance);
 
 
         sharedPref = mContext.getSharedPreferences(
@@ -254,7 +254,7 @@ public class MapFragment extends Fragment implements
 
 
                     View marker = minflater.inflate(R.layout.custom_map_marker, null, false);
-                    ImageView userImage = (ImageView) marker.findViewById(R.id.user_image_details);
+                    ImageView userImage = (ImageView) marker.findViewById(R.id.question_image);
 
 
 
@@ -482,13 +482,13 @@ public class MapFragment extends Fragment implements
             boolean tutor = mQuestionList.getJSONObject(position).getJSONObject("map").getBoolean("tutor");
 
             if(group){
-                groupIcon.setColorFilter(getResources().getColor(R.color.primary_dark));
+                groupIcon.setColorFilter(getResources().getColor(R.color.primary));
             }
             else{
                 groupIcon.setColorFilter(getResources().getColor(R.color.hint_text_on_background));
             }
             if(tutor){
-                tutorIcon.setColorFilter(getResources().getColor(R.color.primary_dark));
+                tutorIcon.setColorFilter(getResources().getColor(R.color.primary));
             }
             else{
                 tutorIcon.setColorFilter(getResources().getColor(R.color.hint_text_on_background));

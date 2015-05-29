@@ -55,14 +55,19 @@ public class ViewQuestionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_view_group);
 
 
-        if(getIntent().getExtras().containsKey("questionId")){
-            mQuestionId = getIntent().getExtras().getString("questionId");
-
-        }
-        else{
+        if(getIntent().getExtras() != null){
+            if(getIntent().getExtras().containsKey("questionId")){
+                mQuestionId = getIntent().getExtras().getString("questionId");
+            }
+            else{
+                System.out.println("Could not find QuestionId, finishing editQuestion");
+                finish();
+            }
+        }else{
             System.out.println("Could not find QuestionId, finishing editQuestion");
             finish();
         }
+
 
         mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.view_group_tabPage);
         mViewPager = (ViewPager) findViewById(R.id.view_group_viewPager);

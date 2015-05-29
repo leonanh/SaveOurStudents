@@ -335,6 +335,22 @@ public class ViewQuestionMembersFragment extends Fragment {
 
 
 
+                ImageView mThumbsUpButton = ((ImageView) convertView.findViewById(R.id.view_group_members_thumbs_up));
+                ImageView mThumbsDownButton = ((ImageView) convertView.findViewById(R.id.view_group_members_thumbs_down));
+
+                if(mEditable){
+                    mThumbsUpButton.setVisibility(View.VISIBLE);
+                    mThumbsDownButton.setVisibility(View.VISIBLE);
+                    setUpThumbsUpButton(mThumbsUpButton, mThumbsDownButton, currStudentMember.getString("user_id"));
+                    setUpThumbsDownButton(mThumbsUpButton, mThumbsDownButton, currStudentMember.getString("user_id"));
+
+                }
+                else{
+                    mThumbsUpButton.setVisibility(View.GONE);
+                    mThumbsDownButton.setVisibility(View.GONE);
+                }
+
+
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -354,29 +370,12 @@ public class ViewQuestionMembersFragment extends Fragment {
             });
 
 
-            ImageView mThumbsUpButton = ((ImageView) convertView.findViewById(R.id.view_group_members_thumbs_up));
-            ImageView mThumbsDownButton = ((ImageView) convertView.findViewById(R.id.view_group_members_thumbs_down));
-
-            if(mEditable){
-                mThumbsUpButton.setVisibility(View.VISIBLE);
-                mThumbsDownButton.setVisibility(View.VISIBLE);
-                setUpThumbsUpButton(mThumbsUpButton, mThumbsDownButton);
-                setUpThumbsDownButton(mThumbsUpButton, mThumbsDownButton);
-
-            }
-            else{
-                mThumbsUpButton.setVisibility(View.GONE);
-                mThumbsDownButton.setVisibility(View.GONE);
-            }
-
-
-
             return convertView;
         }
 
 
-        private void setUpThumbsUpButton(final ImageView mThumbsUpButton,
-                                         final ImageView mThumbsDownButton) {
+
+        private void setUpThumbsUpButton(final ImageView mThumbsUpButton, final ImageView mThumbsDownButton, final String userId) {
             mThumbsUpButton.setSelected(false);
             mThumbsUpButton.setColorFilter(getResources().getColor(R.color.divider_color));
             mThumbsUpButton.setOnClickListener(new View.OnClickListener() {
@@ -384,7 +383,7 @@ public class ViewQuestionMembersFragment extends Fragment {
                 public void onClick(View v) {
 
                     if (!mThumbsUpButton.isSelected()) {
-                        Log.v("ThumbsUp", "SettingLightBlue");
+
                         mThumbsUpButton.setColorFilter(getResources().getColor(R.color.primary));
                         mThumbsUpButton.setSelected(true);
                         // Case 2 - Thumbs down button is currently clicked
@@ -392,19 +391,21 @@ public class ViewQuestionMembersFragment extends Fragment {
                             mThumbsDownButton.setColorFilter(getResources().getColor(R.color.divider_color));
                             mThumbsDownButton.setSelected(false);
                         }
+                        rateTutor(userId, true);
+
                     }
                     // Thumbs Up Button is currently clicked
                     else {
                         Log.v("ThumbsUp", "SettingGrayUp");
                         mThumbsUpButton.setColorFilter(getResources().getColor(R.color.divider_color));
                         mThumbsUpButton.setSelected(false);
+                        rateTutor(userId, false);
                     }
                 }
             });
         }
 
-        private void setUpThumbsDownButton(final ImageView mThumbsUpButton,
-                                           final ImageView mThumbsDownButton) {
+        private void setUpThumbsDownButton(final ImageView mThumbsUpButton, final ImageView mThumbsDownButton, final String userId) {
             mThumbsDownButton.setSelected(false);
             mThumbsDownButton.setColorFilter(getResources().getColor(R.color.divider_color));
             mThumbsDownButton.setOnClickListener(new View.OnClickListener() {
@@ -419,11 +420,13 @@ public class ViewQuestionMembersFragment extends Fragment {
                             mThumbsUpButton.setColorFilter(getResources().getColor(R.color.divider_color));
                             mThumbsUpButton.setSelected(false);
                         }
+                        rateTutor(userId, false);
                     }
                     // Thumbs Down Button is currently clicked
                     else {
                         mThumbsDownButton.setColorFilter(getResources().getColor(R.color.divider_color));
                         mThumbsDownButton.setSelected(false);
+                        rateTutor(userId, true);
                     }
                 }
             });
@@ -523,6 +526,68 @@ public class ViewQuestionMembersFragment extends Fragment {
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
 
     }
+
+
+
+
+
+    private void rateTutor(String userId, boolean like){
+
+        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        params.add(new BasicNameValuePair("questionId", userId));
+        params.add(new BasicNameValuePair("like", like+""));
+
+        String paramString = URLEncodedUtils.format(params, "utf-8");
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/rateTutor?"+paramString;
+
+
+        System.out.println("rateTutor url: " + url);
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
+                (JSONObject)null,
+                new Response.Listener<JSONObject>(){
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+
+                            JSONObject result = new JSONObject(response.toString());
+                            System.out.println("rateTutor result "+result);
+                            if(result.getString("success").equalsIgnoreCase("1")){
+
+                                Toast.makeText(mContext, "User rated", Toast.LENGTH_SHORT);
+
+                            }
+                            else{
+                                Toast.makeText(mContext, "Error rating", Toast.LENGTH_SHORT);
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("Error with connection or url: " + error.toString());
+            }
+
+        });
+
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+
+    }
+
+
+
+
+
+
+
+
+
 
 
 }

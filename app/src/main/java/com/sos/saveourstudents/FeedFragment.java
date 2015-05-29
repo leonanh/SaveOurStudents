@@ -90,8 +90,8 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+
                 getLocationUpdate();
-                //getQuestionData();
             }
         });
 
@@ -341,10 +341,10 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
                 double longitude = Double.parseDouble(mQuestionList.getJSONObject(position).getJSONObject("map").getString("longitude"));
 
                 if(group){
-                    viewHolder.groupIcon.setColorFilter(getResources().getColor(R.color.primary_dark));
+                    viewHolder.groupIcon.setColorFilter(getResources().getColor(R.color.primary));
                 }
                 if(tutor){
-                    viewHolder.tutorIcon.setColorFilter(getResources().getColor(R.color.primary_dark));
+                    viewHolder.tutorIcon.setColorFilter(getResources().getColor(R.color.primary));
                 }
 
                 String userImageUrl = "";
@@ -420,11 +420,11 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
             public ViewHolder(View itemView) {
                 super(itemView);
                 questionText = (TextView) itemView.findViewById(R.id.question_text);
-                nameText = (TextView) itemView.findViewById(R.id.name_text);
-                dateText = (TextView) itemView.findViewById(R.id.timestamp_text);
+                nameText = (TextView) itemView.findViewById(R.id.question_name_text);
+                dateText = (TextView) itemView.findViewById(R.id.question_timestamp);
                 topicText = (TextView) itemView.findViewById(R.id.topic_text);
-                distanceText = (TextView) itemView.findViewById(R.id.distance_text);
-                userImage = (ImageView) itemView.findViewById(R.id.user_image_details);
+                distanceText = (TextView) itemView.findViewById(R.id.question_distance);
+                userImage = (ImageView) itemView.findViewById(R.id.question_image);
 
                 groupIcon = (ImageView) itemView.findViewById(R.id.group_icon);
                 tutorIcon = (ImageView) itemView.findViewById(R.id.tutor_icon);

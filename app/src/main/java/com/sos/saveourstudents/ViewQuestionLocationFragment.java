@@ -282,7 +282,7 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
     private void showCustomMarker(){
 
         View markerLayout = mInflater.inflate(R.layout.custom_map_marker, null, false);
-        ImageView userImage = (ImageView) markerLayout.findViewById(R.id.user_image_details);
+        ImageView userImage = (ImageView) markerLayout.findViewById(R.id.question_image);
         if(userImageUrl != null && !userImageUrl.equalsIgnoreCase("")){
             setMarkerImage(userImageUrl, userImage, new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()));
 
@@ -421,12 +421,6 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
 
     }
-
-
-
-
-
-
 
 
 

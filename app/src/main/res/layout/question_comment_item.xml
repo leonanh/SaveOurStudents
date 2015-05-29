@@ -6,12 +6,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     card_view:cardCornerRadius="0dp"
-    card_view:cardElevation="1sp" >
+    card_view:cardElevation="1sp"
+    android:layout_marginTop="3dp"
+    android:background="@android:color/white">
 
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@android:color/white">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/comment_user_image"

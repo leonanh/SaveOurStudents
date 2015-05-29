@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
@@ -27,6 +28,8 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationServices;
 import com.rey.material.widget.EditText;
 import com.rey.material.widget.FloatingActionButton;
 
@@ -42,9 +45,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-public class ViewQuestionFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
+public class ViewQuestionFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener, LocationListener {
 
     private final int EDIT_QUESTION = 2345;
+
+    private GoogleApiClient mGoogleApiClient;
+    private Location mCurrentLocation;
 
     private RecycleViewAdapter mAdapter;
     private RecyclerView mRecyclerView;
@@ -55,9 +61,13 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
     private EditText commentEditText;
     private TextView userName;
     private TextView questionDate;
+    private TextView questionTopic;
     private TextView questionDistance;
     private TextView questionText;
     private ImageView userImage;
+    private ImageView tutorIcon;
+    private ImageView groupIcon;
+
 
     private boolean mEditable;
     private Context mContext;
@@ -94,12 +104,16 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
             Toast.makeText(mContext, "QuestionId empty in viewQuestiomFrag" , Toast.LENGTH_SHORT).show();
         }
 
+        buildGoogleApiClient();
 
         userImage = (ImageView) rootView.findViewById(R.id.question_image);
         userName = (TextView) rootView.findViewById(R.id.question_name_text);
         questionText = (TextView) rootView.findViewById(R.id.question_text);
         questionDate = (TextView) rootView.findViewById(R.id.question_timestamp);
         questionDistance = (TextView) rootView.findViewById(R.id.question_distance);
+        questionTopic = (TextView) rootView.findViewById(R.id.question_topic_text);
+        tutorIcon = (ImageView) rootView.findViewById(R.id.tutor_icon);
+        groupIcon = (ImageView) rootView.findViewById(R.id.group_icon);
 
         taglist = (LinearLayout) rootView.findViewById(R.id.tag_list_layout);
 
@@ -266,6 +280,8 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
         String topicText = details.getString("topic");
         String question = details.getString("text");
         String dateText = details.getString("date");
+        double latitude = details.getDouble("latitude");
+        double longitude = details.getDouble("longitude");
 
 
         if(details.has("image")) {
@@ -279,9 +295,19 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
         userName.setText(userNameText);
         questionText.setText(question);
+        questionTopic.setText(topicText);
         questionDate.setText(Singleton.getInstance().doDateLogic(dateText));
 
+        if(mCurrentLocation != null)
+            questionDistance.setText(Singleton.getInstance().doDistanceLogic(latitude, longitude, mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), "MI")+"MI");
+        else
+            questionDistance.setVisibility(View.INVISIBLE);
 
+        if(tutorGroupBool)
+        tutorIcon.setColorFilter(getResources().getColor(R.color.primary));
+
+        if(studyGroupBool)
+        groupIcon.setColorFilter(getResources().getColor(R.color.primary));
 
     }
 
@@ -363,12 +389,22 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
     }
 
 
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(mContext)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
 
+        mGoogleApiClient.connect();
+
+
+    }
 
 
     @Override
     public void onConnected(Bundle bundle) {
-
+        mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
     }
 
     @Override
@@ -385,15 +421,24 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
     public void onClick(View v) {
         if(v == sendButton){
             if(!commentEditText.getText().toString().equalsIgnoreCase("")) {
+                commentEditText.clearError();
                 InputMethodManager imm = (InputMethodManager) mContext.getSystemService(
                         Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(commentEditText.getWindowToken(), 0);
                 addComment();
             }
-            else
-                System.out.println("Edit text empty");
+            else{
+                commentEditText.setError("");
+            }
+
 
         }
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        mCurrentLocation = location;
 
     }
 
@@ -490,6 +535,7 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
                         startActivity(intent);
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        Toast.makeText(mContext, "Missing UserId", Toast.LENGTH_SHORT).show();
                     }
 
                 }
@@ -584,12 +630,12 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
         List<NameValuePair> params = new LinkedList<NameValuePair>();
         params.add(new BasicNameValuePair("questionId", mQuestionId));
         params.add(new BasicNameValuePair("userId", sharedPref.getString("user_id", "")));
-        params.add(new BasicNameValuePair("tutor", type+"")); //TODO what type of invite
+        params.add(new BasicNameValuePair("tutor", type+""));
 
         String paramString = URLEncodedUtils.format(params, "utf-8");
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/askToJoinGroup?"+paramString;
 
-        System.out.println("sending group url: " + url);
+        //System.out.println("sending group url: " + url);
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
                 (JSONObject)null,
@@ -600,9 +646,9 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
                         try {
 
                             JSONObject result = new JSONObject(response.toString());
-                            System.out.println("sending group result "+result);
+                            //System.out.println("sending group result "+result);
                             if(result.getString("success").equalsIgnoreCase("1")){
-
+                                Toast.makeText(mContext, "Success sending group request", Toast.LENGTH_SHORT).show();
                             }
                             else{
                                 Toast.makeText(mContext, "Error sending group request", Toast.LENGTH_SHORT).show();

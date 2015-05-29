@@ -13,7 +13,7 @@
         android:tint="@color/divider_color"/>
 
     <ImageView
-        android:id="@+id/user_image_details"
+        android:id="@+id/question_image"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:src="@drawable/defaultprofile"
