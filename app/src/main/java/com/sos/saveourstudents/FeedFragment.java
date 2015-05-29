@@ -174,8 +174,6 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
                                 mQuestionList = theResponse.getJSONObject("result").getJSONArray("myArrayList");
                             }
 
-
-                            //System.out.println("mQuestionList "+mQuestionList);
                             mSwipeRefreshLayout.setRefreshing(false);
                             showQuestions();
 

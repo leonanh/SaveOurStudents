@@ -224,9 +224,7 @@
                 android:autoText="true"
                 android:hint="Add a comment"
                 app:et_dividerColor="@color/primary"
-                app:et_supportTextErrorColor="#FFFF0000"
-                app:et_dividerErrorColor="#FFFF0000"
-                app:et_supportMode="helper"
+                android:paddingBottom="3dp"
                 app:et_dividerHeight="2dp"
                 app:et_dividerPadding="3dp" />
 
