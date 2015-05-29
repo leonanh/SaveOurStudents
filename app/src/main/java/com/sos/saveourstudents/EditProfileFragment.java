@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -53,6 +54,8 @@ public class EditProfileFragment extends Fragment {
     private android.widget.EditText mEditMajorInput;
     private EditText mEditDescription;
     private android.widget.EditText mEditDescriptionInput;
+
+    private ImageView mProfilePicture;
 
     private FloatingActionButton doneButton;
 
@@ -173,6 +176,8 @@ public class EditProfileFragment extends Fragment {
         mEditSchoolInput.setText(mCurrStudent.getSchool());
         mEditMajorInput.setText(mCurrStudent.getMajor());
         mEditDescriptionInput.setText(mCurrStudent.getDescription());
+
+        mProfilePicture = mCurrStudent.getProfilePicture();
     }
 
     /**
