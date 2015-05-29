@@ -2,6 +2,7 @@ package com.sos.saveourstudents;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
@@ -190,6 +191,14 @@ public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
             ((TextView) convertView.findViewById(R.id.student_lastName))
                     .setText(currStudentMember.getLastName());
 
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(getActivity(), ProfileActivity.class)
+                            .putExtra("userId", currStudentMember.getUserId()));
+                }
+            });
+
             // Only set up long click listeners if the current viewer is the owner of the group
             if (((ViewGroupActivity) getActivity()).getmUserId()
                     .equals(((ViewGroupActivity) getActivity()).getmViewerUserId())) {
@@ -202,7 +211,7 @@ public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
                         @Override
                         public boolean onLongClick(View v) {
                             final Dialog removeTutorDialog = new Dialog(getActivity());
-                            removeTutorDialog.title("Remove Tutor?")
+                            removeTutorDialog.title("Remove Member?")
                                     .positiveAction("Yes")
                                     .negativeAction("No")
                                     .cancelable(true)
@@ -277,6 +286,14 @@ public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
                     .setText(currStudentMember.getFirstName());
             ((TextView) convertView.findViewById(R.id.tutor_lastName))
                     .setText(currStudentMember.getLastName());
+
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(getActivity(), ProfileActivity.class)
+                            .putExtra("userId", currStudentMember.getUserId()));
+                }
+            });
 
             // Only set up long click listeners if the current viewer is the owner of the group
             // Unnecessary to do second if check because current owner cannot be a tutor
