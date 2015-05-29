@@ -442,7 +442,9 @@ public class FragmentFeed extends Fragment implements LocationListener, GoogleAp
                         String userId = mQuestionList.getJSONObject(getAdapterPosition()).getJSONObject("map").getString("user_id");
                         Intent mIntent = new Intent(mContext, ViewGroupActivity.class);
                         mIntent.putExtra("questionId", questionId);
-                        mIntent.putExtra("userId", userId);
+
+                        String viewerUserId = sharedPref.getString("user_id", "");
+                        mIntent.putExtra("userId", viewerUserId);
                         startActivity(mIntent);
 
                     } catch (JSONException e) {

@@ -259,9 +259,10 @@ public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
 
         /**
          * Sets up the view for the ListView
-         * @param position The position of the current item in the ListView
+         *
+         * @param position    The position of the current item in the ListView
          * @param convertView The view of the current item in the ListView
-         * @param parent The ListView
+         * @param parent      The ListView
          * @return convertView after setup
          */
         @Override
@@ -282,33 +283,33 @@ public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
             if (((ViewGroupActivity) getActivity()).getmUserId()
                     .equals(((ViewGroupActivity) getActivity()).getmViewerUserId())) {
 
-                    convertView.setOnLongClickListener(new View.OnLongClickListener() {
-                        @Override
-                        public boolean onLongClick(View v) {
-                            final Dialog removeTutorDialog = new Dialog(getActivity());
-                            removeTutorDialog.title("Remove Tutor?")
-                                    .positiveAction("Yes")
-                                    .negativeAction("No")
-                                    .cancelable(true)
-                                    .show();
-                            removeTutorDialog.positiveActionClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    onMemberRemove(currStudentMember.getUserId(), true);
-                                    removeTutorDialog.dismiss();
-                                }
-                            });
+                convertView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        final Dialog removeTutorDialog = new Dialog(getActivity());
+                        removeTutorDialog.title("Remove Tutor?")
+                                .positiveAction("Yes")
+                                .negativeAction("No")
+                                .cancelable(true)
+                                .show();
+                        removeTutorDialog.positiveActionClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                onMemberRemove(currStudentMember.getUserId(), true);
+                                removeTutorDialog.dismiss();
+                            }
+                        });
 
-                            removeTutorDialog.negativeActionClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    removeTutorDialog.cancel();
-                                }
-                            });
+                        removeTutorDialog.negativeActionClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                removeTutorDialog.cancel();
+                            }
+                        });
 
-                            return true;
-                        }
-                    });
+                        return true;
+                    }
+                });
 
             }
 
