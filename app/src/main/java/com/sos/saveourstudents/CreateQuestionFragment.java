@@ -48,7 +48,7 @@ import java.util.Set;
 
 
 
-public class FragmentCreateQuestion extends Fragment implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener,
+public class CreateQuestionFragment extends Fragment implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener,
         Response.Listener, Response.ErrorListener,TagDialogFragment.NoticeDialogListener {
 
     public final int DIALOG_FRAGMENT = 1;
@@ -72,15 +72,15 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
     View rootView;
 
 
-    public static FragmentCreateQuestion newInstance(String questionId) {
-        FragmentCreateQuestion fragment = new FragmentCreateQuestion();
+    public static CreateQuestionFragment newInstance(String questionId) {
+        CreateQuestionFragment fragment = new CreateQuestionFragment();
         Bundle args = new Bundle();
         args.putString("questionId", questionId);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public FragmentCreateQuestion() {
+    public CreateQuestionFragment() {
     }
 
     @Override
@@ -227,7 +227,7 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
             FragmentTransaction ft = getActivity().getFragmentManager().beginTransaction();
 
             DialogFragment newFragment = new TagDialogFragment(mContext, DIALOG_FRAGMENT);
-            newFragment.setTargetFragment(FragmentCreateQuestion.this, DIALOG_FRAGMENT);
+            newFragment.setTargetFragment(CreateQuestionFragment.this, DIALOG_FRAGMENT);
             Bundle listbundle = new Bundle();
             listbundle.putStringArrayList("list", tagList);
 
@@ -545,7 +545,7 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
                 mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
         PendingIntent contentIntent = PendingIntent.getActivity(mContext, 0,
-                new Intent(mContext, ViewGroupActivity.class), 0);
+                new Intent(mContext, ViewQuestionActivity.class), 0);
 
         //Add question ID to intent
 

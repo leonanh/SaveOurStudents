@@ -18,7 +18,7 @@ import com.rey.material.widget.FloatingActionButton;
 /**
  * Created by Xian on 5/16/2015.
  */
-public class MemberJoinActivity extends AppCompatActivity implements View.OnClickListener{
+public class MemberWantsToJoinActivity extends AppCompatActivity implements View.OnClickListener{
 
     FloatingActionButton acceptButton;
     FloatingActionButton declineButton;

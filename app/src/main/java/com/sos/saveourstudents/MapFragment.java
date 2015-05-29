@@ -54,7 +54,7 @@ import java.util.Set;
 
 
 
-public class FragmentMap extends Fragment implements
+public class MapFragment extends Fragment implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener, View.OnClickListener {
 
@@ -86,7 +86,7 @@ public class FragmentMap extends Fragment implements
 
     SharedPreferences sharedPref;
 
-    public FragmentMap() {
+    public MapFragment() {
         this.mContext = this.getActivity();
     }
 
@@ -536,7 +536,7 @@ public class FragmentMap extends Fragment implements
 
         }
         else{
-            Intent mIntent = new Intent(mContext, EditQuestionActivity.class);
+            Intent mIntent = new Intent(mContext, ViewQuestionActivity.class);
             mIntent.putExtra("questionId", clickedQuestionId);
             startActivity(mIntent);
 

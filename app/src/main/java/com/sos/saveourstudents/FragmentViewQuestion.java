@@ -110,13 +110,13 @@ public class FragmentViewQuestion extends Fragment implements GoogleApiClient.Co
 
 
 
-        if(((EditQuestionActivity) getActivity()).mQuestionInfo == null) {
+        if(((ViewQuestionActivity) getActivity()).mQuestionInfo == null) {
             getQuestionData();
             getCommentsData();
         }
         else{
-            this.mQuestionInfo = ((EditQuestionActivity) getActivity()).mQuestionInfo;
-            this.tags = ((EditQuestionActivity) getActivity()).tags;
+            this.mQuestionInfo = ((ViewQuestionActivity) getActivity()).mQuestionInfo;
+            this.tags = ((ViewQuestionActivity) getActivity()).tags;
             try {
                 showQuestionDetails(mQuestionInfo);
                 showQuestionTags(tags);

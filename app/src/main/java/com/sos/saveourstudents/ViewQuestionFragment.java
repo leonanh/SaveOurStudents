@@ -42,7 +42,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-public class EditQuestionFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
+public class ViewQuestionFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
     private final int EDIT_QUESTION = 2345;
 
@@ -67,8 +67,8 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
     private ArrayList tags;
 
 
-    public static EditQuestionFragment newInstance(String questionId, boolean isEditable) {
-        EditQuestionFragment fragment = new EditQuestionFragment();
+    public static ViewQuestionFragment newInstance(String questionId, boolean isEditable) {
+        ViewQuestionFragment fragment = new ViewQuestionFragment();
         Bundle args = new Bundle();
         args.putString("questionId", questionId);
         args.putBoolean("isEditable", isEditable);
@@ -76,7 +76,7 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
         return fragment;
     }
 
-    public EditQuestionFragment() {
+    public ViewQuestionFragment() {
         // Required empty public constructor
     }
 
@@ -117,12 +117,12 @@ public class EditQuestionFragment extends Fragment implements GoogleApiClient.Co
 
         getCommentsData();
 
-        if(((EditQuestionActivity) getActivity()).mQuestionInfo == null) {
+        if(((ViewQuestionActivity) getActivity()).mQuestionInfo == null) {
             getQuestionData();
         }
         else{
-            mQuestionInfo = ((EditQuestionActivity) getActivity()).mQuestionInfo;
-            tags = ((EditQuestionActivity) getActivity()).tags;
+            mQuestionInfo = ((ViewQuestionActivity) getActivity()).mQuestionInfo;
+            tags = ((ViewQuestionActivity) getActivity()).tags;
             try {
                 showQuestionDetails(mQuestionInfo);
                 showQuestionTags(tags);

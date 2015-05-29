@@ -35,7 +35,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-public class EditQuestionActivity extends AppCompatActivity {
+public class ViewQuestionActivity extends AppCompatActivity {
 
     private final int numPages = 3;
 
@@ -272,7 +272,7 @@ public class EditQuestionActivity extends AppCompatActivity {
                             System.out.println("remove group result: "+result);
                             if(result.getString("success").equalsIgnoreCase("1")){
 
-                                EditQuestionActivity.this.finishActivity(EditQuestionActivity.this.RESULT_OK);
+                                ViewQuestionActivity.this.finishActivity(ViewQuestionActivity.this.RESULT_OK);
 
                             }
                             else{
@@ -315,9 +315,11 @@ public class EditQuestionActivity extends AppCompatActivity {
         public ViewGroupPagerAdapter(FragmentManager fm, Location location, String userImageUrl, boolean isEditable) {
             super(fm);
             this.isEditable = isEditable;
-            mFragmentViewQuestion = EditQuestionFragment.newInstance(mQuestionId, isEditable);
-            mViewGroupLocationFragment = EditQuestionLocationFragment.newInstance(mQuestionId, location, userImageUrl, isEditable);
-            mViewGroupMembersFragment = EditQuestionMembersFragment.newInstance(mQuestionId, isEditable);
+            mFragmentViewQuestion = ViewQuestionFragment.newInstance(mQuestionId, isEditable);
+            mViewGroupLocationFragment = ViewQuestionLocationFragment.newInstance(mQuestionId, location, userImageUrl, isEditable);
+            //mViewGroupMembersFragment = EditQuestionMembersFragment.newInstance(mQuestionId, isEditable);
+            mViewGroupMembersFragment = ViewQuestionMembersFragment.newInstance(mQuestionId, isEditable);
+
         }
 
         @Override

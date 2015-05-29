@@ -68,11 +68,11 @@
         <activity android:name=".CreateQuestionActivity"
             android:windowSoftInputMode="stateHidden|adjustResize"/>
 
-        <activity android:name=".MemberJoinActivity"/>
+        <activity android:name=".MemberWantsToJoinActivity"/>
 
         <activity android:name=".SettingsActivity"/>
 
-        <activity android:name=".EditQuestionActivity"/>
+        <activity android:name=".ViewQuestionActivity"/>
 
 
 
@@ -112,14 +112,6 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
-        </activity>
-        <activity
-            android:name=".ViewGroupActivity"
-            android:label="@string/title_activity_view_group"
-            android:parentActivityName=".MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.sos.saveourstudents.MainActivity" />
         </activity>
     </application>
 

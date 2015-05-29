@@ -211,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         else if (item.getItemId() == R.id.add_member) {
-            Intent mIntent = new Intent(this, MemberJoinActivity.class);
+            Intent mIntent = new Intent(this, MemberWantsToJoinActivity.class);
             startActivity(mIntent);
         }
 
@@ -246,10 +246,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         updateFeedFragment();
     }
     private void updateMapFragment(){
-        ((FragmentMap) viewPagerAdapter.getItem(1)).getLocationUpdate();
+        ((MapFragment) viewPagerAdapter.getItem(1)).getLocationUpdate();
     }
     private void updateFeedFragment(){
-        ((FragmentFeed) viewPagerAdapter.getItem(0)).getQuestionData();
+        ((FeedFragment) viewPagerAdapter.getItem(0)).getQuestionData();
     }
 
 
@@ -300,7 +300,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     fab.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
-                                            Intent mIntent = new Intent(MainActivity.this, EditQuestionActivity.class);
+                                            Intent mIntent = new Intent(MainActivity.this, ViewQuestionActivity.class);
                                             mIntent.putExtra("questionId", questionId);
                                             startActivityForResult(mIntent, EDIT_QUESTION);
                                         }
@@ -380,8 +380,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
  */
 class ViewPagerAdapter extends FragmentPagerAdapter {
 
-    FragmentFeed feed = new FragmentFeed();
-    FragmentMap map = new FragmentMap();
+    FeedFragment feed = new FeedFragment();
+    MapFragment map = new MapFragment();
     String[] tabNames = {"Feed", "Map"};
 
 

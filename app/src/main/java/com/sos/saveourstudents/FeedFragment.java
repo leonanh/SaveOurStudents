@@ -49,7 +49,7 @@ import java.util.Set;
 /**
  * Created by deamon on 4/21/15.
  */
-public class FragmentFeed extends Fragment implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class FeedFragment extends Fragment implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
 
     private SharedPreferences sharedPref;
@@ -442,7 +442,7 @@ public class FragmentFeed extends Fragment implements LocationListener, GoogleAp
 
                     try {
                         String questionId = mQuestionList.getJSONObject(getAdapterPosition()).getJSONObject("map").getString("question_id");
-                        Intent mIntent = new Intent(mContext, EditQuestionActivity.class);
+                        Intent mIntent = new Intent(mContext, ViewQuestionActivity.class);
                         mIntent.putExtra("questionId", questionId);
                         startActivity(mIntent);
 

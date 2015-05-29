@@ -21,7 +21,7 @@ public class CreateQuestionActivity extends AppCompatActivity {
             if(getIntent().getExtras().containsKey("questionId")){
                 questionId = getIntent().getExtras().getString("questionId");
             }
-            Fragment theFragToShow = FragmentCreateQuestion.newInstance(questionId);
+            Fragment theFragToShow = CreateQuestionFragment.newInstance(questionId);
             getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, theFragToShow).commit();
 
 

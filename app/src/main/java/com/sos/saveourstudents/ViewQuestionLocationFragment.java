@@ -46,7 +46,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-public class EditQuestionLocationFragment extends android.support.v4.app.Fragment implements
+public class ViewQuestionLocationFragment extends android.support.v4.app.Fragment implements
         LocationListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMarkerDragListener {
@@ -70,8 +70,8 @@ public class EditQuestionLocationFragment extends android.support.v4.app.Fragmen
     private boolean mEditable;
     private String mQuestionId;
 
-    public static EditQuestionLocationFragment newInstance(String questionId, Location location, String userImageUrl, boolean isEditable) {
-        EditQuestionLocationFragment fragment = new EditQuestionLocationFragment();
+    public static ViewQuestionLocationFragment newInstance(String questionId, Location location, String userImageUrl, boolean isEditable) {
+        ViewQuestionLocationFragment fragment = new ViewQuestionLocationFragment();
         Bundle args = new Bundle();
         args.putParcelable(QUESTION_LOCATION, location);
         args.putString(USER_IMAGE, userImageUrl);
@@ -81,7 +81,7 @@ public class EditQuestionLocationFragment extends android.support.v4.app.Fragmen
         return fragment;
     }
 
-    public EditQuestionLocationFragment() {
+    public ViewQuestionLocationFragment() {
         // Required empty public constructor
     }
 
