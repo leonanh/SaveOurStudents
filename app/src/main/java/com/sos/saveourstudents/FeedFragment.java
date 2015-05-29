@@ -242,6 +242,7 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
 
 
     public void getLocationUpdate(){
+        mSwipeRefreshLayout.setRefreshing(true);
         createLocationRequest();
         startLocationUpdates();
     }
