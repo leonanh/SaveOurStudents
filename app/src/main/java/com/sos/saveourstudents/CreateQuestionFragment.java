@@ -51,6 +51,8 @@ import java.util.Set;
 public class CreateQuestionFragment extends Fragment implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener,
         Response.Listener, Response.ErrorListener,TagDialogFragment.NoticeDialogListener {
 
+    //TODO turn fragment into Activity.
+
     public final int DIALOG_FRAGMENT = 1;
     private String mQuestionId;
     private ArrayList<String> tagList;

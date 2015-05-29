@@ -90,7 +90,8 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getQuestionData();
+                getLocationUpdate();
+                //getQuestionData();
             }
         });
 

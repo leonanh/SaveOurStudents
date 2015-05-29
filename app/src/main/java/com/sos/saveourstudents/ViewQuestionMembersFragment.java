@@ -2,6 +2,7 @@ package com.sos.saveourstudents;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -28,7 +29,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -206,20 +206,22 @@ public class ViewQuestionMembersFragment extends Fragment {
 
 
     private class StudentsArrayAdapter extends ArrayAdapter<JSONObject> {
-        HashMap<JSONObject, Integer> mIdMap;
+        private List<JSONObject> data;
 
         public StudentsArrayAdapter(Context context, List<JSONObject> objects) {
             super(context, 0, objects);
-            mIdMap = new HashMap<>();
+            data = objects;
 
-            for (int i = 0; i < objects.size(); i++) {
-                mIdMap.put(objects.get(i), i);
-            }
+        }
+
+        @Override
+        public JSONObject getItem(int position) {
+            return data.get(position);
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            JSONObject currStudentMember = getItem(position);
+            final JSONObject currStudentMember = getItem(position);
             if (convertView == null) {
                 convertView = LayoutInflater.from(getContext())
                         .inflate(R.layout.view_group_members_student_layout, parent, false);
@@ -232,9 +234,26 @@ public class ViewQuestionMembersFragment extends Fragment {
                 if(currStudentMember.has("image"))
                     getUserImage(currStudentMember.getString("image"), ((ImageView) convertView.findViewById(R.id.user_image)));
 
+
+
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        startActivity(new Intent(getActivity(), ProfileActivity.class)
+                                .putExtra("userId", currStudentMember.getString("user_id")));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+
 
             return convertView;
         }
@@ -245,35 +264,26 @@ public class ViewQuestionMembersFragment extends Fragment {
      * Incorporates Thumbs Up/Down functionality
      */
     private class TutorsArrayAdapter extends ArrayAdapter<JSONObject> {
-        private HashMap<JSONObject, Integer> mIdMap;
+        private List<JSONObject> data;
 
         public TutorsArrayAdapter(Context context, List<JSONObject> objects) {
             super(context, 0, objects);
-            mIdMap = new HashMap<>();
+            data = objects;
 
-            for (int i = 0; i < objects.size(); i++) {
-                mIdMap.put(objects.get(i), i);
-            }
         }
 
         @Override
-        public long getItemId(int position) {
-            return mIdMap.get(getItem(position));
+        public JSONObject getItem(int position) {
+            return data.get(position);
         }
 
-        /**
-         * Sets up the view for the ListView
-         * @param position The position of the current item in the ListView
-         * @param convertView The view of the current item in the ListView
-         * @param parent The ListView
-         * @return convertView after setup
-         */
+
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            JSONObject currStudentMember = getItem(position);
+            final JSONObject currStudentMember = getItem(position);
+
             if (convertView == null) {
-                convertView = LayoutInflater.from(getContext())
-                        .inflate(R.layout.view_group_members_tutors_layout, parent, false);
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.view_group_members_tutors_layout, parent, false);
             }
 
             try {
@@ -287,9 +297,23 @@ public class ViewQuestionMembersFragment extends Fragment {
                 if(currStudentMember.has("image"))
                     getUserImage(currStudentMember.getString("image"), ((ImageView) convertView.findViewById(R.id.tutor_profile_image)));
 
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        startActivity(new Intent(getActivity(), ProfileActivity.class)
+                                .putExtra("userId", currStudentMember.getString("user_id")));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
 
 
             ImageView mThumbsUpButton = ((ImageView) convertView.findViewById(R.id.view_group_members_thumbs_up));
@@ -311,7 +335,7 @@ public class ViewQuestionMembersFragment extends Fragment {
 
                     if (!mThumbsUpButton.isSelected()) {
                         Log.v("ThumbsUp", "SettingLightBlue");
-                        mThumbsUpButton.setColorFilter(getResources().getColor(R.color.primary_light));
+                        mThumbsUpButton.setColorFilter(getResources().getColor(R.color.primary));
                         mThumbsUpButton.setSelected(true);
                         // Case 2 - Thumbs down button is currently clicked
                         if (mThumbsDownButton.isSelected()) {

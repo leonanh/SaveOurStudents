@@ -368,6 +368,9 @@ public class MapFragment extends Fragment implements
 
 
     protected void startLocationUpdates() {
+        if(mGoogleApiClient == null){
+            buildGoogleApiClient();
+        }else
         LocationServices.FusedLocationApi.requestLocationUpdates(
                 mGoogleApiClient, mLocationRequest, this);
     }

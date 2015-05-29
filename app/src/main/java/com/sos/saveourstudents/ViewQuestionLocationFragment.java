@@ -147,8 +147,8 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
 
     @Override
     public void onConnected(Bundle bundle) {
-        mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
+        //mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(
+        //        mGoogleApiClient);
 
         //System.out.println("Connected to GoogleApi: " + mCurrentLocation);
         //getLocationUpdate();
