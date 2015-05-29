@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -25,10 +24,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class ViewGroupActivity extends AppCompatActivity
-        implements ViewGroupMembersFragment.OnTutorRatingListener {
+        implements ViewGroupMembersFragment.OnTutorRatingListener,
+        ViewGroupMembersFragment.OnMemberRemoveListener {
 
     private static final int numPages = 3;
     private static FragmentViewQuestion mFragmentViewQuestion;
@@ -40,10 +41,11 @@ public class ViewGroupActivity extends AppCompatActivity
 
     private Question mCurrQuestion;
 
-    private ArrayList<Student> mStudents;
-    private ArrayList<Student> mTutors;
+    private List<Student> mStudents;
+    private List<Student> mTutors;
 
     private static final String mUserIdIntentsTag = "userId";
+
     private String mViewerUserId;
     private boolean mCurrViewerIsInGroup;
 
@@ -55,6 +57,9 @@ public class ViewGroupActivity extends AppCompatActivity
 
     private static final String mUserURL =
             "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getUserById?userId=";
+
+
+
     private String mUserId;
     private static final String mMembersUrl =
             "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/viewMembers?questionId=";
@@ -63,6 +68,9 @@ public class ViewGroupActivity extends AppCompatActivity
             "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/rateTutor?userId=";
     private static final String mRatingParameter =
             "&like=";
+
+    private static final String mRemoveMemberUrl =
+            "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/removeUser?userId=";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +91,7 @@ public class ViewGroupActivity extends AppCompatActivity
 
         Singleton.getInstance().addToRequestQueue(questionRequest);
 
-        // Setting up toolbar
+        // Setting up toolbar - independent of JSON requests
         Toolbar toolbar = (Toolbar) findViewById(R.id.view_group_toolbar);
         if (toolbar != null) {
             toolbar.setTitle(R.string.app_name);
@@ -158,6 +166,59 @@ public class ViewGroupActivity extends AppCompatActivity
                 });
 
         Singleton.getInstance().addToRequestQueue(request);
+    }
+
+    /**
+     * Method to be called when listener reports a request to remove a member from the dialog
+     * @param memberUserId The user ID of the member to be removed
+     * @param tutor A boolean representing whether the member is a tutor or not
+     */
+    @Override
+    public void onMemberRemoveInteraction(String memberUserId, boolean tutor) {
+        if(!tutor) {
+           for(int i = 0; i < mStudents.size(); i++) {
+               if(mStudents.get(i).getUserId().equals(memberUserId)) {
+                   mStudents.remove(i);
+                   String removeMemberUrl = mRemoveMemberUrl + memberUserId;
+                   JsonObjectRequest removeMemberRequest = new JsonObjectRequest(Request.Method.GET,
+                           removeMemberUrl, (JSONObject) null, new Response.Listener<JSONObject>() {
+                       @Override
+                       public void onResponse(JSONObject response) {
+                           mViewGroupMembersFragment.notifyStudentsDataSetChanged();
+                       }
+                   }, new Response.ErrorListener() {
+                       @Override
+                       public void onErrorResponse(VolleyError error) {
+
+                       }
+                   });
+                   Singleton.getInstance().addToRequestQueue(removeMemberRequest);
+                   return;
+               }
+           }
+        } else {
+            for(int i = 0; i < mTutors.size(); i++) {
+                if(mTutors.get(i).getUserId().equals(memberUserId)) {
+                    mTutors.remove(i);
+                    String removeMemberUrl = mRemoveMemberUrl + memberUserId;
+                    JsonObjectRequest removeTutorRequest = new JsonObjectRequest(Request.Method.GET,
+                            removeMemberUrl, (JSONObject) null, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            mViewGroupMembersFragment.notifyTutorsDataSetChanged();
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                        }
+                    });
+
+                    Singleton.getInstance().addToRequestQueue(removeTutorRequest);
+                    return;
+                }
+            }
+        }
     }
 
     /**
@@ -245,6 +306,22 @@ public class ViewGroupActivity extends AppCompatActivity
     }
 
     /**
+     * Gets the current viewer's user ID
+     * @return Current viewer's user ID
+     */
+    public String getmViewerUserId() {
+        return mViewerUserId;
+    }
+
+    /**
+     * Gets the current owner of the group's user ID
+     * @return Group owner's user ID
+     */
+    public String getmUserId() {
+        return mUserId;
+    }
+
+    /**
      * Begins parsing through the Question and creating the Group Leader Student object
      */
     class QuestionResponseListener implements Response.Listener<JSONObject> {
@@ -321,6 +398,9 @@ public class ViewGroupActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Error listener for the owner profile JSON request
+     */
     class ProfileErrorListener implements Response.ErrorListener {
 
         @Override
@@ -329,6 +409,10 @@ public class ViewGroupActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Response listener for populating the mStudents and mTutors ArrayLists
+     * Views are initialized once this is complete
+     */
     class MembersTableResponseListener implements Response.Listener<JSONObject> {
 
         @Override
@@ -361,6 +445,9 @@ public class ViewGroupActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Error listener for the members lists' JSON Request
+     */
     class MembersTableErrorListener implements Response.ErrorListener {
 
         @Override

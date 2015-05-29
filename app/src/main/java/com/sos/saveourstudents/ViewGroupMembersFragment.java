@@ -13,6 +13,8 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.rey.material.app.Dialog;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,13 +32,17 @@ public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
     private static final String ARG_LISTOFSTUDENTS = "studentsList";
     private static final String ARG_LISTOFTUTORS = "tutorsList";
 
-    private ArrayList<Student> mStudentsList;
-    private ArrayList<Student> mTutorsList;
+    private List<Student> mStudentsList;
+    private List<Student> mTutorsList;
 
-    private OnTutorRatingListener mListener;
+    private OnTutorRatingListener mTutorRatingListener;
+    private OnMemberRemoveListener mMemberRemoveListener;
 
     private static ListView mStudentsListView;
     private static ListView mTutorsListView;
+
+    private StudentsArrayAdapter mStudentsListViewArrayAdapter;
+    private TutorsArrayAdapter mTutorsListViewArrayAdapter;
 
     /**
      * Use this factory method to create a new instance of
@@ -46,13 +52,12 @@ public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
      * @param tutorsList   Parameter 2.
      * @return A new instance of fragment ViewGroupMembersFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static ViewGroupMembersFragment newInstance(ArrayList<Student> studentsList,
-                                                       ArrayList<Student> tutorsList) {
+    public static ViewGroupMembersFragment newInstance(List<Student> studentsList,
+                                                       List<Student> tutorsList) {
         ViewGroupMembersFragment fragment = new ViewGroupMembersFragment();
         Bundle args = new Bundle();
-        args.putParcelableArrayList(ARG_LISTOFSTUDENTS, studentsList);
-        args.putParcelableArrayList(ARG_LISTOFTUTORS, tutorsList);
+        args.putParcelableArrayList(ARG_LISTOFSTUDENTS, (ArrayList<Student>) studentsList);
+        args.putParcelableArrayList(ARG_LISTOFTUTORS, (ArrayList<Student>) tutorsList);
         fragment.setArguments(args);
         return fragment;
     }
@@ -77,10 +82,15 @@ public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
         return inflater.inflate(R.layout.fragment_view_group_members, container, false);
     }
 
-    // TODO: Hook method into UI event
     public void onTutorRating(boolean rating, String currUserId) {
-        if (mListener != null) {
-            mListener.onTutorRatingInteraction(rating, currUserId);
+        if (mTutorRatingListener != null) {
+            mTutorRatingListener.onTutorRatingInteraction(rating, currUserId);
+        }
+    }
+
+    public void onMemberRemove(String memberUserId, boolean tutor) {
+        if (mMemberRemoveListener != null) {
+            mMemberRemoveListener.onMemberRemoveInteraction(memberUserId, tutor);
         }
     }
 
@@ -94,29 +104,35 @@ public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
         mTutorsListView = (ListView) getActivity()
                 .findViewById(R.id.view_group_members_tutors_listView);
 
-        mStudentsListView.setAdapter(new StudentsArrayAdapter(getActivity(),
-                mStudentsList));
+        mStudentsListViewArrayAdapter = new StudentsArrayAdapter(getActivity(),
+                mStudentsList);
 
-        // TODO: Change layout to a tutors-specific item
-        mTutorsListView.setAdapter(new TutorsArrayAdapter(getActivity(),
-                mTutorsList));
+        mTutorsListViewArrayAdapter = new TutorsArrayAdapter(getActivity(),
+                mTutorsList);
+
+        mStudentsListView.setAdapter(mStudentsListViewArrayAdapter);
+
+        mTutorsListView.setAdapter(mTutorsListViewArrayAdapter);
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnTutorRatingListener) activity;
+            mTutorRatingListener = (OnTutorRatingListener) activity;
+            mMemberRemoveListener = (OnMemberRemoveListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnTutorRatingListener");
+                    + " must implement OnTutorRatingListener" +
+                    " and OnMemberRemoveListener");
         }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        mTutorRatingListener = null;
+        mMemberRemoveListener = null;
     }
 
     /**
@@ -134,7 +150,15 @@ public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
     }
 
     public interface OnMemberRemoveListener {
-        void onMemberRemoveInteraction(String memberUserId);
+        void onMemberRemoveInteraction(String memberUserId, boolean tutor);
+    }
+
+    public void notifyStudentsDataSetChanged() {
+        mStudentsListViewArrayAdapter.notifyDataSetChanged();
+    }
+
+    public void notifyTutorsDataSetChanged() {
+        mTutorsListViewArrayAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -155,7 +179,7 @@ public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            Student currStudentMember = getItem(position);
+            final Student currStudentMember = getItem(position);
             if (convertView == null) {
                 convertView = LayoutInflater.from(getContext())
                         .inflate(R.layout.view_group_members_student_layout, parent, false);
@@ -165,6 +189,44 @@ public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
                     .setText(currStudentMember.getFirstName());
             ((TextView) convertView.findViewById(R.id.student_lastName))
                     .setText(currStudentMember.getLastName());
+
+            // Only set up long click listeners if the current viewer is the owner of the group
+            if (((ViewGroupActivity) getActivity()).getmUserId()
+                    .equals(((ViewGroupActivity) getActivity()).getmViewerUserId())) {
+
+                // Do not set up long click listener on the owner of the group
+                if (!currStudentMember.getUserId()
+                        .equals(((ViewGroupActivity) getActivity()).getmViewerUserId())) {
+
+                    convertView.setOnLongClickListener(new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(View v) {
+                            final Dialog removeTutorDialog = new Dialog(getActivity());
+                            removeTutorDialog.title("Remove Tutor?")
+                                    .positiveAction("Yes")
+                                    .negativeAction("No")
+                                    .cancelable(true)
+                                    .show();
+                            removeTutorDialog.positiveActionClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    onMemberRemove(currStudentMember.getUserId(), false);
+                                    removeTutorDialog.dismiss();
+                                }
+                            });
+
+                            removeTutorDialog.negativeActionClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    removeTutorDialog.cancel();
+                                }
+                            });
+
+                            return true;
+                        }
+                    });
+                }
+            }
 
             return convertView;
         }
@@ -204,7 +266,7 @@ public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
          */
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            Student currStudentMember = getItem(position);
+            final Student currStudentMember = getItem(position);
             if (convertView == null) {
                 convertView = LayoutInflater.from(getContext())
                         .inflate(R.layout.view_group_members_tutors_layout, parent, false);
@@ -215,12 +277,40 @@ public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
             ((TextView) convertView.findViewById(R.id.tutor_lastName))
                     .setText(currStudentMember.getLastName());
 
-            convertView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    return false;
-                }
-            });
+            // Only set up long click listeners if the current viewer is the owner of the group
+            // Unnecessary to do second if check because current owner cannot be a tutor
+            if (((ViewGroupActivity) getActivity()).getmUserId()
+                    .equals(((ViewGroupActivity) getActivity()).getmViewerUserId())) {
+
+                    convertView.setOnLongClickListener(new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(View v) {
+                            final Dialog removeTutorDialog = new Dialog(getActivity());
+                            removeTutorDialog.title("Remove Tutor?")
+                                    .positiveAction("Yes")
+                                    .negativeAction("No")
+                                    .cancelable(true)
+                                    .show();
+                            removeTutorDialog.positiveActionClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    onMemberRemove(currStudentMember.getUserId(), true);
+                                    removeTutorDialog.dismiss();
+                                }
+                            });
+
+                            removeTutorDialog.negativeActionClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    removeTutorDialog.cancel();
+                                }
+                            });
+
+                            return true;
+                        }
+                    });
+
+            }
 
             ImageButton mThumbsUpButton =
                     ((ImageButton) convertView.findViewById(R.id.view_group_members_thumbs_up));
@@ -233,7 +323,6 @@ public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
             return convertView;
         }
 
-        // TODO: Set up Thumbs Up/Down functionality for database rating updates
         private void setUpThumbsUpButton(final ImageButton mThumbsUpButton,
                                          final ImageButton mThumbsDownButton, final String currUserId) {
             if (!(((ViewGroupActivity) getActivity()).isCurrViewerIsInGroup())) {
