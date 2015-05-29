@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -247,10 +246,6 @@ public class ViewQuestionMembersFragment extends Fragment {
      */
     private class TutorsArrayAdapter extends ArrayAdapter<JSONObject> {
         private HashMap<JSONObject, Integer> mIdMap;
-        private final int mThumbsUpButtonGreyId = R.drawable.ic_thumb_up_grey_500_18dp;
-        private final int mThumbsUpButtonBlueId = R.drawable.ic_thumb_up_light_blue_500_18dp;
-        private final int mThumbsDownButtonGreyId = R.drawable.ic_thumb_down_grey_500_18dp;
-        private final int mThumbsDownButtonRedId = R.drawable.ic_thumb_down_red_400_18dp;
 
         public TutorsArrayAdapter(Context context, List<JSONObject> objects) {
             super(context, 0, objects);
@@ -297,73 +292,64 @@ public class ViewQuestionMembersFragment extends Fragment {
             }
 
 
-            ImageButton mThumbsUpButton =
-                    ((ImageButton) convertView.findViewById(R.id.view_group_members_thumbs_up));
-            ImageButton mThumbsDownButton =
-                    ((ImageButton) convertView.findViewById(R.id.view_group_members_thumbs_down));
+            ImageView mThumbsUpButton = ((ImageView) convertView.findViewById(R.id.view_group_members_thumbs_up));
+            ImageView mThumbsDownButton = ((ImageView) convertView.findViewById(R.id.view_group_members_thumbs_down));
             setUpThumbsUpButton(mThumbsUpButton, mThumbsDownButton);
             setUpThumbsDownButton(mThumbsUpButton, mThumbsDownButton);
 
             return convertView;
         }
 
-        // TODO: Set up Thumbs Up/Down functionality for database rating updates
-        private void setUpThumbsUpButton(final ImageButton mThumbsUpButton,
-                                         final ImageButton mThumbsDownButton) {
-            mThumbsUpButton.setTag(false);
-            mThumbsUpButton.setImageResource(mThumbsUpButtonGreyId);
+
+        private void setUpThumbsUpButton(final ImageView mThumbsUpButton,
+                                         final ImageView mThumbsDownButton) {
+            mThumbsUpButton.setSelected(false);
+            mThumbsUpButton.setColorFilter(getResources().getColor(R.color.divider_color));
             mThumbsUpButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.v("ThumbsUp", "onClick");
-                    // Thumbs Up Button is not clicked
-                    if ((Boolean) mThumbsUpButton.getTag() == false) {
+
+                    if (!mThumbsUpButton.isSelected()) {
                         Log.v("ThumbsUp", "SettingLightBlue");
-                        mThumbsUpButton
-                                .setImageResource(mThumbsUpButtonBlueId);
-                        mThumbsUpButton.setTag(true);
+                        mThumbsUpButton.setColorFilter(getResources().getColor(R.color.primary_light));
+                        mThumbsUpButton.setSelected(true);
                         // Case 2 - Thumbs down button is currently clicked
-                        if ((Boolean) mThumbsDownButton.getTag() == true) {
-                            mThumbsDownButton
-                                    .setImageResource(mThumbsDownButtonGreyId);
-                            mThumbsDownButton.setTag(false);
+                        if (mThumbsDownButton.isSelected()) {
+                            mThumbsDownButton.setColorFilter(getResources().getColor(R.color.divider_color));
+                            mThumbsDownButton.setSelected(false);
                         }
                     }
                     // Thumbs Up Button is currently clicked
                     else {
                         Log.v("ThumbsUp", "SettingGrayUp");
-                        mThumbsUpButton
-                                .setImageResource(mThumbsUpButtonGreyId);
-                        mThumbsUpButton.setTag(false);
+                        mThumbsUpButton.setColorFilter(getResources().getColor(R.color.divider_color));
+                        mThumbsUpButton.setSelected(false);
                     }
                 }
             });
         }
 
-        private void setUpThumbsDownButton(final ImageButton mThumbsUpButton,
-                                           final ImageButton mThumbsDownButton) {
-            mThumbsDownButton.setTag(false);
-            mThumbsDownButton.setImageResource(mThumbsDownButtonGreyId);
+        private void setUpThumbsDownButton(final ImageView mThumbsUpButton,
+                                           final ImageView mThumbsDownButton) {
+            mThumbsDownButton.setSelected(false);
+            mThumbsDownButton.setColorFilter(getResources().getColor(R.color.divider_color));
             mThumbsDownButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     // Thumbs Down Button is not clicked
-                    if ((Boolean) mThumbsDownButton.getTag() == false) {
-                        mThumbsDownButton
-                                .setImageResource(mThumbsDownButtonRedId);
-                        mThumbsDownButton.setTag(true);
+                    if (!mThumbsDownButton.isSelected()) {
+                        mThumbsDownButton.setColorFilter(getResources().getColor(R.color.red));
+                        mThumbsDownButton.setSelected(true);
                         // Case 2 - Thumbs Up Button is currently clicked
-                        if ((Boolean) mThumbsUpButton.getTag() == true) {
-                            mThumbsUpButton
-                                    .setImageResource(mThumbsUpButtonGreyId);
-                            mThumbsUpButton.setTag(false);
+                        if (mThumbsUpButton.isSelected()) {
+                            mThumbsUpButton.setColorFilter(getResources().getColor(R.color.divider_color));
+                            mThumbsUpButton.setSelected(false);
                         }
                     }
                     // Thumbs Down Button is currently clicked
                     else {
-                        mThumbsDownButton
-                                .setImageResource(mThumbsDownButtonGreyId);
-                        mThumbsDownButton.setTag(false);
+                        mThumbsDownButton.setColorFilter(getResources().getColor(R.color.divider_color));
+                        mThumbsDownButton.setSelected(false);
                     }
                 }
             });
