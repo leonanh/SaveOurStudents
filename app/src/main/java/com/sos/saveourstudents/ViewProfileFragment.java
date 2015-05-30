@@ -1,16 +1,23 @@
 package com.sos.saveourstudents;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rey.material.widget.FloatingActionButton;
+
+import java.io.InputStream;
 
 
 /**
@@ -30,6 +37,7 @@ public class ViewProfileFragment extends Fragment {
     private boolean mIsCurrentUser;
 
     private OnEditButtonListener mListener;
+    private ImageView mProfileImage;
 
     /**
      * Use this factory method to create a new instance of
@@ -74,6 +82,7 @@ public class ViewProfileFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        mProfileImage = (ImageView) getActivity().findViewById(R.id.profile_image);
         updateCurrentStudentView();
 
         LinearLayout aboutMeContents = (LinearLayout) getActivity()
@@ -97,6 +106,7 @@ public class ViewProfileFragment extends Fragment {
             });
 
         }
+
     }
 
     @Override
@@ -123,6 +133,16 @@ public class ViewProfileFragment extends Fragment {
                 .setText(mCurrStudent.getMajor());
         ((TextView) getActivity().findViewById(R.id.profile_myDescription))
                 .setText(mCurrStudent.getDescription());
+
+        if (mCurrStudent.getProfilePictureUrl().equals(null) ||
+                mCurrStudent.getProfilePictureUrl().isEmpty()) {
+            mProfileImage.setImageResource(R.drawable.defaultprofile);
+            mCurrStudent.setProfilePicture(mProfileImage);
+        } else {
+            new DownloadImageTask(mProfileImage)
+                    .execute(mCurrStudent.getProfilePictureUrl());
+            mCurrStudent.setProfilePicture(mProfileImage);
+        }
     }
 
     @Override
@@ -154,6 +174,35 @@ public class ViewProfileFragment extends Fragment {
      */
     public interface OnEditButtonListener {
         void onEditButton();
+    }
+
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                mIcon11 = null;
+                Log.e("Profile Activity", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            if (result != null) bmImage.setImageBitmap(result);
+            else {
+                bmImage.setImageResource(R.drawable.defaultprofile);
+            }
+        }
     }
 
 }

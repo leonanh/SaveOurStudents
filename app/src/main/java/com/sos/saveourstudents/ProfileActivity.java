@@ -59,7 +59,7 @@ public class ProfileActivity extends AppCompatActivity
                 }
             });
         }
-   }
+    }
 
     /**
      * Overrides onBackPressed()
@@ -155,10 +155,11 @@ public class ProfileActivity extends AppCompatActivity
                         .getJSONArray("myArrayList")
                         .getJSONObject(0)
                         .getJSONObject("map");
+
                 mCurrStudent = new Student(theResponse.getString("first_name"),
                         theResponse.getString("last_name"), theResponse.getInt("rating"),
                         theResponse.getString("school"), theResponse.getString("major"),
-                        theResponse.getString("description"), null);
+                        theResponse.getString("description"), theResponse.getString("image"));
 
                 mViewProfileFragment = ViewProfileFragment.newInstance(mCurrStudent,
                         isCurrentlyTheUser());
@@ -180,4 +181,6 @@ public class ProfileActivity extends AppCompatActivity
 
         }
     }
+
+
 }
