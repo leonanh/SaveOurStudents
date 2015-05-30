@@ -209,10 +209,10 @@ public class MapFragment extends Fragment implements
                             }
 
                             showOverlays();
-
+                            stopLocationUpdates();
 
                         } catch (JSONException e) {
-                            e.printStackTrace();//TODO Error parsing overlays, show error
+                            e.printStackTrace();
                         }
 
                     }
@@ -220,7 +220,7 @@ public class MapFragment extends Fragment implements
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                                                //TODO Error parsing overlays, show error
+
                 System.out.println("Error: " + error.toString());
 
             }
@@ -339,31 +339,34 @@ public class MapFragment extends Fragment implements
 
         LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
-
         Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
 
+        System.out.println("Current Zoom: "+mMap.getCameraPosition().zoom);
+        float zoomDistance = mMap.getCameraPosition().zoom;
+        if(zoomDistance == 2.0)
+            zoomDistance = 16;
 
         if(mCurrentLocation != null){
-
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()))      // Sets the center of the map to location user
-                    .zoom(17)                   // Sets the zoom
+                    .zoom(zoomDistance)                   // Sets the zoom
                     .bearing(0)                // Sets the orientation of the camera to east
                     .tilt(40)                   // Sets the tilt of the camera to 30 degrees
                     .build();                   // Creates a CameraPosition from the builder
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         }
-        else if (location != null)
-        {
+        else if (location != null){
             mCurrentLocation = location;
             CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
-                    .zoom(17)                   // Sets the zoom
+                    .target(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()))      // Sets the center of the map to location user
+                    .zoom(zoomDistance)                   // Sets the zoom
                     .bearing(0)                // Sets the orientation of the camera to east
                     .tilt(40)                   // Sets the tilt of the camera to 30 degrees
                     .build();                   // Creates a CameraPosition from the builder
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         }
+
+
 
     }
 
@@ -419,6 +422,7 @@ public class MapFragment extends Fragment implements
     }
 
     protected void stopLocationUpdates() {
+        System.out.println("Stopping location updates in map");
         LocationServices.FusedLocationApi.removeLocationUpdates(
                 mGoogleApiClient, this);
     }

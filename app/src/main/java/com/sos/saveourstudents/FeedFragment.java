@@ -14,6 +14,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -101,8 +102,11 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
         sharedPref = mContext.getSharedPreferences(
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
+        TypedValue typed_value = new TypedValue();
+        getActivity().getTheme().resolveAttribute(android.support.v7.appcompat.R.attr.actionBarSize, typed_value, true);
+        mSwipeRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(typed_value.resourceId));
+        mSwipeRefreshLayout.setRefreshing(true);
 
-        buildGoogleApiClient();
 
 
         LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
@@ -111,8 +115,36 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
 
 
 
+        buildGoogleApiClient();
+
+
+
+
+
+
         return rootView;
     }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        stopLocationUpdates();
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        stopLocationUpdates();
+        super.onDestroy();
+    }
+
+
+
 
     public void getQuestionData() {
 
@@ -206,6 +238,7 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
         mAdapter = new RecycleViewAdapter(R.layout.feed_item_layout);
         mRecyclerView.setAdapter(mAdapter);
 
+        stopLocationUpdates();
     }
 
     @Override
@@ -253,6 +286,7 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
     }
 
     protected void stopLocationUpdates() {
+        System.out.println("Stopping location updates in feed");
         LocationServices.FusedLocationApi.removeLocationUpdates(
                 mGoogleApiClient, this);
     }

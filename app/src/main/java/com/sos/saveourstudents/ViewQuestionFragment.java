@@ -403,6 +403,22 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
 
     @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+
+    @Override
     public void onConnected(Bundle bundle) {
         mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
     }
