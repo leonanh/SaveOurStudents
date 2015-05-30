@@ -58,6 +58,7 @@ public class MapFragment extends Fragment implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener, View.OnClickListener {
 
+    private final int PROFILE_ACTIVITY = 505;
     LocationRequest mLocationRequest;
     Location mCurrentLocation;
 
@@ -535,8 +536,7 @@ public class MapFragment extends Fragment implements
         if(v == userImageDetails){
             Intent mIntent = new Intent(mContext, ProfileActivity.class);
             mIntent.putExtra("userId", clickedUserId);
-            startActivity(mIntent);
-
+            startActivityForResult(mIntent, PROFILE_ACTIVITY);
         }
         else{
             Intent mIntent = new Intent(mContext, ViewQuestionActivity.class);

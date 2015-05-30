@@ -51,7 +51,7 @@ import java.util.Set;
  */
 public class FeedFragment extends Fragment implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-
+    private final int PROFILE_ACTIVITY = 505;
     private SharedPreferences sharedPref;
     LocationRequest mLocationRequest;
     Location mCurrentLocation;
@@ -464,7 +464,7 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
                         String userId = mQuestionList.getJSONObject(getAdapterPosition()).getJSONObject("map").getString("user_id");
                         Intent intent = new Intent(mContext, ProfileActivity.class);
                         intent.putExtra("userId", userId);
-                        startActivity(intent);
+                        startActivityForResult(intent, PROFILE_ACTIVITY);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

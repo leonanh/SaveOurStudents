@@ -366,6 +366,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         else if(requestCode == PROFILE_ACTIVITY){
             updateNavDrawer();
+            updateFragments();
         }
 
     }
@@ -374,6 +375,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void updateNavDrawer(){
         String name = sharedPref.getString("first_name", "") + " "+ sharedPref.getString("last_name", "");
         mAdapter = new NavDrawerAdapter(TITLES, ICONS, name, sharedPref.getString("email", "email"), sharedPref.getString("image", "image"));
+        mRecyclerView.setAdapter(mAdapter);
     }
 
 
