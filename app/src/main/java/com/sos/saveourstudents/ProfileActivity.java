@@ -156,10 +156,15 @@ public class ProfileActivity extends AppCompatActivity
                         .getJSONObject(0)
                         .getJSONObject("map");
 
+
+                String imageUrl = "";
+                if(theResponse.has("image"))
+                    imageUrl = theResponse.getString("image");
+
                 mCurrStudent = new Student(theResponse.getString("first_name"),
                         theResponse.getString("last_name"), theResponse.getInt("rating"),
                         theResponse.getString("school"), theResponse.getString("major"),
-                        theResponse.getString("description"), theResponse.getString("image"));
+                        theResponse.getString("description"), imageUrl);
 
                 mViewProfileFragment = ViewProfileFragment.newInstance(mCurrStudent,
                         isCurrentlyTheUser());

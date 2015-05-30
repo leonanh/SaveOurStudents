@@ -39,6 +39,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private final int PROFILE_ACTIVITY = 505;
     private final int CREATE_QUESTION = 987;
     private final int EDIT_QUESTION = 567;
     private boolean fabShowing = false;
@@ -108,11 +109,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mRecyclerView = (RecyclerView) findViewById(R.id.RecyclerView); // Assigning the RecyclerView Object to the xml View
 
-        //mRecyclerView.setHasFixedSize(true);                            // Letting the system know we wont change the size of the list
+        mRecyclerView.setHasFixedSize(true);                            // Letting the system know we wont change the size of the list
 
         String name = sharedPref.getString("first_name", "") + " "+ sharedPref.getString("last_name", "");
         mAdapter = new NavDrawerAdapter(TITLES, ICONS, name, sharedPref.getString("email", "email"), sharedPref.getString("image", "image"));//PROFILEIMAGE
-
 
         mRecyclerView.setAdapter(mAdapter);                              // Setting the adapter to RecyclerView
 
@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if(position == 1){
                             Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
                             intent.putExtra("userId", sharedPref.getString("user_id", ""));
-                            startActivity(intent);
+                            startActivityForResult(intent, PROFILE_ACTIVITY);
 
                         }
                         else if(position == 2){
@@ -168,6 +168,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onResume() {
+        System.out.println("OnResume Main");
         super.onResume();
     }
 
@@ -255,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        //System.out.println("clicked tabs: ");
+        System.out.println("clicked tabs: ");
     }
 
 
@@ -363,7 +364,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 System.out.println("Returned from create Question ok");
             }
         }
+        else if(requestCode == PROFILE_ACTIVITY){
+            updateNavDrawer();
+        }
 
+    }
+
+
+    private void updateNavDrawer(){
+        String name = sharedPref.getString("first_name", "") + " "+ sharedPref.getString("last_name", "");
+        mAdapter = new NavDrawerAdapter(TITLES, ICONS, name, sharedPref.getString("email", "email"), sharedPref.getString("image", "image"));
     }
 
 

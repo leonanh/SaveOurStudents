@@ -1,12 +1,10 @@
 package com.sos.saveourstudents;
 
 import android.app.Activity;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
-import android.os.Bundle;
 import android.app.Fragment;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -21,13 +19,13 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.rey.material.widget.EditText;
 import com.rey.material.widget.FloatingActionButton;
 
 import org.json.JSONObject;
 
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
 
@@ -71,7 +69,7 @@ public class EditProfileFragment extends Fragment {
      * @param currStudent Parameter 2.
      * @return A new instance of fragment EditProfileFragment.
      */
-    // TODO: Rename and change types and number of parameters
+
     public static EditProfileFragment newInstance(Student currStudent) {
         EditProfileFragment fragment = new EditProfileFragment();
         Bundle args = new Bundle();
@@ -130,7 +128,6 @@ public class EditProfileFragment extends Fragment {
         super.onStart();
 
 
-
         initializeMemberVariables();
 
         initializeEditTextWithEnterExit(mEditFirstName, mEditFirstNameInput);
@@ -150,16 +147,6 @@ public class EditProfileFragment extends Fragment {
 
 
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnDoneButtonListener {
         // TODO: Update argument type and name
         public void onDoneButton();
@@ -281,70 +268,70 @@ public class EditProfileFragment extends Fragment {
         mProfilePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 new MaterialDialog.Builder(getActivity())
                         .title("Edit Image")
                         .content("Enter the URL for your new profile image")
-                        .input("Image URL", "", new MaterialDialog.InputCallback() {
+                        .input("Image URL", mProfilePictureUrl, new MaterialDialog.InputCallback() {
                             @Override
                             public void onInput(MaterialDialog materialDialog, CharSequence charSequence) {
-                                new DownloadImageTask(mProfilePicture)
-                                        .execute(charSequence.toString());
+                                getUserImage(charSequence.toString(), mProfilePicture);
                             }
                         }).show();
+
+
             }
+
         });
     }
 
 
-    /**
-     * AsyncTask for downloading the image from the provided URL
-     */
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
-        ImageView originalImage;
-        String passedUrl;
 
-        public DownloadImageTask(ImageView bmImage) {
-            this.bmImage = bmImage;
-            originalImage = bmImage;
-        }
+    private void getUserImage(final String imageUrl, final ImageView imageView){
 
-        protected Bitmap doInBackground(String... urls) {
-            passedUrl = urls[0];
-            String urldisplay = new String();
-            if(!(passedUrl.contains("http://") || passedUrl.contains("https://"))) {
-                passedUrl = "http://" + passedUrl;
-                urldisplay = passedUrl;
+        ImageLoader imageLoader = Singleton.getInstance().getImageLoader();
+
+        imageLoader.get(imageUrl, new ImageLoader.ImageListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getActivity(), "Invalid Image URL", Toast.LENGTH_SHORT).show();
             }
 
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                mIcon11 = null;
-                Log.e("Profile Activity", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
+            @Override
+            public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
 
-        protected void onPostExecute(Bitmap result) {
-            if (result != null) {
-                bmImage.setImageBitmap(result);
-                mProfilePictureUrl = passedUrl;
+                if (response.getBitmap() != null) {
+                    imageView.setImageBitmap(response.getBitmap());
+                    mProfilePictureUrl = imageUrl;
+                } else {
+                    //Toast.makeText(getActivity(), "Error processing your image URL", Toast.LENGTH_SHORT).show();
+                }
+
             }
-            else {
-                bmImage = originalImage;
-                Toast.makeText(getActivity(), "Invalid Image URL!", Toast.LENGTH_SHORT).show();
-            }
-        }
+        });
+
+    }
+
+
+    private void updateSharedPrefs(){
+
+        System.out.println("Updating shared prefs");
+        SharedPreferences sharedPref = getActivity().getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("first_name", mCurrStudent.getFirstName());
+        editor.putString("last_name", mCurrStudent.getLastName());
+        editor.putString("image", mProfilePictureUrl);
+
+        editor.commit();
+
     }
 
     class EditProfileResponseListener implements Response.Listener<JSONObject> {
 
         @Override
         public void onResponse(JSONObject response) {
+            updateSharedPrefs();
         }
     }
     class EditProfileErrorListener implements Response.ErrorListener {
