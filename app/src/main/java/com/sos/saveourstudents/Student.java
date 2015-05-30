@@ -17,6 +17,16 @@ public class Student implements Parcelable{
     private ImageView profilePicture;
     private String profilePictureUrl;
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    private String userId;
+
     public Student(String firstName, String lastName, int rating, String school, String major,
                    String description, String profilePictureUrl) {
         this.firstName = firstName;
@@ -29,6 +39,11 @@ public class Student implements Parcelable{
         this.profilePicture = null;
     }
 
+    public Student(String firstName, String lastName, String userId) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.userId = userId;
+    }
     public String getFirstName() {
         return firstName;
     }

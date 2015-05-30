@@ -562,7 +562,7 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
                 mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
         PendingIntent contentIntent = PendingIntent.getActivity(mContext, 0,
-                new Intent(mContext, ViewQuestionActivity.class), 0);
+                new Intent(mContext, ViewGroupActivity.class), 0);
 
         //Add question ID to intent
 

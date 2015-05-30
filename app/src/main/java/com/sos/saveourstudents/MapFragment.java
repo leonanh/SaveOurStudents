@@ -539,7 +539,7 @@ public class MapFragment extends Fragment implements
 
         }
         else{
-            Intent mIntent = new Intent(mContext, ViewQuestionActivity.class);
+            Intent mIntent = new Intent(mContext, ViewGroupActivity.class);
             mIntent.putExtra("questionId", clickedQuestionId);
             startActivity(mIntent);
 

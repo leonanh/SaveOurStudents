@@ -33,33 +33,30 @@
         android:layout_marginLeft="4dp"
         android:textColor="@color/primary_text"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:layout_gravity="center_vertical"
-        />
+        android:layout_gravity="center_vertical" />
 
     <View
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <ImageView
-        android:id="@+id/view_group_members_thumbs_down"
+    <ImageButton
+        android:id="@+id/view_group_members_thumbs_up"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:layout_marginRight="24dp"
+        android:layout_marginRight="14dp"
         android:layout_gravity="center_vertical"
-        android:src="@drawable/ic_thumb_down_grey600_24dp"
-        android:tint="@color/divider_color"/>
+        android:background="@null" />
 
-    <ImageView
-        android:id="@+id/view_group_members_thumbs_up"
+    <ImageButton
+        android:id="@+id/view_group_members_thumbs_down"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
         android:layout_marginRight="34dp"
         android:layout_gravity="center_vertical"
-        android:src="@drawable/ic_thumb_up_grey600_24dp"
-        android:tint="@color/divider_color"/>
+        android:background="@null"/>
 
 
 

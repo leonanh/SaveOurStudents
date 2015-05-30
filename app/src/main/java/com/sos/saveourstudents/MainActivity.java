@@ -300,7 +300,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     fab.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
-                                            Intent mIntent = new Intent(MainActivity.this, ViewQuestionActivity.class);
+                                            Intent mIntent = new Intent(MainActivity.this, ViewGroupActivity.class);
                                             mIntent.putExtra("questionId", questionId);
                                             startActivityForResult(mIntent, EDIT_QUESTION);
                                         }

@@ -442,8 +442,12 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
 
                     try {
                         String questionId = mQuestionList.getJSONObject(getAdapterPosition()).getJSONObject("map").getString("question_id");
-                        Intent mIntent = new Intent(mContext, ViewQuestionActivity.class);
+                        String userId = mQuestionList.getJSONObject(getAdapterPosition()).getJSONObject("map").getString("user_id");
+                        Intent mIntent = new Intent(mContext, ViewGroupActivity.class);
                         mIntent.putExtra("questionId", questionId);
+
+                        String viewerUserId = sharedPref.getString("user_id", "");
+                        mIntent.putExtra("userId", viewerUserId);
                         startActivity(mIntent);
 
                     } catch (JSONException e) {

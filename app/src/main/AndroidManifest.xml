@@ -55,9 +55,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-      
-
-
 
         <activity android:name=".LoginActivity"/>
 
@@ -71,13 +68,6 @@
         <activity android:name=".MemberWantsToJoinActivity"/>
 
         <activity android:name=".SettingsActivity"/>
-
-        <activity android:name=".ViewQuestionActivity"/>
-
-
-
-
-
 
         <!-- FB login -->
         <activity
@@ -112,6 +102,14 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".ViewGroupActivity"
+            android:label="@string/title_activity_view_group"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.sos.saveourstudents.MainActivity" />
         </activity>
     </application>
 
