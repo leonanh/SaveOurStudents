@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rey.material.widget.FloatingActionButton;
 
@@ -189,6 +190,7 @@ public class ViewProfileFragment extends Fragment {
                 InputStream in = new java.net.URL(urldisplay).openStream();
                 mIcon11 = BitmapFactory.decodeStream(in);
             } catch (Exception e) {
+                mIcon11 = null;
                 Log.e("Profile Activity", e.getMessage());
                 e.printStackTrace();
             }
@@ -196,7 +198,10 @@ public class ViewProfileFragment extends Fragment {
         }
 
         protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
+            if (result != null) bmImage.setImageBitmap(result);
+            else {
+                bmImage.setImageResource(R.drawable.defaultprofile);
+            }
         }
     }
 
