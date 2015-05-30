@@ -55,31 +55,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-      
-
-
-
-        <activity android:name=".LoginActivity"/>
-
-        <activity android:name=".SignupActivity"/>
-
-        <activity android:name=".ForgotLoginActivity"/>
-
-        <activity android:name=".QuestionActivity"
-            android:windowSoftInputMode="stateHidden|adjustResize"/>
-
-
-        <activity android:name=".MemberJoinActivity"/>
-
-        <activity android:name=".SettingsActivity"/>
-
-
-
-
-
-
-
-
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".SignupActivity" />
+        <activity android:name=".ForgotLoginActivity" />
+        <activity
+            android:name=".QuestionActivity"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity android:name=".MemberJoinActivity" />
+        <activity android:name=".SettingsActivity" />
 
         <!-- FB login -->
         <activity
@@ -122,6 +105,10 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sos.saveourstudents.MainActivity" />
+        </activity>
+        <activity
+            android:name=".CreateQuestionActivity"
+            android:label="@string/title_activity_create_question" >
         </activity>
     </application>
 

@@ -30,7 +30,7 @@ public class QuestionActivity extends AppCompatActivity {
                     theFragToShow = new FragmentViewQuestion();
                 }
                 else{
-                    theFragToShow = new FragmentCreateQuestion();
+                    theFragToShow = new CreateQuestionFragment();
                 }
 
             }

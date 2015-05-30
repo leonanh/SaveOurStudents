@@ -1,5 +1,8 @@
 package com.sos.saveourstudents;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.location.Location;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -19,11 +22,15 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.maps.model.LatLng;
 import com.sos.saveourstudents.supportclasses.SlidingTabLayout;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -32,7 +39,7 @@ public class ViewGroupActivity extends AppCompatActivity
         ViewGroupMembersFragment.OnMemberRemoveListener {
 
     private static final int numPages = 3;
-    private static FragmentViewQuestion mFragmentViewQuestion;
+    private static ViewGroupQuestionFragment mFragmentViewQuestion;
     private static ViewGroupLocationFragment mViewGroupLocationFragment;
     private static ViewGroupMembersFragment mViewGroupMembersFragment;
     private static SlidingTabLayout mSlidingTabLayout;
@@ -58,7 +65,12 @@ public class ViewGroupActivity extends AppCompatActivity
     private static final String mUserURL =
             "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getUserById?userId=";
 
+    // Start of Deagan's adjustments
+    public JSONObject mQuestionInfo;
+    public ArrayList tags;
+    private boolean isEditable;
 
+    // End of Deagan's adjustments
 
     private String mUserId;
     private static final String mMembersUrl =
@@ -76,6 +88,19 @@ public class ViewGroupActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_group);
+
+        if(getIntent().getExtras() != null){
+            if(getIntent().getExtras().containsKey("questionId")){
+                mQuestionId = getIntent().getExtras().getString("questionId");
+            }
+            else{
+                System.out.println("Could not find QuestionId, finishing editQuestion");
+                finish();
+            }
+        }else{
+            System.out.println("Could not find QuestionId, finishing editQuestion");
+            finish();
+        }
 
         mCurrViewerIsInGroup = false; // Will be checked in JSON parsing
         mViewerUserId = getIntent().getStringExtra(mUserIdIntentsTag);
@@ -105,6 +130,75 @@ public class ViewGroupActivity extends AppCompatActivity
             });
         }
 
+        getQuestionData();
+
+
+    }
+
+    private void getQuestionData() {
+
+
+        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        params.add(new BasicNameValuePair("questionId", mQuestionId));
+
+        String paramString = URLEncodedUtils.format(params, "utf-8");
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/viewQuestion?"+paramString;
+
+
+        //System.out.println("url: " + url);
+
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
+                (JSONObject)null,
+                new Response.Listener<JSONObject>(){
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+
+                            JSONObject result = new JSONObject(response.toString());
+                            //System.out.println("edit questions result "+result);
+                            if(result.getString("success").equalsIgnoreCase("1")){
+
+
+
+
+                                String userImageUrl = "";
+                                if(mQuestionInfo.has("image"))
+                                    userImageUrl = mQuestionInfo.getString("image");
+
+
+                                String latitude = mQuestionInfo.getString("latitude");
+                                String longitude = mQuestionInfo.getString("longitude");
+
+                                Location location = new Location("new");
+                                location.setLongitude(Double.parseDouble(longitude));
+                                location.setLatitude(Double.parseDouble(latitude));
+
+
+
+                            }
+                            else{
+
+                                //Error...
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("Error with connection or url: " + error.toString());
+            }
+
+        });
+
+
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
 
     }
 
@@ -270,7 +364,7 @@ public class ViewGroupActivity extends AppCompatActivity
      */
     private void initializeAllViews() {
         // Assigning private variables to correct ViewGroups
-        mFragmentViewQuestion = new FragmentViewQuestion();
+        mFragmentViewQuestion = ViewGroupQuestionFragment.newInstance(mQuestionId, isEditable);
 
         mViewGroupLocationFragment = ViewGroupLocationFragment.newInstance(mCurrQuestion
                 .getmLocation());
@@ -336,14 +430,26 @@ public class ViewGroupActivity extends AppCompatActivity
                         .getJSONObject("map");
 
                 mUserId = theResponse.getString("user_id");
+                isEditable = mUserId.equals(mViewerUserId);
                 String getStudentUrl = mUserURL + mUserId;
-
 
                 mCurrQuestion = new Question(theResponse.getBoolean("study_group"),
                         theResponse.getBoolean("tutor"), new LatLng(
                         theResponse.getDouble("latitude"), theResponse.getDouble("longitude")),
                         theResponse.getBoolean("active"), null, theResponse.getString("text"));
                 mCurrQuestion.setmQuestionId(mQuestionId);
+
+                JSONArray questionAndTags = new JSONObject(response.toString())
+                        .getJSONObject("result").getJSONArray("myArrayList");
+
+                mQuestionInfo = questionAndTags.getJSONObject(0).getJSONObject("map");
+
+                tags = new ArrayList<>();
+                if(questionAndTags.length() > 1){
+                    for(int a = 1; a < questionAndTags.length(); a++){
+                        tags.add(questionAndTags.getJSONObject(a).getJSONObject("map").getString("tag"));
+                    }
+                }
 
                 JsonObjectRequest studentRequest = new JsonObjectRequest(Request.Method.GET,
                         getStudentUrl, (JSONObject) null,

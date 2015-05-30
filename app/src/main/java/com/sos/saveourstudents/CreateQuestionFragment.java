@@ -37,6 +37,7 @@ import com.rey.material.widget.EditText;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -46,11 +47,16 @@ import java.util.List;
 import java.util.Set;
 
 
-public class FragmentCreateQuestion extends Fragment implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener,
-        Response.Listener, Response.ErrorListener,TagDialogFragment.NoticeDialogListener {
-    public final int DIALOG_FRAGMENT = 1;
 
+public class CreateQuestionFragment extends Fragment implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener,
+        Response.Listener, Response.ErrorListener,TagDialogFragment.NoticeDialogListener {
+
+
+
+    public final int DIALOG_FRAGMENT = 1;
+    private String mQuestionId;
     private ArrayList<String> tagList;
+    private JSONObject mQuestionInfo;
 
     private SharedPreferences sharedPref;
     private Context mContext;
@@ -63,15 +69,27 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
     private ImageView sendButton, addTagsButton, locationToggle, groupToggle, tutorToggle;
     private TextView userName, requestGroupText, requestTutorText;
     private boolean showLocation = true;
+    private boolean isInEditMode = false; //For response back to edit question frag
     LayoutInflater inflater;
     View rootView;
 
+
+    public static CreateQuestionFragment newInstance(String questionId) {
+        CreateQuestionFragment fragment = new CreateQuestionFragment();
+        Bundle args = new Bundle();
+        args.putString("questionId", questionId);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public CreateQuestionFragment() {
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        mContext = this.getActivity();
+        mContext = getActivity();
         this.inflater = inflater;
 
         sharedPref = mContext.getSharedPreferences(
@@ -79,6 +97,7 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
 
         rootView = inflater.inflate(R.layout.fragment_create_question, container,
                 false);
+
 
         sendButton = (ImageView) rootView.findViewById(R.id.send_button);
         sendButton.setOnClickListener(this);
@@ -113,6 +132,15 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
         String name = sharedPref.getString("first_name", "") + " " + sharedPref.getString("last_name", "");
         userName.setText(name);
         getUserImage(sharedPref.getString("image", "image"), userImage);
+
+        if (getArguments() != null) {
+            mQuestionId = getArguments().getString("questionId");
+            if(!mQuestionId.equalsIgnoreCase("")){
+                getQuestionData();
+                isInEditMode = true;
+            }
+
+        }
 
 
         return rootView;
@@ -166,7 +194,7 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
     public void onClick(View v) {
 
         if(v == sendButton){
-            System.out.println("Location: " + mCurrentLocation);
+            //System.out.println("Location: " + mCurrentLocation);
 
             InputMethodManager imm = (InputMethodManager)mContext.getSystemService(
                     Context.INPUT_METHOD_SERVICE);
@@ -201,7 +229,7 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
             FragmentTransaction ft = getActivity().getFragmentManager().beginTransaction();
 
             DialogFragment newFragment = new TagDialogFragment(mContext, DIALOG_FRAGMENT);
-            newFragment.setTargetFragment(FragmentCreateQuestion.this, DIALOG_FRAGMENT);
+            newFragment.setTargetFragment(CreateQuestionFragment.this, DIALOG_FRAGMENT);
             Bundle listbundle = new Bundle();
             listbundle.putStringArrayList("list", tagList);
 
@@ -229,27 +257,85 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
 
 
         }
+    }
 
 
+    private void getQuestionData() {
+
+
+        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        params.add(new BasicNameValuePair("questionId", mQuestionId));
+
+        String paramString = URLEncodedUtils.format(params, "utf-8");
+
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/viewQuestion?"+paramString;
+
+
+        //System.out.println("url: " + url);
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
+                (JSONObject)null,
+                new Response.Listener<JSONObject>(){
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+
+                            JSONObject result = new JSONObject(response.toString());
+                            //System.out.println("edit questions result "+result);
+                            if(result.getString("success").equalsIgnoreCase("1")){
+
+
+                                JSONArray questionAndTags = result.getJSONObject("result").getJSONArray("myArrayList");
+
+                                mQuestionInfo = questionAndTags.getJSONObject(0).getJSONObject("map");
+                                tagList = new ArrayList<>();
+                                if(questionAndTags.length() > 1){
+                                    for(int a = 1; a < questionAndTags.length(); a++){
+                                        tagList.add(questionAndTags.getJSONObject(a).getJSONObject("map").getString("tag"));
+                                    }
+                                }
+
+                                showQuestionDetails();
+
+                            }
+                            else{
+                                //Error...
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("Error with connection or url: " + error.toString());
+            }
+
+        });
+
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
     }
 
 
 
     private void sendQuestionToServer(){
 
-
         double latitude = 0.0;
         double longitude = 0.0;
 
         if (mCurrentLocation == null) {
             if (getLastKnownLocation() != null) {
-                System.out.println("Using last known location, which is not current. So its probably wrong.");
+                //System.out.println("Using last known location, which is not current. So its probably wrong.");
                 mCurrentLocation = getLastKnownLocation();
                 latitude = mCurrentLocation.getLatitude();
                 longitude = mCurrentLocation.getLongitude();
             } else {
-                if (showLocation) {
-                    System.out.println("Error getting current or last known location. Unable to send this post");
+                if (showLocation && !isInEditMode) {
+                    //System.out.println("Error getting current or last known location. Unable to send this post");
                     Toast.makeText(mContext, "Unable to send this post", Toast.LENGTH_SHORT).show();
                     return;
                 } else {
@@ -266,10 +352,13 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
 
         List<NameValuePair> params = new LinkedList<NameValuePair>();
         params.add(new BasicNameValuePair("userId", sharedPref.getString("user_id", "")));
-        params.add(new BasicNameValuePair("latitude", latitude+""));
-        params.add(new BasicNameValuePair("longitude", longitude + ""));
+
+        if(!isInEditMode){
+            params.add(new BasicNameValuePair("latitude", latitude+""));
+            params.add(new BasicNameValuePair("longitude", longitude + ""));
+        }
+
         params.add(new BasicNameValuePair("text", questionEditText.getText().toString()));
-        params.add(new BasicNameValuePair("tags", topicEditText.getText().toString()));
 
         for (int a = 0; a < tagList.size(); a++) {
             params.add(new BasicNameValuePair("tags", tagList.get(a)));
@@ -281,10 +370,15 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
 
 
         String paramString = URLEncodedUtils.format(params, "utf-8").replace("+", "%20");
-        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createQuestion?"+paramString;
+
+        String url;
+        if(isInEditMode)
+            url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/editQuestion?"+paramString;
+        else
+            url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createQuestion?"+paramString;
 
 
-        System.out.println("url: " + url);
+        System.out.println("create/edit url: " + url);
 
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
@@ -304,13 +398,21 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
                                     Toast.makeText(mContext, "You already have an active post", Toast.LENGTH_SHORT).show();
                                 }
                                 else{
-                                    Toast.makeText(mContext, "Error creating question", Toast.LENGTH_SHORT).show();
+                                    if(isInEditMode)
+                                        Toast.makeText(mContext, "Error editing question", Toast.LENGTH_SHORT).show();
+                                    else
+                                        Toast.makeText(mContext, "Error creating question", Toast.LENGTH_SHORT).show();
+
                                 }
 
                             }
                             else{
-                                sendNotification("Successfully Created Question");
-                                getActivity().finish();
+                                if(isInEditMode)
+                                    sendNotification("Successfully Edited Question");
+                                else
+                                    sendNotification("Successfully Created Question");
+
+                                getActivity().finishActivity(getActivity().RESULT_OK);
                             }
 
                         } catch (JSONException e) {
@@ -323,14 +425,12 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
             @Override
             public void onErrorResponse(VolleyError error) {
 
-                System.out.println("Error: " + error.toString());
             }
 
         });
 
 
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
-
 
     }
 
@@ -400,7 +500,6 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
     public void onResponse(Object response) {
 
     }
-
 
 
     private void getUserImage(String imageUrl, final ImageView imageView){
@@ -481,5 +580,58 @@ public class FragmentCreateQuestion extends Fragment implements View.OnClickList
         mBuilder.setContentIntent(contentIntent);
         mNotificationManager.notify(12345, mBuilder.build());
     }
+
+
+
+
+    private void showQuestionDetails(){
+
+
+        System.out.println("ShowQuestionDetails: " +mQuestionInfo);
+
+        try {
+
+
+
+            boolean studyBool = mQuestionInfo.getBoolean("study_group");
+            boolean tutorBool = mQuestionInfo.getBoolean("tutor");
+
+            if(tutorBool)
+                clickTutorButton();
+
+            if(studyBool)
+                clickGroupButton();
+
+
+            questionEditText.setText(mQuestionInfo.getString("text"));
+            topicEditText.setText(mQuestionInfo.getString("topic"));
+
+
+            if(tagList.size() > 0){
+                addTagsButton.setColorFilter(getResources().getColor(R.color.primary_dark));
+            }
+
+
+
+            //TODO need visibility bool
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+
+
+
+
+
+
+    }
+
+
+
+
+
 
 }
