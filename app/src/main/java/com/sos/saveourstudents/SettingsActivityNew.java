@@ -1,8 +1,6 @@
 package com.sos.saveourstudents;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,24 +11,27 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.rey.material.app.DialogFragment;
+import com.rey.material.app.SimpleDialog;
 import com.rey.material.widget.Slider;
 import com.sos.saveourstudents.supportclasses.Validations;
 
 /**
  * Created by Xian on 5/19/2015.
  */
-public class SettingsActivity extends AppCompatActivity implements View.OnClickListener {
+public class SettingsActivityNew extends AppCompatActivity implements View.OnClickListener {
 
-    Validations validations = new Validations();
     Context appContext;
     Toolbar toolbar;
-    TextView distanceConfirmation;
     SharedPreferences sharedPref;
+    Validations validations = new Validations();
     String email;
     String curPassword;
     String enteredPW;
     String enteredPW2;
     int currdistance;
+
+
     Slider distanceSlider;
     Button emailButton;
     Button passwordButton;
@@ -38,11 +39,11 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     EditText password;
     EditText newPassword;
     EditText newPasswordReEnter;
+
     boolean validEmail;
     boolean validPassword;
     boolean correctPassword;
     TextView currDistanceDisplay;
-
     Toast prompt;
 
     @Override
@@ -51,16 +52,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         setContentView(R.layout.settings_layout);
         appContext = getApplicationContext();
 
-        sharedPref = getSharedPreferences(
-                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-
-        distanceSlider = (Slider) findViewById(R.id.distance_slider);
-        currDistanceDisplay = (TextView) findViewById(R.id.current_distance);
-        emailButton = (Button) findViewById(R.id.change_email);
-        passwordButton = (Button) findViewById(R.id.change_password);
 
         toolbar = (Toolbar) findViewById(R.id.settings_toolbar);
-
         toolbar.setTitle(R.string.app_name);
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
@@ -71,101 +64,93 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             }
         });
 
+        distanceSlider = (Slider) findViewById(R.id.distance_slider);
+        currDistanceDisplay = (TextView) findViewById(R.id.current_distance);
+        emailButton = (Button) findViewById(R.id.change_email);
+        passwordButton = (Button) findViewById(R.id.change_password);
+
+        sharedPref = getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         currdistance = sharedPref.getInt("distance", 1);
 
-        currDistanceDisplay.setText(currdistance+"");
+        currDistanceDisplay.setText(currdistance + "");
         distanceSlider.setPosition(currdistance, true);
         distanceSlider.setValue(currdistance, true);
         distanceSlider.setOnPositionChangeListener(new Slider.OnPositionChangeListener() {
             @Override
             public void onPositionChanged(Slider slider, float oldPos, float newPos, int oldValue, int newValue) {
-                currDistanceDisplay.setText(newValue+"");
-                if(newValue != oldValue)
-                {
-                    distanceConfirmation.setText("Distance Changed");
-                    distanceConfirmation.setTextColor(getResources().getColor(R.color.green));
-                }
+                currDistanceDisplay.setText(newValue + "");
+                //TODO Change with server
             }
 
         });
-
-
-
         emailButton.setOnClickListener(this);
         passwordButton.setOnClickListener(this);
     }
 
+
     @Override
     public void onClick(View v) {
-        if(v == emailButton) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Change Email");
-            newEmail = new EditText(this);
-            newEmail.setHint("New Email");
-            builder.setView(newEmail);
-            builder.setPositiveButton("Change Email", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
+        if (v == emailButton) {
+            SimpleDialog.Builder builder = new SimpleDialog.Builder() {
+                @Override
+                public void onPositiveActionClicked(DialogFragment fragment) {
+                    newEmail = (EditText) findViewById(R.id.new_email);
                     email = newEmail.getText().toString();
                     validEmail = verifyEmail(email);
-                    if(validEmail) {
+                    if (validEmail) {
                         // change with server
                         prompt = Toast.makeText(appContext, "Email Changed", Toast.LENGTH_SHORT);
                         prompt.show();
-                    }
-                    else
-                    {
+                    } else {
                         //toast invalid email
                         prompt = Toast.makeText(appContext, "Invalid Email", Toast.LENGTH_SHORT);
                         prompt.show();
                     }
+                    super.onPositiveActionClicked(fragment);
                 }
-            });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    // go back
+
+                @Override
+                public void onNegativeActionClicked(DialogFragment fragment) {
+                    super.onNegativeActionClicked(fragment);
                 }
-            });
-            AlertDialog dialog = builder.create();
-            dialog.show();
+            };
+            builder.title("Change Email");
+            builder.contentView(R.layout.email_settings_dialog);
+            builder.positiveAction("Change Email");
+            builder.negativeAction("Cancel");
         }
-        if(v == passwordButton) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Change Password");
-            password = new EditText(this);
-            password.setHint("Current Password");
-            builder.setView(password);
-            newPassword = new EditText(this);
-            newPassword.setHint("New Password");
-            builder.setView(newPassword);
-            newPasswordReEnter= new EditText(this);
-            newPasswordReEnter.setHint("Re-enter New Password");
-            builder.setView(newPasswordReEnter);
-            builder.setPositiveButton("Change Email", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
+        if (v == passwordButton) {
+            SimpleDialog.Builder builder = new SimpleDialog.Builder() {
+                @Override
+                public void onPositiveActionClicked(DialogFragment fragment) {
+                    password = (EditText) findViewById(R.id.current_password);
+                    newPassword = (EditText) findViewById(R.id.new_password);
+                    newPasswordReEnter = (EditText) findViewById(R.id.new_password_reeneter);
                     curPassword = password.getText().toString();
                     enteredPW = newPassword.getText().toString();
                     enteredPW2 = newPasswordReEnter.getText().toString();
                     correctPassword = true; // TODO check if password is correct
                     validPassword = verifyPassword(enteredPW, enteredPW2);
-                    if(validPassword && correctPassword)
-                    {
+                    if (validPassword && correctPassword) {
                         prompt = Toast.makeText(appContext, "Password Changed", Toast.LENGTH_SHORT);
                         prompt.show();
-                    }
-                    else
-                    {
+                    } else {
                         //toast invalid email
                         prompt.show();
                     }
+                    super.onPositiveActionClicked(fragment);
                 }
-            });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    // go back
+
+                @Override
+                public void onNegativeActionClicked(DialogFragment fragment) {
+                    super.onNegativeActionClicked(fragment);
                 }
-            });
-            AlertDialog dialog = builder.create();
-            dialog.show();
+            };
+            builder.title("Change Password");
+            builder.contentView(R.layout.password_settings_dialog);
+            builder.positiveAction("Change Password");
+            builder.negativeAction("Cancel");
         }
     }
 
@@ -182,12 +167,12 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             return false;
         }
 
-        if ( verifyPassword1 == Validations.INCORRECT_LENGTH_BOT) {
+        if (verifyPassword1 == Validations.INCORRECT_LENGTH_BOT) {
             prompt = Toast.makeText(appContext, "Invalid Password Length", Toast.LENGTH_SHORT);
             return false;
         }
 
-        if (verifyPassword1 == Validations.REPEAT_NOT_SAME){
+        if (verifyPassword1 == Validations.REPEAT_NOT_SAME) {
             prompt = Toast.makeText(appContext, "Passwords Do Not Match", Toast.LENGTH_SHORT);
             return false;
         }
@@ -198,3 +183,5 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         return true;
     }
 }
+
+

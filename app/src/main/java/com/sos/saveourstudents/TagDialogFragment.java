@@ -131,6 +131,7 @@ public class TagDialogFragment extends DialogFragment implements View.OnClickLis
         getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
 
 
+
         getDialog().setCancelable(true);
         getDialog().setCanceledOnTouchOutside(true);
 

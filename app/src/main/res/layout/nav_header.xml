@@ -46,7 +46,7 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/user_image_details"
+        android:id="@+id/question_image"
         app:border_color="@color/primary_light"
         app:border_width="1dp"
         android:layout_width="70dp"

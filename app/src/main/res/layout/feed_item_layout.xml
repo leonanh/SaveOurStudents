@@ -25,7 +25,7 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/user_image_details"
+                android:id="@+id/question_image"
                 app:border_color="@color/primary_light"
                 app:border_width="1dp"
                 android:layout_width="40dp"
@@ -67,26 +67,26 @@
 
 
         <TextView
-                android:id="@+id/timestamp_text"
+                android:id="@+id/question_timestamp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:text="3h"
                 android:textColor="@color/secondary_text"
-                android:layout_alignTop="@+id/user_image_details"
+                android:layout_alignTop="@+id/question_image"
                 android:gravity="right"
                 android:layout_marginRight="15dp"
                 android:paddingRight="5dp"
                 android:minWidth="40dp"/>
 
         <TextView
-            android:id="@+id/distance_text"
+            android:id="@+id/question_distance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:text="150m"
             android:textColor="@color/secondary_text"
-            android:layout_alignBottom="@+id/user_image_details"
+            android:layout_alignBottom="@+id/question_image"
             android:gravity="right"
             android:layout_marginRight="15dp"
             android:paddingRight="5dp"
@@ -99,15 +99,15 @@
             android:layout_height="match_parent"
             android:weightSum="2"
             android:orientation="vertical"
-            android:layout_alignBottom="@+id/user_image_details"
-            android:layout_alignTop="@+id/user_image_details"
-            android:layout_toRightOf="@+id/user_image_details"
+            android:layout_alignBottom="@+id/question_image"
+            android:layout_alignTop="@+id/question_image"
+            android:layout_toRightOf="@+id/question_image"
             android:layout_toLeftOf="@+id/group_icon">
 
 
 
             <TextView
-                android:id="@+id/name_text"
+                android:id="@+id/question_name_text"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -154,7 +154,7 @@
             android:layout_marginRight="20dp"
             android:layout_marginBottom="15dp"
             android:padding="3dp"
-            android:layout_toLeftOf="@+id/timestamp_text"
+            android:layout_toLeftOf="@+id/question_timestamp"
             android:tint="@color/hint_text_on_background"/>
 
         <!--

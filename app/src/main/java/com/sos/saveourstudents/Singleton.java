@@ -3,7 +3,6 @@ package com.sos.saveourstudents;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Typeface;
 import android.support.v4.util.LruCache;
 import android.text.TextUtils;
 
@@ -33,9 +32,6 @@ public class Singleton {
 	private RequestQueue mRequestQueue;
 	private ImageLoader mImageLoader;
 
-
-	//static Typeface face;
-	static public android.graphics.Typeface face;
 	/**
 	 * To initialize the class. It must be called before call the method getInstance()
 	 * @param ctx The Context used
@@ -43,8 +39,6 @@ public class Singleton {
 
 	public static void initialize(Context ctx) {
 		mContext = ctx;
-		face = Typeface.createFromAsset(mContext.getAssets(), "CODE Bold.otf");
-		//buildGoogleApiClient();
 	}
 
 

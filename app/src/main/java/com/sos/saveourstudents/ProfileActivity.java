@@ -51,7 +51,7 @@ public class ProfileActivity extends AppCompatActivity
         if (toolbar != null) {
             toolbar.setTitle(R.string.app_name);
             setSupportActionBar(toolbar);
-            toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_18dp);
+            toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -59,7 +59,7 @@ public class ProfileActivity extends AppCompatActivity
                 }
             });
         }
-   }
+    }
 
     /**
      * Overrides onBackPressed()
@@ -155,10 +155,16 @@ public class ProfileActivity extends AppCompatActivity
                         .getJSONArray("myArrayList")
                         .getJSONObject(0)
                         .getJSONObject("map");
+
+
+                String imageUrl = "";
+                if(theResponse.has("image"))
+                    imageUrl = theResponse.getString("image");
+
                 mCurrStudent = new Student(theResponse.getString("first_name"),
                         theResponse.getString("last_name"), theResponse.getInt("rating"),
                         theResponse.getString("school"), theResponse.getString("major"),
-                        theResponse.getString("description"), null);
+                        theResponse.getString("description"), imageUrl);
 
                 mViewProfileFragment = ViewProfileFragment.newInstance(mCurrStudent,
                         isCurrentlyTheUser());
@@ -180,4 +186,6 @@ public class ProfileActivity extends AppCompatActivity
 
         }
     }
+
+
 }

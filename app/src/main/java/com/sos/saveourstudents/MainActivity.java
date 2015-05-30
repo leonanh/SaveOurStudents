@@ -39,6 +39,9 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private final int PROFILE_ACTIVITY = 505;
+    private final int CREATE_QUESTION = 987;
+    private final int EDIT_QUESTION = 567;
     private boolean fabShowing = false;
 
     ViewPager mViewPager;
@@ -47,7 +50,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ViewPagerAdapter viewPagerAdapter;
     RecyclerView mRecyclerView;                           // Declaring RecyclerView
     RecyclerView.Adapter mAdapter;                        // Declaring Adapter For Recycler View
-    RecyclerView.LayoutManager mLayoutManager;            // Declaring Layout Manager as a linear layout manager
     DrawerLayout mDrawer;                                 // Declaring DrawerLayout
 
     ActionBarDrawerToggle mDrawerToggle;
@@ -112,12 +114,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String name = sharedPref.getString("first_name", "") + " "+ sharedPref.getString("last_name", "");
         mAdapter = new NavDrawerAdapter(TITLES, ICONS, name, sharedPref.getString("email", "email"), sharedPref.getString("image", "image"));//PROFILEIMAGE
 
-
         mRecyclerView.setAdapter(mAdapter);                              // Setting the adapter to RecyclerView
 
 
-        mLayoutManager = new LinearLayoutManager(this);                 // Creating a layout Manager
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
                     //Nav drawer listener
@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if(position == 1){
                             Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
                             intent.putExtra("userId", sharedPref.getString("user_id", ""));
-                            startActivity(intent);
+                            startActivityForResult(intent, PROFILE_ACTIVITY);
 
                         }
                         else if(position == 2){
@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             finish();
                         }
                         else if(position == 3){
-                            Intent intent = new Intent(MainActivity.this,SettingsActivity.class);
+                            Intent intent = new Intent(MainActivity.this,SettingsActivityNew.class);
                             startActivity(intent);
                         }
 
@@ -168,6 +168,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onResume() {
+        System.out.println("OnResume Main");
         super.onResume();
     }
 
@@ -204,19 +205,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        int id = item.getItemId();
-
-
-        if (id == R.id.action_filter) {
-
+        if (item.getItemId() == R.id.action_filter) {
             TagDialogFragment newFragment = new TagDialogFragment(this, 0);
             newFragment.show(getSupportFragmentManager(), "");
 
         }
 
-        else if (id == R.id.add_member) {
-
-            Intent mIntent = new Intent(this, MemberJoinActivity.class);
+        else if (item.getItemId() == R.id.add_member) {
+            Intent mIntent = new Intent(this, MemberWantsToJoinActivity.class);
             startActivity(mIntent);
         }
 
@@ -251,24 +247,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         updateFeedFragment();
     }
     private void updateMapFragment(){
-        ((FragmentMap) viewPagerAdapter.getItem(1)).getLocationUpdate();
+        ((MapFragment) viewPagerAdapter.getItem(1)).getLocationUpdate();
     }
     private void updateFeedFragment(){
-        ((FragmentFeed) viewPagerAdapter.getItem(0)).getQuestionData();
+        ((FeedFragment) viewPagerAdapter.getItem(0)).getLocationUpdate();
     }
 
 
     @Override
     public void onClick(View v) {
-        //System.out.println("clicked tabs: ");
+        System.out.println("clicked tabs: ");
     }
 
 
     private void buildFab(){
-
-        //TODO Does user have active question?
         getQuestionActiveStatus();
-
     }
 
 
@@ -293,23 +286,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void onResponse(JSONObject response) {
                         try {
 
-                            JSONObject result = new JSONObject(response.toString());
+                            final JSONObject result = new JSONObject(response.toString());
                             System.out.println("has questions result "+result);
+
                             if(!result.getString("success").equalsIgnoreCase("1")){
                                 //Error...
 
                             }
                             else{
 
-                                //Edit Question
                                 if(result.getString("expectResults").equalsIgnoreCase("1")){
+                                    final String questionId = result.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("question_id");
                                     fab.setIcon(getResources().getDrawable(R.drawable.ic_create_white_18dp), false);
                                     fab.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
-                                            Intent mIntent = new Intent(MainActivity.this, QuestionActivity.class);
-                                            mIntent.putExtra("type", 1);
-                                            startActivity(mIntent);
+                                            Intent mIntent = new Intent(MainActivity.this, ViewQuestionActivity.class);
+                                            mIntent.putExtra("questionId", questionId);
+                                            startActivityForResult(mIntent, EDIT_QUESTION);
                                         }
                                     });
                                 }
@@ -319,9 +313,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     fab.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
-                                            Intent mIntent = new Intent(MainActivity.this, QuestionActivity.class);
-                                            mIntent.putExtra("type", 1);
-                                            startActivity(mIntent);
+                                            Intent mIntent = new Intent(MainActivity.this, CreateQuestionActivity.class); //TODO rename, dialogize
+                                            mIntent.putExtra("questionId", "");
+                                            startActivityForResult(mIntent, CREATE_QUESTION);
                                         }
                                     });
                                 }
@@ -351,6 +345,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == EDIT_QUESTION) {
+            System.out.println("Returned from edit Question");
+            updateFragments();
+            if (resultCode == RESULT_OK) {
+                System.out.println("Returned from edit Question ok");
+            }
+        }
+
+        else if (requestCode == CREATE_QUESTION) {
+            // Make sure the request was successful
+            buildFab();
+            System.out.println("Returned from create Question");
+            if (resultCode == RESULT_OK) {
+                System.out.println("Returned from create Question ok");
+            }
+        }
+        else if(requestCode == PROFILE_ACTIVITY){
+            updateNavDrawer();
+            updateFragments();
+        }
+
+    }
+
+
+    private void updateNavDrawer(){
+        String name = sharedPref.getString("first_name", "") + " "+ sharedPref.getString("last_name", "");
+        mAdapter = new NavDrawerAdapter(TITLES, ICONS, name, sharedPref.getString("email", "email"), sharedPref.getString("image", "image"));
+        mRecyclerView.setAdapter(mAdapter);
+    }
 
 
 
@@ -366,8 +392,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
  */
 class ViewPagerAdapter extends FragmentPagerAdapter {
 
-    FragmentFeed feed = new FragmentFeed();
-    FragmentMap map = new FragmentMap();
+    FeedFragment feed = new FeedFragment();
+    MapFragment map = new MapFragment();
     String[] tabNames = {"Feed", "Map"};
 
 
