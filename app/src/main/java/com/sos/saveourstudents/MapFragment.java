@@ -211,6 +211,7 @@ public class MapFragment extends Fragment implements
                             showOverlays();
                             stopLocationUpdates();
 
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -380,10 +381,12 @@ public class MapFragment extends Fragment implements
     }
 
     protected void createLocationRequest() {
+        System.out.println("Creating new locationRequest in maps");
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(10000);
         mLocationRequest.setFastestInterval(5000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        startLocationUpdates();
     }
 
     @Override
@@ -391,14 +394,12 @@ public class MapFragment extends Fragment implements
         mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
 
-        //System.out.println("Connected to GoogleApi: " + mCurrentLocation);
         getLocationUpdate();
 
     }
 
     public void getLocationUpdate(){
         createLocationRequest();
-        startLocationUpdates();
     }
 
     @Override
@@ -423,8 +424,8 @@ public class MapFragment extends Fragment implements
 
     protected void stopLocationUpdates() {
         System.out.println("Stopping location updates in map");
-        LocationServices.FusedLocationApi.removeLocationUpdates(
-                mGoogleApiClient, this);
+        LocationServices.FusedLocationApi.removeLocationUpdates( mGoogleApiClient, this);
+        mLocationRequest = null; //TODO
     }
 
     @Override

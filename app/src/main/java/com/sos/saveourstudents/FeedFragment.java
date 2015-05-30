@@ -97,11 +97,12 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
         });
 
         mSwipeRefreshLayout.setColorSchemeColors(
-                Color.RED, Color.GREEN, Color.BLUE, Color.CYAN);
+                Color.RED, Color.GREEN, Color.BLUE, Color.BLACK);
 
         sharedPref = mContext.getSharedPreferences(
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
+        //Initial Swipe to refresh workaround
         TypedValue typed_value = new TypedValue();
         getActivity().getTheme().resolveAttribute(android.support.v7.appcompat.R.attr.actionBarSize, typed_value, true);
         mSwipeRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(typed_value.resourceId));
@@ -275,14 +276,17 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
     public void getLocationUpdate(){
         mSwipeRefreshLayout.setRefreshing(true);
         createLocationRequest();
-        startLocationUpdates();
+
     }
 
 
 
     protected void startLocationUpdates() {
-        LocationServices.FusedLocationApi.requestLocationUpdates(
-                mGoogleApiClient, mLocationRequest, this);
+        if(mGoogleApiClient == null){
+            buildGoogleApiClient();
+        }else
+            LocationServices.FusedLocationApi.requestLocationUpdates(
+                    mGoogleApiClient, mLocationRequest, this);
     }
 
     protected void stopLocationUpdates() {
@@ -292,10 +296,12 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
     }
 
     protected void createLocationRequest() {
+        System.out.println("Creating new locationRequest in feed");
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(10000);
         mLocationRequest.setFastestInterval(5000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        startLocationUpdates();
     }
 
 
