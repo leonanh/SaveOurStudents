@@ -149,7 +149,6 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
         return rootView;
     }
 
-
     private void getQuestionData() {
 
 
@@ -595,6 +594,7 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
         List<NameValuePair> params = new LinkedList<NameValuePair>();
         params.add(new BasicNameValuePair("questionId", mQuestionId));
         params.add(new BasicNameValuePair("userId", sharedPref.getString("user_id", "")));
+
         params.add(new BasicNameValuePair("comment", commentEditText.getText().toString()));
 
         String paramString = URLEncodedUtils.format(params, "utf-8").replace("+", "%20");
@@ -695,7 +695,15 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
         if (requestCode == EDIT_QUESTION) {
             // Make sure the request was successful
             if (resultCode == getActivity().RESULT_OK) {
-                System.out.println("Returned from edit Question ok");
+                ((ViewQuestionActivity) getActivity()).getQuestionData();
+                mQuestionInfo = ((ViewQuestionActivity) getActivity()).mQuestionInfo;
+                tags = ((ViewQuestionActivity) getActivity()).tags;
+                try {
+                    showQuestionDetails(mQuestionInfo);
+                    showQuestionTags(tags);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

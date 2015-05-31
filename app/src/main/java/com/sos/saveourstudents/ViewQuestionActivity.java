@@ -3,6 +3,7 @@ package com.sos.saveourstudents;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
@@ -49,10 +50,14 @@ public class ViewQuestionActivity extends AppCompatActivity {
     public ArrayList tags;
     private boolean isEditable;
 
+    private boolean menuIsBuilt;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_group);
+
+        menuIsBuilt = false;
 
 
         if(getIntent().getExtras() != null){
@@ -91,11 +96,9 @@ public class ViewQuestionActivity extends AppCompatActivity {
         getQuestionData();
 
 
-
-
     }
 
-    private void getQuestionData() {
+    public void getQuestionData() {
 
 
         List<NameValuePair> params = new LinkedList<NameValuePair>();
@@ -182,9 +185,10 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
     private void buildFragments(Location location, String userImageUrl, boolean isEditable){
 
-
-
-        onCreateOptionsMenu(menu);
+        if (!menuIsBuilt) {
+            onCreateOptionsMenu(menu);
+            menuIsBuilt = true;
+        }
 
         mViewGroupPagerAdapter = new ViewGroupPagerAdapter(getSupportFragmentManager(), location, userImageUrl, isEditable);
 
@@ -234,7 +238,10 @@ public class ViewQuestionActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
     private void showCloseGroupDialog(){
 
