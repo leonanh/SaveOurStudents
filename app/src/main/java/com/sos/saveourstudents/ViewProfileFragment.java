@@ -1,11 +1,12 @@
 package com.sos.saveourstudents;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.rey.material.widget.FloatingActionButton;
 
@@ -38,6 +38,7 @@ public class ViewProfileFragment extends Fragment {
 
     private OnEditButtonListener mListener;
     private ImageView mProfileImage;
+    private ImageView mCoverImageView;
 
     /**
      * Use this factory method to create a new instance of
@@ -76,13 +77,16 @@ public class ViewProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_view_profile, container, false);
+        mProfileImage = (ImageView) rootView.findViewById(R.id.profile_image);
+        mCoverImageView = (ImageView) rootView.findViewById(R.id.cover_image);
         return rootView;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mProfileImage = (ImageView) getActivity().findViewById(R.id.profile_image);
+
+        updateCoverImage();
         updateCurrentStudentView();
 
         LinearLayout aboutMeContents = (LinearLayout) getActivity()
@@ -134,6 +138,10 @@ public class ViewProfileFragment extends Fragment {
         ((TextView) getActivity().findViewById(R.id.profile_myDescription))
                 .setText(mCurrStudent.getDescription());
 
+
+
+
+            //TODO
         if (mCurrStudent.getProfilePictureUrl().equals(null) ||
                 mCurrStudent.getProfilePictureUrl().isEmpty()) {
             mProfileImage.setImageResource(R.drawable.defaultprofile);
@@ -143,6 +151,14 @@ public class ViewProfileFragment extends Fragment {
                     .execute(mCurrStudent.getProfilePictureUrl());
             mCurrStudent.setProfilePicture(mProfileImage);
         }
+    }
+
+    private void updateCoverImage(){
+        if(mIsCurrentUser)
+            mCoverImageView.setImageResource(getActivity().getSharedPreferences(
+                    getString(R.string.preference_file_key), Context.MODE_PRIVATE)
+                    .getInt("cover_photo", R.drawable.materialwallpaperdefault));
+
     }
 
     @Override

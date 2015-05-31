@@ -91,8 +91,8 @@
                     <com.rey.material.widget.Slider
                         android:id="@+id/distance_slider"
                         style="@style/Material.Widget.Slider.Discrete"
-                        app:sl_maxValue="10"
-                        app:sl_minValue="0"
+                        app:sl_maxValue="30"
+                        app:sl_minValue="1"
                         app:sl_primaryColor="@color/primary"
                         app:sl_secondaryColor="@color/secondary_text"
                         app:sl_stepValue="1"
@@ -100,11 +100,31 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="15dp"
-                        android:layout_marginRight="5dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="10dp"
                         android:layout_toLeftOf="@id/current_distance"
                         android:gravity="center" />
+
+
+
                 </RelativeLayout>
+
+                <com.rey.material.widget.Spinner
+                    style="@style/Material.Widget.Spinner.Light"
+                    android:id="@+id/cover_spinner"
+                    android:layout_below="@+id/slidercontainer"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="128dp"
+                    app:rd_style="@style/Material.Drawable.Ripple.Wave.Light"
+                    app:rd_enable="true"
+                    app:spn_labelEnable="true"
+                    app:spn_label="Cover image"
+                    app:spn_arrowSwitchMode="true"
+                    app:spn_arrowAnimDuration="@android:integer/config_shortAnimTime"
+                    app:spn_arrowInterpolator="@android:anim/decelerate_interpolator"/>
 
             </RelativeLayout>
         </ScrollView>

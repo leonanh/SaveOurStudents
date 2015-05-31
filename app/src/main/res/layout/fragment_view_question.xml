@@ -202,7 +202,7 @@
                 android:layout_margin="10dp"
                 android:text="Comments"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                android:textColor="@android:color/black" />
+                android:textColor="@android:color/black"/>
 
 
             <android.support.v7.widget.RecyclerView
@@ -226,7 +226,7 @@
                 app:et_dividerColor="@color/primary"
                 android:paddingBottom="3dp"
                 app:et_dividerHeight="2dp"
-                app:et_dividerPadding="3dp" />
+                app:et_dividerPadding="3dp"/>
 
 
 

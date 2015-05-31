@@ -22,6 +22,7 @@
             android:layout_height="235dp">
 
             <ImageView
+                android:id="@+id/cover_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:adjustViewBounds="false"

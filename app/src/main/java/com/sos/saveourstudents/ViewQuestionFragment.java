@@ -339,7 +339,7 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
             if(currentUserId.equalsIgnoreCase(userId)){
                 //owner
-                fabButton.setIcon(getResources().getDrawable(R.drawable.ic_create_white_18dp), false);
+                fabButton.setIcon(getResources().getDrawable(R.drawable.ic_create_white_24dp), false);
                 fabButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

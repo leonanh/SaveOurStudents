@@ -57,7 +57,8 @@ public class EditProfileFragment extends Fragment {
     private EditText mEditDescription;
     private android.widget.EditText mEditDescriptionInput;
 
-    private ImageView mProfilePicture;
+    private ImageView mCoverImageView;
+    private ImageView mProfileImage;
     private String mProfilePictureUrl;
 
     private FloatingActionButton doneButton;
@@ -95,8 +96,13 @@ public class EditProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_edit_profile, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_edit_profile, container, false);
+        mProfileImage = (ImageView) rootView.findViewById(R.id.profile_editImage);
+        mCoverImageView = (ImageView) rootView.findViewById(R.id.cover_image);
+        mCoverImageView.setImageResource(getActivity().getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE)
+                .getInt("cover_photo", R.drawable.materialwallpaperdefault));
+        return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -170,8 +176,8 @@ public class EditProfileFragment extends Fragment {
         mEditMajorInput.setText(mCurrStudent.getMajor());
         mEditDescriptionInput.setText(mCurrStudent.getDescription());
 
-        mProfilePicture = (ImageView) getActivity().findViewById(R.id.profile_editImage);
-        mProfilePicture.setImageDrawable(mCurrStudent.getProfilePicture().getDrawable());
+        //mProfileImage = (ImageView) getActivity().findViewById(R.id.profile_editImage);
+        mProfileImage.setImageDrawable(mCurrStudent.getProfilePicture().getDrawable());
         mProfilePictureUrl = mCurrStudent.getProfilePictureUrl();
 
     }
@@ -188,7 +194,7 @@ public class EditProfileFragment extends Fragment {
         mCurrStudent.setSchool(mEditSchoolInput.getText().toString());
         mCurrStudent.setMajor(mEditMajorInput.getText().toString());
         mCurrStudent.setDescription(mEditDescriptionInput.getText().toString());
-        mCurrStudent.setProfilePicture(mProfilePicture);
+        mCurrStudent.setProfilePicture(mProfileImage);
         mCurrStudent.setProfilePictureUrl(mProfilePictureUrl);
 
         String newFirstName = "";
@@ -265,7 +271,7 @@ public class EditProfileFragment extends Fragment {
      * Initializes OnClickListener for the editable profile picture
      */
     private void initializeProfileImageEdit() {
-        mProfilePicture.setOnClickListener(new View.OnClickListener() {
+        mProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -275,7 +281,7 @@ public class EditProfileFragment extends Fragment {
                         .input("Image URL", mProfilePictureUrl, new MaterialDialog.InputCallback() {
                             @Override
                             public void onInput(MaterialDialog materialDialog, CharSequence charSequence) {
-                                getUserImage(charSequence.toString(), mProfilePicture);
+                                getUserImage(charSequence.toString(), mProfileImage);
                             }
                         }).show();
 
@@ -284,7 +290,6 @@ public class EditProfileFragment extends Fragment {
 
         });
     }
-
 
 
     private void getUserImage(final String imageUrl, final ImageView imageView){
@@ -304,7 +309,7 @@ public class EditProfileFragment extends Fragment {
                     imageView.setImageBitmap(response.getBitmap());
                     mProfilePictureUrl = imageUrl;
                 } else {
-                    //Toast.makeText(getActivity(), "Error processing your image URL", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Error processing your image URL", Toast.LENGTH_SHORT).show();
                 }
 
             }

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -23,10 +24,9 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
     private int mIcons[];       // Int Array to store the passed icons resource value from MainActivity.java
 
     private String name;        //String Resource for header View Name
-    //private int profile;        //int Resource for header view profile picture
+    private int coverPhotoResourceId;
     private String userImageUrl;
     private String email;       //String Resource for header view email
-
 
 
 
@@ -36,10 +36,10 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
     public class ViewHolder extends RecyclerView.ViewHolder {
         int holderid;
 
-        //RippleView itemLayout;
         TextView textView;
         ImageView imageView;
         ImageView profile;
+        RelativeLayout coverPhoto;
         TextView name;
         TextView email;
 
@@ -54,10 +54,11 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                 holderid = 1;                                               // setting holder id as 1 as the object being populated are of type item row
 
             } else {
-                name = (TextView) itemView.findViewById(R.id.name);         // Creating Text View object from header.xml for name
-                email = (TextView) itemView.findViewById(R.id.email);       // Creating Text View object from header.xml for email
-                profile = (ImageView) itemView.findViewById(R.id.question_image);// Creating Image view object from header.xml for profile pic
-                holderid = 0;                                                // Setting holder id = 0 as the object being populated are of type header view
+                name = (TextView) itemView.findViewById(R.id.name);
+                email = (TextView) itemView.findViewById(R.id.email);
+                profile = (ImageView) itemView.findViewById(R.id.question_image);
+                coverPhoto = (RelativeLayout) itemView.findViewById(R.id.cover_layout);
+                holderid = 0;
             }
 
         }
@@ -66,13 +67,13 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
     }
 
 
-    public NavDrawerAdapter(String Titles[], int Icons[], String Name, String Email, String userImageUrl ) { //int Profile MyAdapter Constructor with titles and icons parameter
-        // titles, icons, name, email, profile pic are passed from the main activity as we
+    public NavDrawerAdapter(String Titles[], int Icons[], String Name, String Email, String userImageUrl, int coverPhoto ) {
+
         mNavTitles = Titles;
         mIcons = Icons;
         name = Name;
         email = Email;
-
+        coverPhotoResourceId = coverPhoto;
         this.userImageUrl = userImageUrl;
 
     }
@@ -98,9 +99,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
 
     }
 
-    //Next we override a method which is called when the item in a row is needed to be displayed, here the int position
-    // Tells us item at which position is being constructed to be displayed and the holder id of the holder object tell us
-    // which view type is being created 1 for item row
+
     @Override
     public void onBindViewHolder(NavDrawerAdapter.ViewHolder holder, int position) {
         if (holder.holderid == 1) {                              // as the list view is going to be called after the header view so we decrement the
@@ -109,8 +108,8 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
             holder.imageView.setImageResource(mIcons[position - 1]);// Settimg the image with array of our icons
         } else {
 
-            System.out.println("UserImage url: "+userImageUrl);
-            //holder.profile.setImageResource(profile);           // Similarly we set the resources for header view
+            System.out.println("cover resource : "+coverPhotoResourceId);
+            holder.coverPhoto.setBackgroundResource(coverPhotoResourceId);
             getUserImage(userImageUrl, holder.profile);
             holder.name.setText(name);
             holder.email.setText(email);

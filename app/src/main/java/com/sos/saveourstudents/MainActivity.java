@@ -39,6 +39,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private final int SETTINGS_ACTIVITY = 363;
     private final int PROFILE_ACTIVITY = 505;
     private final int CREATE_QUESTION = 987;
     private final int EDIT_QUESTION = 567;
@@ -111,11 +112,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mRecyclerView.setHasFixedSize(true);                            // Letting the system know we wont change the size of the list
 
+        updateNavDrawer();
+        /*
         String name = sharedPref.getString("first_name", "") + " "+ sharedPref.getString("last_name", "");
-        mAdapter = new NavDrawerAdapter(TITLES, ICONS, name, sharedPref.getString("email", "email"), sharedPref.getString("image", "image"));//PROFILEIMAGE
+        mAdapter = new NavDrawerAdapter(TITLES, ICONS, name,
+                sharedPref.getString("email", "email"),
+                sharedPref.getString("image", "image"),
+                sharedPref.getInt("cover_photo", R.drawable.materialwallpaperdefault));
 
         mRecyclerView.setAdapter(mAdapter);                              // Setting the adapter to RecyclerView
-
+*/
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.addOnItemTouchListener(
@@ -137,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                         else if(position == 3){
                             Intent intent = new Intent(MainActivity.this,SettingsActivityNew.class);
-                            startActivity(intent);
+                            startActivityForResult(intent, SETTINGS_ACTIVITY);
                         }
 
                     }
@@ -297,7 +303,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                                 if(result.getString("expectResults").equalsIgnoreCase("1")){
                                     final String questionId = result.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("question_id");
-                                    fab.setIcon(getResources().getDrawable(R.drawable.ic_create_white_18dp), false);
+                                    fab.setIcon(getResources().getDrawable(R.drawable.ic_create_white_24dp), false);
                                     fab.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
@@ -368,14 +374,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             updateNavDrawer();
             updateFragments();
         }
+        else if(requestCode == SETTINGS_ACTIVITY){
+            updateNavDrawer();
+        }
+
 
     }
 
 
     private void updateNavDrawer(){
+
+        //System.out.println("materialWallpareID?: "+R.drawable.materialwallpaperdefault);
+
         String name = sharedPref.getString("first_name", "") + " "+ sharedPref.getString("last_name", "");
-        mAdapter = new NavDrawerAdapter(TITLES, ICONS, name, sharedPref.getString("email", "email"), sharedPref.getString("image", "image"));
+        mAdapter = new NavDrawerAdapter(TITLES, ICONS, name,
+                sharedPref.getString("email", "email"),
+                sharedPref.getString("image", "image"),
+                sharedPref.getInt("cover_photo", R.drawable.materialwallpaperdefault));
+
         mRecyclerView.setAdapter(mAdapter);
+
+
     }
 
 

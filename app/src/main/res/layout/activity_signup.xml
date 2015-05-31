@@ -104,7 +104,7 @@
             app:et_supportTextErrorColor="#FFFF0000"
             android:textCursorDrawable="@null"/>
 
-        <com.rey.material.widget.EditText xmlns:app="http://schemas.android.com/apk/res-auto"
+        <com.rey.material.widget.EditText
             android:id="@+id/signup_password_textfield"
             style="@style/Material.Widget.EditText.Light"
             android:layout_width="match_parent"
