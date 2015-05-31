@@ -12,7 +12,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.sos.saveourstudents.MemberJoinActivity;
+import com.sos.saveourstudents.MemberWantsToJoinActivity;
 import com.sos.saveourstudents.R;
 
 /**
@@ -80,7 +80,7 @@ public class GcmIntentService extends IntentService {
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, MemberJoinActivity.class), 0);
+                new Intent(this, MemberWantsToJoinActivity.class), 0);
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)

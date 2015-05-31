@@ -611,7 +611,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 "email=" + email +
                 "&password=" + Singleton.get_SHA_1_SecurePassword(password);
 
-
+        System.out.println("Login url: " + url);
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url,
                 (JSONObject) null, new Response.Listener<JSONObject>() {
             @Override
@@ -627,7 +627,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         editor.putString("first_name", response.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("first_name"));
                         editor.putString("last_name", response.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("last_name"));
                         editor.putString("email", response.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("email"));
-                        editor.putString("image", response.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("image"));
+
+                        if(response.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").has("image"))
+                            editor.putString("image", response.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("image"));
+
                         editor.putString("user_id", response.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("user_id"));
                         editor.putString("provider", provider);
                         editor.commit();
