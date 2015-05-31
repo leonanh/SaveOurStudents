@@ -249,14 +249,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void updateFragments(){
-        updateMapFragment();
-        updateFeedFragment();
-    }
-    private void updateMapFragment(){
-        ((MapFragment) viewPagerAdapter.getItem(1)).getLocationUpdate();
-    }
-    private void updateFeedFragment(){
-        ((FeedFragment) viewPagerAdapter.getItem(0)).getLocationUpdate();
+        viewPagerAdapter.notifyDataSetChanged();
     }
 
 
@@ -269,7 +262,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void buildFab(){
         getQuestionActiveStatus();
     }
-
 
 
     private void getQuestionActiveStatus(){
@@ -411,13 +403,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
  */
 class ViewPagerAdapter extends FragmentPagerAdapter {
 
-    FeedFragment feed = new FeedFragment();
-    MapFragment map = new MapFragment();
+    private Fragment
+            feedFragment,
+            mapFragment;
+
+    //FeedFragment feed = new FeedFragment();
+    //MapFragment map = new MapFragment();
     String[] tabNames = {"Feed", "Map"};
 
 
     public ViewPagerAdapter(FragmentManager fm) {
         super(fm);
+        feedFragment = FeedFragment.newInstance();
+        mapFragment = MapFragment.newInstance();
     }
 
     @Override
@@ -428,10 +426,10 @@ class ViewPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if(position == 0){
-            return feed;
+            return feedFragment;
         }
         else{
-            return map;
+            return mapFragment;
         }
 
 

@@ -60,43 +60,46 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
     private GoogleApiClient mGoogleApiClient;
 
     private RecycleViewAdapter mAdapter;
-
+    private View rootView;
     RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     Context mContext;
 
     private JSONArray mQuestionList;
 
+
+
+    public static FeedFragment newInstance() {
+        FeedFragment fragment = new FeedFragment();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public FeedFragment() {
+        // Required empty public constructor
+    }
+
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_feed_layout, container,
+        rootView = inflater.inflate(R.layout.fragment_feed_layout, container,
                 false);
 
 
-        mContext = this.getActivity().getBaseContext();
+        mContext = getActivity();
 
         if(!Singleton.hasBeenInitialized()){
             Singleton.initialize(mContext);
         }
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.my_recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
+        initializeRecyclerView();
 
-        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getLocationUpdate();
-            }
-        });
-
-        mSwipeRefreshLayout.setColorSchemeColors(
-                Color.RED, Color.GREEN, Color.BLUE, Color.BLACK);
 
         sharedPref = mContext.getSharedPreferences(
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
@@ -123,6 +126,27 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
 
 
         return rootView;
+    }
+
+    private void initializeRecyclerView() {
+
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.my_recycler_view);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getLocationUpdate();
+            }
+        });
+
+        mSwipeRefreshLayout.setColorSchemeColors(
+                Color.RED, Color.GREEN, Color.BLUE, Color.BLACK);
+
+
     }
 
 

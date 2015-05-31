@@ -186,7 +186,6 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
         onCreateOptionsMenu(menu);
 
-
         mViewGroupPagerAdapter = new ViewGroupPagerAdapter(getSupportFragmentManager(), location, userImageUrl, isEditable);
 
         // Setting up sliding tabs feature
@@ -272,7 +271,7 @@ public class ViewQuestionActivity extends AppCompatActivity {
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/removeGroup?"+paramString;
 
 
-        System.out.println("url: " + url);
+        //System.out.println("url: " + url);
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
                 (JSONObject)null,
@@ -283,7 +282,7 @@ public class ViewQuestionActivity extends AppCompatActivity {
                         try {
 
                             JSONObject result = new JSONObject(response.toString());
-                            System.out.println("remove group result: "+result);
+                            //System.out.println("remove group result: "+result);
                             if(result.getString("success").equalsIgnoreCase("1")){
 
                                 ViewQuestionActivity.this.finishActivity(ViewQuestionActivity.this.RESULT_OK);
@@ -318,17 +317,16 @@ public class ViewQuestionActivity extends AppCompatActivity {
     class ViewGroupPagerAdapter extends FragmentPagerAdapter {
 
 
-        private Fragment mFragmentViewQuestion;
-
         private Fragment
+                mFragmentViewQuestion,
                 mViewGroupLocationFragment,
                 mViewGroupMembersFragment;
 
-        private boolean isEditable;
+        //private boolean isEditable;
 
         public ViewGroupPagerAdapter(FragmentManager fm, Location location, String userImageUrl, boolean isEditable) {
             super(fm);
-            this.isEditable = isEditable;
+            //this.isEditable = isEditable;
             mFragmentViewQuestion = ViewQuestionFragment.newInstance(mQuestionId, isEditable);
             mViewGroupLocationFragment = ViewQuestionLocationFragment.newInstance(mQuestionId, location, userImageUrl, isEditable);
             //mViewGroupMembersFragment = EditQuestionMembersFragment.newInstance(mQuestionId, isEditable);

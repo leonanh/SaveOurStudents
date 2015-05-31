@@ -87,15 +87,25 @@ public class MapFragment extends Fragment implements
 
     SharedPreferences sharedPref;
 
+
+
+
+    public static MapFragment newInstance() {
+        MapFragment fragment = new MapFragment();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     public MapFragment() {
-        this.mContext = this.getActivity();
+        // Required empty public constructor
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         minflater = inflater;
-        mContext = this.getActivity();
+        mContext = getActivity();
         rootView = inflater.inflate(R.layout.fragment_map_layout, container,
                 false);
 
