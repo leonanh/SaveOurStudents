@@ -285,7 +285,8 @@ public class ViewQuestionActivity extends AppCompatActivity {
                             //System.out.println("remove group result: "+result);
                             if(result.getString("success").equalsIgnoreCase("1")){
 
-                                ViewQuestionActivity.this.finishActivity(ViewQuestionActivity.this.RESULT_OK);
+                                setResult(RESULT_OK);
+                                finish();
 
                             }
                             else{

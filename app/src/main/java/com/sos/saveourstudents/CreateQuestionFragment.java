@@ -402,7 +402,8 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
                                 else
                                     sendNotification("Successfully Created Question");
 
-                                getActivity().finishActivity(getActivity().RESULT_OK);
+                                getActivity().setResult(getActivity().RESULT_OK);
+                                getActivity().finish();
                             }
 
                         } catch (JSONException e) {
