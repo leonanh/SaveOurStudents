@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             finish();
                         }
                         else if(position == 3){
-                            Intent intent = new Intent(MainActivity.this,SettingsActivityNew.class);
+                            Intent intent = new Intent(MainActivity.this,SettingsActivity.class);
                             startActivityForResult(intent, SETTINGS_ACTIVITY);
                         }
 
@@ -325,6 +325,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             startActivityForResult(mIntent, EDIT_QUESTION);
                                         }
                                     });
+                                    showFab();
                                 }
                                 //Add question
                                 else{
@@ -337,8 +338,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             startActivityForResult(mIntent, CREATE_QUESTION);
                                         }
                                     });
+                                    showFab();
                                 }
-                                showFab();
+
 
 
                             }
