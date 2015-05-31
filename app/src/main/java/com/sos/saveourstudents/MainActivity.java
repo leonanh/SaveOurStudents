@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private final int PROFILE_ACTIVITY = 505;
     private final int CREATE_QUESTION = 987;
     private final int EDIT_QUESTION = 567;
+    private final int VIEWQUESTION_ACTIVITY = 37;
     private boolean fabShowing = false;
 
     private ViewPager mViewPager;
@@ -84,9 +85,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             finish();
         }
 
-        //Our AppCompat Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.the_toolbar);
-        setSupportActionBar(toolbar);
+        if (toolbar != null) {
+            toolbar.setTitle(R.string.app_name);
+            setSupportActionBar(toolbar);
+        }
 
         fab = (com.rey.material.widget.FloatingActionButton) findViewById(R.id.fab_image);
 
@@ -254,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //Fragment goes null after rotation within tagDialog - WTF
     public void updateFragments(){
 
-        System.out.println("nullcheck: "+viewPagerAdapter.getItem(0) == null);
+        System.out.println("nullcheck: " + viewPagerAdapter.getItem(0) == null);
 
 
         if(((FeedFragment) viewPagerAdapter.getItem(0)).mContext != null)
@@ -280,7 +283,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    private void buildFab(){
+    public void buildFab(){
         getQuestionActiveStatus();
     }
 
@@ -383,8 +386,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             System.out.println("Returned from create Question");
             if (resultCode == RESULT_OK) {
                 System.out.println("Returned from create Question ok");
+                updateFragments();
             }
         }
+
         else if(requestCode == PROFILE_ACTIVITY){
             updateNavDrawer();
             updateFragments();
@@ -393,6 +398,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             updateNavDrawer();
         }
 
+        else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
 
     }
 
