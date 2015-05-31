@@ -70,7 +70,7 @@
 
         <activity android:name=".MemberWantsToJoinActivity"/>
 
-        <activity android:name=".SettingsActivityNew"/>
+        <activity android:name=".SettingsActivity"/>
 
         <activity android:name=".ViewQuestionActivity"/>
 

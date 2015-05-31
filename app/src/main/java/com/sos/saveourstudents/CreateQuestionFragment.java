@@ -343,12 +343,16 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
 
 
         List<NameValuePair> params = new LinkedList<NameValuePair>();
-        params.add(new BasicNameValuePair("userId", sharedPref.getString("user_id", "")));
+
 
         if(!isInEditMode){
+
+            params.add(new BasicNameValuePair("userId", sharedPref.getString("user_id", "")));
             params.add(new BasicNameValuePair("latitude", latitude+""));
             params.add(new BasicNameValuePair("longitude", longitude + ""));
         }
+        else
+            params.add(new BasicNameValuePair("questionId", mQuestionId));
 
         params.add(new BasicNameValuePair("text", questionEditText.getText().toString()));
 

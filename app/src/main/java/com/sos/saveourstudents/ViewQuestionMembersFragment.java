@@ -390,6 +390,7 @@ public class ViewQuestionMembersFragment extends Fragment {
                         if (mThumbsDownButton.isSelected()) {
                             mThumbsDownButton.setColorFilter(getResources().getColor(R.color.divider_color));
                             mThumbsDownButton.setSelected(false);
+                            rateTutor(userId, true);
                         }
                         rateTutor(userId, true);
 
@@ -419,6 +420,7 @@ public class ViewQuestionMembersFragment extends Fragment {
                         if (mThumbsUpButton.isSelected()) {
                             mThumbsUpButton.setColorFilter(getResources().getColor(R.color.divider_color));
                             mThumbsUpButton.setSelected(false);
+                            rateTutor(userId, false);
                         }
                         rateTutor(userId, false);
                     }
@@ -534,7 +536,7 @@ public class ViewQuestionMembersFragment extends Fragment {
     private void rateTutor(String userId, boolean like){
 
         List<NameValuePair> params = new LinkedList<NameValuePair>();
-        params.add(new BasicNameValuePair("questionId", userId));
+        params.add(new BasicNameValuePair("userId", userId));
         params.add(new BasicNameValuePair("like", like+""));
 
         String paramString = URLEncodedUtils.format(params, "utf-8");

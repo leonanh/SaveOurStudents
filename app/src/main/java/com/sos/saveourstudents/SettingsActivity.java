@@ -40,7 +40,7 @@ import java.util.List;
 /**
  * Created by Xian on 5/19/2015.
  */
-public class SettingsActivityNew extends AppCompatActivity implements View.OnClickListener {
+public class SettingsActivity extends AppCompatActivity implements View.OnClickListener {
 
 
     private EditText passwordEditText;
@@ -107,8 +107,6 @@ public class SettingsActivityNew extends AppCompatActivity implements View.OnCli
 
 
 
-
-
         currdistance = sharedPref.getInt("distance", 1);
 
         currDistanceDisplay.setText(currdistance + "");
@@ -152,7 +150,7 @@ public class SettingsActivityNew extends AppCompatActivity implements View.OnCli
                             if (Validations.isValidEmail(charSequence)) {
                                 updateEmail(charSequence.toString());
                             } else {
-                                Toast.makeText(SettingsActivityNew.this, "Invalid Email", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SettingsActivity.this, "Invalid Email", Toast.LENGTH_SHORT).show();
                             }
                         }
                     })
@@ -175,11 +173,11 @@ public class SettingsActivityNew extends AppCompatActivity implements View.OnCli
                 passwordEditText = (EditText) fragment.getDialog().findViewById(R.id.password_edittext);
                 passwordConfirmEditText = (EditText) fragment.getDialog().findViewById(R.id.confirm_password_edittext);
                 if(areValidPasswords(passwordEditText.getText().toString(), passwordConfirmEditText.getText().toString())){
-                    Toast.makeText(SettingsActivityNew.this, "VALID password", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SettingsActivity.this, "VALID password", Toast.LENGTH_SHORT).show();
                     updatePassword(passwordEditText.getText().toString());
                 }
                 else
-                    Toast.makeText(SettingsActivityNew.this, "Invalid password", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SettingsActivity.this, "Invalid password", Toast.LENGTH_SHORT).show();
                 //super.onPositiveActionClicked(fragment);
             }
 
@@ -249,11 +247,11 @@ public class SettingsActivityNew extends AppCompatActivity implements View.OnCli
                             if(result.getString("success").equalsIgnoreCase("1")){
 
                                 //JSONArray questionAndTags = result.getJSONObject("result").getJSONArray("myArrayList");
-                                Toast.makeText(SettingsActivityNew.this, "PW updated", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SettingsActivity.this, "PW updated", Toast.LENGTH_SHORT).show();
 
                             }
                             else{
-                                Toast.makeText(SettingsActivityNew.this, "Couldnt update password", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SettingsActivity.this, "Couldnt update password", Toast.LENGTH_SHORT).show();
                             }
 
                         } catch (JSONException e) {
@@ -307,11 +305,11 @@ public class SettingsActivityNew extends AppCompatActivity implements View.OnCli
                                 SharedPreferences.Editor editor = sharedPref.edit();
                                 editor.putString("email", newEmail);
                                 editor.commit();
-                                Toast.makeText(SettingsActivityNew.this, "Email updated", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SettingsActivity.this, "Email updated", Toast.LENGTH_SHORT).show();
                             }
                             else{
 
-                                Toast.makeText(SettingsActivityNew.this, "Couldnt update email", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SettingsActivity.this, "Couldnt update email", Toast.LENGTH_SHORT).show();
                             }
 
                         } catch (JSONException e) {
