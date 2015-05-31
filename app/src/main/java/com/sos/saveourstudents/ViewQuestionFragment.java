@@ -12,6 +12,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -594,13 +595,12 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
         List<NameValuePair> params = new LinkedList<NameValuePair>();
         params.add(new BasicNameValuePair("questionId", mQuestionId));
         params.add(new BasicNameValuePair("userId", sharedPref.getString("user_id", "")));
-
         params.add(new BasicNameValuePair("comment", commentEditText.getText().toString()));
 
-        String paramString = URLEncodedUtils.format(params, "utf-8").replace("+", "%20");
-        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/addComment?"+paramString;
+        String paramString = URLEncodedUtils.format(params, "utf-8")
+                .replaceAll("%27", "%27%27");
 
-        //System.out.println("add comment url: " + url);
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/addComment?"+paramString;
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
                 (JSONObject)null,
