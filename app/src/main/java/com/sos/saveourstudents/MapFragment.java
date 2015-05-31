@@ -64,7 +64,7 @@ public class MapFragment extends Fragment implements
 
     private GoogleMap mMap;
     private MapView mMapView;
-    private Context mContext;
+    Context mContext;
 
     private ImageView userImageDetails;
     private ImageView groupIcon;
@@ -333,7 +333,8 @@ public class MapFragment extends Fragment implements
 
     @Override
     public void onPause() {
-        stopLocationUpdates();
+        if(mGoogleApiClient != null && mGoogleApiClient.isConnected())
+            stopLocationUpdates();
         mMapView.onPause();
         ((MainActivity) getActivity()).showFab();
         super.onPause();
@@ -341,7 +342,8 @@ public class MapFragment extends Fragment implements
 
     @Override
     public void onDestroy() {
-        stopLocationUpdates();
+        if(mGoogleApiClient != null && mGoogleApiClient.isConnected())
+            stopLocationUpdates();
         mMapView.onDestroy();
         super.onDestroy();
     }
@@ -386,7 +388,7 @@ public class MapFragment extends Fragment implements
     protected void startLocationUpdates() {
         if(mGoogleApiClient == null){
             buildGoogleApiClient();
-        }else
+        }else if(mGoogleApiClient.isConnected())
         LocationServices.FusedLocationApi.requestLocationUpdates(
                 mGoogleApiClient, mLocationRequest, this);
     }

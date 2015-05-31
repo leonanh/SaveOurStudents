@@ -80,12 +80,26 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
         // Required empty public constructor
     }
 
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
+        if (savedInstanceState != null) {
+            //Restore the fragment's state here
+        }
+    }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        //Save the fragment's state here
+
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        setRetainInstance(true);
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_feed_layout, container,
                 false);
@@ -115,7 +129,6 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
         LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         lastKnownLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-
 
 
         buildGoogleApiClient();
@@ -153,17 +166,21 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
     @Override
     public void onResume() {
         super.onResume();
+        System.out.println("onresume feed");
+
     }
 
     @Override
     public void onPause() {
-        stopLocationUpdates();
+        if(mGoogleApiClient != null && mGoogleApiClient.isConnected())
+            stopLocationUpdates();
         super.onPause();
     }
 
     @Override
     public void onDestroy() {
-        stopLocationUpdates();
+        if(mGoogleApiClient != null && mGoogleApiClient.isConnected())
+            stopLocationUpdates();
         super.onDestroy();
     }
 
@@ -171,6 +188,7 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
 
 
     public void getQuestionData() {
+
 
 
         Set<String> filterList = new HashSet<String>(sharedPref.getStringSet("filter_list", new HashSet<String>()));
@@ -307,7 +325,7 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
     protected void startLocationUpdates() {
         if(mGoogleApiClient == null){
             buildGoogleApiClient();
-        }else
+        }else if(mGoogleApiClient.isConnected())
             LocationServices.FusedLocationApi.requestLocationUpdates(
                     mGoogleApiClient, mLocationRequest, this);
     }

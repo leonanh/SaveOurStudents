@@ -1,6 +1,5 @@
 package com.sos.saveourstudents;
 
-import android.app.FragmentTransaction;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -11,7 +10,6 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
@@ -49,11 +47,8 @@ import java.util.Set;
 
 
 public class CreateQuestionFragment extends Fragment implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener,
-        Response.Listener, Response.ErrorListener,TagDialogFragment.NoticeDialogListener {
+        Response.Listener, Response.ErrorListener{
 
-
-
-    public final int DIALOG_FRAGMENT = 1;
     private String mQuestionId;
     private ArrayList<String> tagList;
     private JSONObject mQuestionInfo;
@@ -226,15 +221,19 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
         }
         else if(v == addTagsButton){
 
-            FragmentTransaction ft = getActivity().getFragmentManager().beginTransaction();
+            //FragmentTransaction ft = getActivity().getFragmentManager().beginTransaction();
+            //DialogFragment newFragment = new TagDialogFragment(mContext, DIALOG_FRAGMENT);
 
-            DialogFragment newFragment = new TagDialogFragment(mContext, DIALOG_FRAGMENT);
-            newFragment.setTargetFragment(CreateQuestionFragment.this, DIALOG_FRAGMENT);
-            Bundle listbundle = new Bundle();
-            listbundle.putStringArrayList("list", tagList);
-
-            newFragment.setArguments(listbundle);
+            TagDialogFragment newFragment = TagDialogFragment.newInstance(1, tagList);
+            newFragment.setTargetFragment(CreateQuestionFragment.this, 1);
             newFragment.show(getActivity().getSupportFragmentManager(), "");
+
+            /*newFragment.setTargetFragment(CreateQuestionFragment.this, DIALOG_FRAGMENT);
+            Bundle listbundle = new Bundle();
+            listbundle.putInt("type", DIALOG_FRAGMENT);
+            listbundle.putStringArrayList("list", tagList);
+            newFragment.setArguments(listbundle);*/
+
 
 
         }
@@ -541,8 +540,8 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
     }
 
 
-    @Override
-    public void passTagList(DialogFragment dialog, Set<String> activeFilters) {
+
+    public void passTagList(Set<String> activeFilters) {
         System.out.println("activeFilters: "+activeFilters.toString());
         if(activeFilters.size() > 0 ){
             tagList.clear();

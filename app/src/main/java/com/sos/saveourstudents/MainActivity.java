@@ -34,8 +34,11 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -45,23 +48,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private final int EDIT_QUESTION = 567;
     private boolean fabShowing = false;
 
-    ViewPager mViewPager;
-    SlidingTabLayout mTabs;
+    private ViewPager mViewPager;
+    private SlidingTabLayout mTabs;
 
-    ViewPagerAdapter viewPagerAdapter;
-    RecyclerView mRecyclerView;                           // Declaring RecyclerView
-    RecyclerView.Adapter mAdapter;                        // Declaring Adapter For Recycler View
-    DrawerLayout mDrawer;                                 // Declaring DrawerLayout
+    private ViewPagerAdapter viewPagerAdapter;
+    private RecyclerView mRecyclerView;                           // Declaring RecyclerView
+    private RecyclerView.Adapter mAdapter;                        // Declaring Adapter For Recycler View
+    private DrawerLayout mDrawer;                                 // Declaring DrawerLayout
 
-    ActionBarDrawerToggle mDrawerToggle;
+    private ActionBarDrawerToggle mDrawerToggle;
 
-    com.rey.material.widget.FloatingActionButton fab;
+    private com.rey.material.widget.FloatingActionButton fab;
 
     int ICONS[] = {R.drawable.ic_person_black_24dp,R.drawable.ic_exit_to_app_black_24dp, R.drawable.ic_settings_black_24dp};
     String TITLES[] = {"Profile","Logout","Settings"};
 
-
-    SharedPreferences sharedPref;
+    private SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(!Singleton.hasBeenInitialized()){
             Singleton.initialize(this);
         }
+
 
         sharedPref = getSharedPreferences(
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
@@ -113,15 +116,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRecyclerView.setHasFixedSize(true);                            // Letting the system know we wont change the size of the list
 
         updateNavDrawer();
-        /*
-        String name = sharedPref.getString("first_name", "") + " "+ sharedPref.getString("last_name", "");
-        mAdapter = new NavDrawerAdapter(TITLES, ICONS, name,
-                sharedPref.getString("email", "email"),
-                sharedPref.getString("image", "image"),
-                sharedPref.getInt("cover_photo", R.drawable.materialwallpaperdefault));
-
-        mRecyclerView.setAdapter(mAdapter);                              // Setting the adapter to RecyclerView
-*/
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.addOnItemTouchListener(
@@ -150,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 })
         );
 
-        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);        // Drawer object Assigned to the view
+        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer, toolbar,R.string.openDrawer,R.string.closeDrawer){
 
             @Override
@@ -163,11 +157,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 super.onDrawerClosed(drawerView);
             }
 
-
-
-        }; // Drawer Toggle Object Made
-        mDrawer.setDrawerListener(mDrawerToggle); // Drawer Listener set to the Drawer toggle
-        mDrawerToggle.syncState();               // Finally we set the drawer toggle sync State
+        };
+        mDrawer.setDrawerListener(mDrawerToggle);
+        mDrawerToggle.syncState();
 
 
     }
@@ -186,11 +178,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+
+
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
-        //mDrawerToggle.syncState();
+        mDrawerToggle.syncState();
     }
 
     @Override
@@ -212,8 +206,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == R.id.action_filter) {
-            TagDialogFragment newFragment = new TagDialogFragment(this, 0);
-            newFragment.show(getSupportFragmentManager(), "");
+
+
+            Set<String> filterList = new HashSet<String>(sharedPref.getStringSet("filter_list", new HashSet<String>()));
+            ArrayList<String> myList = new ArrayList<String>();
+            myList.addAll(filterList);
+
+
+            TagDialogFragment newFragment = TagDialogFragment.newInstance(0, myList);
+
+            newFragment.show(getSupportFragmentManager(), "dialog");
+
 
         }
 
@@ -248,8 +251,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    //Fragment goes null after rotation within tagDialog - WTF
     public void updateFragments(){
-        viewPagerAdapter.notifyDataSetChanged();
+
+        System.out.println("nullcheck: "+viewPagerAdapter.getItem(0) == null);
+
+
+        if(((FeedFragment) viewPagerAdapter.getItem(0)).mContext != null)
+            ((FeedFragment) viewPagerAdapter.getItem(0)).getQuestionData();
+        else{
+            //viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+            //viewPagerAdapter.feedFragment = FeedFragment.newInstance();
+            //mViewPager.setAdapter(viewPagerAdapter);
+        }
+        if(((MapFragment) viewPagerAdapter.getItem(1)).getActivity() != null){
+            System.out.println("Updating map?");
+            ((MapFragment) viewPagerAdapter.getItem(1)).getMapData();
+        }
+        else{
+            //viewPagerAdapter.notifyDataSetChanged();
+        }
     }
 
 
@@ -403,7 +424,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
  */
 class ViewPagerAdapter extends FragmentPagerAdapter {
 
-    private Fragment
+    public Fragment
             feedFragment,
             mapFragment;
 
@@ -432,12 +453,16 @@ class ViewPagerAdapter extends FragmentPagerAdapter {
             return mapFragment;
         }
 
-
     }
 
     @Override
     public int getCount() {
         return tabNames.length;
+    }
+
+    @Override
+    public int getItemPosition(Object object) {
+        return POSITION_NONE;
     }
 
 }
