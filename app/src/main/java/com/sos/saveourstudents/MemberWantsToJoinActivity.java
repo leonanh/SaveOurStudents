@@ -41,9 +41,6 @@ public class MemberWantsToJoinActivity extends AppCompatActivity implements View
 
 
 
-
-
-
         TextView joiningMemberName = (TextView) findViewById(R.id.member_name);
         joiningMemberName.setText(enteringStudent.getFirstName());
 
@@ -107,9 +104,7 @@ public class MemberWantsToJoinActivity extends AppCompatActivity implements View
             @Override
             public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
                 if (response.getBitmap() != null) {
-
                     imageView.setImageBitmap(response.getBitmap());
-                    //TODO imageview.setImageBitmap(response.getBitmap());
                 }
                 else{
                     // Default image...
