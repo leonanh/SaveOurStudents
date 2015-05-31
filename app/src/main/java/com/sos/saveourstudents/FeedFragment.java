@@ -189,6 +189,7 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == VIEWQUESTION_ACTIVITY) {
             ((MainActivity) getActivity()).updateFragments();
+            ((MainActivity) getActivity()).buildFab();
         }
     }
 

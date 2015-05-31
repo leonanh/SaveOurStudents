@@ -196,7 +196,9 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
             boolean error = false;
 
             if(!tutorToggle.isSelected() && !groupToggle.isSelected()) {
-                topicEditText.setError("Please Request a Group and/or Tutor");
+                Toast.makeText(getActivity(), "Please Request a Group and/or Tutor",
+                        Toast.LENGTH_SHORT)
+                        .show();
                 error = true;
             }
             if(topicEditText.getText().toString().equalsIgnoreCase("")) {

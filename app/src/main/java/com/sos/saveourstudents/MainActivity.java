@@ -283,7 +283,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    private void buildFab(){
+    public void buildFab(){
         getQuestionActiveStatus();
     }
 
