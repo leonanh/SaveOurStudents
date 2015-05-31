@@ -1,0 +1,263 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cardview_light_background">
+
+
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/header_card_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        card_view:cardCornerRadius="2dp"
+        card_view:cardElevation="1dp"
+        card_view:cardUseCompatPadding="false">
+
+        <RelativeLayout
+            android:id="@+id/header_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white">
+
+
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/question_image"
+                app:border_color="@color/primary_light"
+                app:border_width="1dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/defaultprofile" />
+
+
+
+
+            <View
+                android:id="@+id/divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/linear_layout"
+                android:background="@color/divider_color"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="5dp"
+                />
+
+
+
+            <TextView
+                android:id="@+id/question_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/divider"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:ellipsize="end"
+                android:text="Max acceleration was 6X gravity, altitude 1187m, lateral distance 1202m and velocity 155 m/s. Main chutes deployed 970m."
+                android:textColor="@color/primary_text" />
+
+
+
+            <TextView
+                android:id="@+id/question_timestamp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="3h"
+                android:textColor="@color/secondary_text"
+                android:layout_alignTop="@+id/question_image"
+                android:gravity="right"
+                android:layout_marginRight="15dp"
+                android:paddingRight="5dp"
+                android:minWidth="40dp"/>
+
+            <TextView
+                android:id="@+id/question_distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="150m"
+                android:textColor="@color/secondary_text"
+                android:layout_alignBottom="@+id/question_image"
+                android:gravity="right"
+                android:layout_marginRight="15dp"
+                android:paddingRight="5dp"
+                android:minWidth="40dp"/>
+
+
+            <LinearLayout
+                android:id="@+id/linear_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:weightSum="2"
+                android:orientation="vertical"
+                android:layout_alignBottom="@+id/question_image"
+                android:layout_alignTop="@+id/question_image"
+                android:layout_toRightOf="@+id/question_image"
+                android:layout_toLeftOf="@+id/group_icon">
+
+
+
+                <TextView
+                    android:id="@+id/question_name_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="Elon Musk"
+                    android:textColor="@color/primary_text"
+                    android:gravity="center_vertical"
+                    android:ellipsize="end" />
+
+                <TextView
+                    android:id="@+id/question_topic_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="Topic"
+                    android:textColor="@color/primary_dark"
+                    android:gravity="center_vertical"
+                    android:ellipsize="end" />
+
+
+
+            </LinearLayout>
+
+
+
+            <ImageView
+                android:id="@+id/group_icon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_group_grey600_36dp"
+                android:layout_alignTop="@+id/linear_layout"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="15dp"
+                android:layout_toLeftOf="@+id/tutor_icon"
+                android:tint="@color/hint_text_on_background"/>
+
+
+
+            <ImageView
+                android:id="@+id/tutor_icon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_school_grey600_36dp"
+                android:layout_alignTop="@+id/linear_layout"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="15dp"
+                android:padding="3dp"
+                android:layout_toLeftOf="@+id/question_timestamp"
+                android:tint="@color/hint_text_on_background"/>
+
+
+            <HorizontalScrollView
+                android:id="@+id/tag_list"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/question_image"
+                android:layout_below="@+id/question_text"
+                android:paddingBottom="16dp"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/tag_list_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:orientation="horizontal"/>
+
+            </HorizontalScrollView>
+
+
+        </RelativeLayout>
+
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/header_card_view"
+        android:layout_marginTop="5dp"
+        android:elevation="2dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white">
+
+
+            <TextView
+                android:id="@+id/comment_divider"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="Comments"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textColor="@android:color/black" />
+
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/my_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/comment_divider"
+                android:layout_above="@+id/comment_edittext"
+                />
+
+            <com.rey.material.widget.EditText
+                android:id="@+id/comment_edittext"
+                style="@style/Material.Widget.EditText.Light"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/comment_divider"
+                android:layout_alignParentBottom="true"
+                android:layout_toLeftOf="@+id/send_button"
+                android:autoText="true"
+                android:hint="Add a comment"
+                app:et_dividerColor="@color/primary"
+                android:paddingBottom="3dp"
+                app:et_dividerHeight="2dp"
+                app:et_dividerPadding="3dp" />
+
+
+
+            <ImageView
+                android:id="@+id/send_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:layout_alignBottom="@+id/comment_edittext"
+                android:layout_alignTop="@+id/comment_edittext"
+                android:layout_alignParentRight="true"
+                android:tint="@color/primary"
+                android:src="@drawable/ic_send_grey600_36dp" />
+
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+    <com.rey.material.widget.FloatingActionButton
+        android:id="@+id/group_action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/header_card_view"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="-32dp"
+        android:elevation="2dp"
+        app:fab_backgroundColor="@color/accent"
+        app:fab_iconSrc="@drawable/ic_person_add_white_18dp"
+        app:rd_enable="true"
+        app:rd_style="@style/Material.Drawable.Ripple.Wave" />
+
+</RelativeLayout>

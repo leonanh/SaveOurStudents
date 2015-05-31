@@ -55,9 +55,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-      
-
-
 
         <activity android:name=".LoginActivity"/>
 
@@ -65,21 +62,12 @@
 
         <activity android:name=".ForgotLoginActivity"/>
 
-        <activity android:name=".QuestionActivity"
-            android:windowSoftInputMode="stateHidden|adjustResize"/>
+        <activity android:name=".CreateQuestionActivity"
+            android:windowSoftInputMode="stateHidden"/>
 
-
-        <activity android:name=".MemberJoinActivity"/>
+        <activity android:name=".MemberWantsToJoinActivity"/>
 
         <activity android:name=".SettingsActivity"/>
-
-
-
-
-
-
-
-
 
         <!-- FB login -->
         <activity

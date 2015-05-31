@@ -17,7 +17,6 @@ public class CustomTextView extends TextView {
         if(!Singleton.hasBeenInitialized()){
             Singleton.initialize(context);
         }
-        this.setTypeface(Singleton.getInstance().face);
     }
 
     public CustomTextView(Context context, AttributeSet attrs) {
@@ -25,7 +24,7 @@ public class CustomTextView extends TextView {
         if(!Singleton.hasBeenInitialized()){
             Singleton.initialize(context);
         }
-        this.setTypeface(Singleton.getInstance().face);
+        //this.setTypeface(Singleton.getInstance().face);
     }
 
     public CustomTextView(Context context, AttributeSet attrs, int defStyle) {
@@ -33,7 +32,7 @@ public class CustomTextView extends TextView {
         if(!Singleton.hasBeenInitialized()){
             Singleton.initialize(context);
         }
-        this.setTypeface(Singleton.getInstance().face);
+        //this.setTypeface(Singleton.getInstance().face);
     }
 
     protected void onDraw(Canvas canvas) {
