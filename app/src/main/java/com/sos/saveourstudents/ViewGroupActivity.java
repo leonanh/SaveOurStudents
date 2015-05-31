@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -74,6 +75,7 @@ public class ViewGroupActivity extends AppCompatActivity
     public JSONObject mQuestionInfo;
     public ArrayList tags;
     private boolean isEditable;
+    private String mUserImageUrl;
 
     // End of Deagan's adjustments
 
@@ -85,7 +87,6 @@ public class ViewGroupActivity extends AppCompatActivity
             "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/rateTutor?userId=";
     private static final String mRatingParameter =
             "&like=";
-
     private static final String mRemoveMemberUrl =
             "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/removeUser?userId=";
 
@@ -164,24 +165,12 @@ public class ViewGroupActivity extends AppCompatActivity
                             JSONObject result = new JSONObject(response.toString());
                             //System.out.println("edit questions result "+result);
                             if(result.getString("success").equalsIgnoreCase("1")){
-
-
-
-
-                                String userImageUrl = "";
-                                if(mQuestionInfo.has("image"))
-                                    userImageUrl = mQuestionInfo.getString("image");
-
-
                                 String latitude = mQuestionInfo.getString("latitude");
                                 String longitude = mQuestionInfo.getString("longitude");
 
                                 Location location = new Location("new");
                                 location.setLongitude(Double.parseDouble(longitude));
                                 location.setLatitude(Double.parseDouble(latitude));
-
-
-
                             }
                             else{
 
@@ -300,6 +289,7 @@ public class ViewGroupActivity extends AppCompatActivity
                        }
                    });
                    Singleton.getInstance().addToRequestQueue(removeMemberRequest);
+                   Toast.makeText(this, "Student Removed!", Toast.LENGTH_SHORT);
                    return;
                }
            }
@@ -320,7 +310,7 @@ public class ViewGroupActivity extends AppCompatActivity
 
                         }
                     });
-
+                    Toast.makeText(this, "Tutor Removed!", Toast.LENGTH_SHORT);
                     Singleton.getInstance().addToRequestQueue(removeTutorRequest);
                     return;
                 }
@@ -379,8 +369,11 @@ public class ViewGroupActivity extends AppCompatActivity
         // Assigning private variables to correct ViewGroups
         mFragmentViewQuestion = ViewGroupQuestionFragment.newInstance(mQuestionId, isEditable);
 
-        mViewGroupLocationFragment = ViewGroupLocationFragment.newInstance(mCurrQuestion
-                .getmLocation());
+        Location groupLocation = new Location("new");
+        groupLocation.setLatitude(mCurrQuestion.getmLocation().latitude);
+        groupLocation.setLongitude(mCurrQuestion.getmLocation().longitude);
+        mViewGroupLocationFragment = ViewGroupLocationFragment.newInstance(mQuestionId,
+                groupLocation, mUserImageUrl, isEditable);
 
         mViewGroupMembersFragment = ViewGroupMembersFragment.newInstance(
                 mStudents, mTutors);
@@ -519,6 +512,7 @@ public class ViewGroupActivity extends AppCompatActivity
                         .getJSONObject("map");
 
                 mUserId = theResponse.getString("user_id");
+                mUserImageUrl = theResponse.getString("image");
                 isEditable = mUserId.equals(mViewerUserId);
                 String getStudentUrl = mUserURL + mUserId;
 

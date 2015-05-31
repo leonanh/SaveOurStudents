@@ -2,9 +2,11 @@ package com.sos.saveourstudents;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -210,26 +212,7 @@ public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
                     convertView.setOnLongClickListener(new View.OnLongClickListener() {
                         @Override
                         public boolean onLongClick(View v) {
-                            final Dialog removeTutorDialog = new Dialog(getActivity());
-                            removeTutorDialog.title("Remove Member?")
-                                    .positiveAction("Yes")
-                                    .negativeAction("No")
-                                    .cancelable(true)
-                                    .show();
-                            removeTutorDialog.positiveActionClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    onMemberRemove(currStudentMember.getUserId(), false);
-                                    removeTutorDialog.dismiss();
-                                }
-                            });
-
-                            removeTutorDialog.negativeActionClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    removeTutorDialog.cancel();
-                                }
-                            });
+                            showRemoveUserDialog(currStudentMember.getUserId(), false);
 
                             return true;
                         }
@@ -303,27 +286,7 @@ public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
                 convertView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
-                        final Dialog removeTutorDialog = new Dialog(getActivity());
-                        removeTutorDialog.title("Remove Tutor?")
-                                .positiveAction("Yes")
-                                .negativeAction("No")
-                                .cancelable(true)
-                                .show();
-                        removeTutorDialog.positiveActionClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                onMemberRemove(currStudentMember.getUserId(), true);
-                                removeTutorDialog.dismiss();
-                            }
-                        });
-
-                        removeTutorDialog.negativeActionClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                removeTutorDialog.cancel();
-                            }
-                        });
-
+                        showRemoveUserDialog(currStudentMember.getUserId(), true);
                         return true;
                     }
                 });
@@ -419,6 +382,28 @@ public class ViewGroupMembersFragment extends android.support.v4.app.Fragment {
                 }
             });
         }
+
+    }
+
+    private void showRemoveUserDialog(final String userId, final boolean tutor){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setCancelable(false);
+        builder.setMessage("Would you like to remove this user from your group?");
+
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                onMemberRemove(userId, tutor);
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
 
     }
 
