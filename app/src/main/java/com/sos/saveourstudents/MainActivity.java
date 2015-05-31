@@ -84,9 +84,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             finish();
         }
 
-        //Our AppCompat Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.the_toolbar);
-        setSupportActionBar(toolbar);
+        if (toolbar != null) {
+            toolbar.setTitle(R.string.app_name);
+            setSupportActionBar(toolbar);
+        }
 
         fab = (com.rey.material.widget.FloatingActionButton) findViewById(R.id.fab_image);
 
