@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/settings_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/primary"
+            android:elevation="2dp"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/settings_toolbar">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+
+                <Button
+                    android:id="@+id/change_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/container_padding"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="25dp"
+                    android:layout_marginTop="25dp"
+                    android:background="@color/primary"
+                    android:paddingBottom="@dimen/abc_button_padding_vertical_material"
+                    android:paddingTop="@dimen/abc_button_padding_vertical_material"
+                    android:text="Change Email"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                    android:textColor="@color/primary_text1" />
+
+                <Button
+                    android:id="@+id/change_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/change_email"
+                    android:layout_marginBottom="@dimen/container_padding"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="25dp"
+                    android:layout_marginTop="15dp"
+                    android:background="@color/primary"
+                    android:paddingBottom="@dimen/abc_button_padding_vertical_material"
+                    android:paddingTop="@dimen/abc_button_padding_vertical_material"
+                    android:text="Change Password"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                    android:textColor="@color/primary_text1" />
+
+                <TextView
+                    android:id="@+id/distance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/change_password"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="20dp"
+                    android:text="Distance (Miles)"
+                    android:textColor="@android:color/black"
+                    android:textIsSelectable="false"
+                    android:textSize="21sp" />
+
+                <RelativeLayout
+                    android:id="@+id/slidercontainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/distance">
+
+                    <TextView
+                        android:id="@+id/current_distance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="25dp"
+                        android:background="@drawable/distance_bg"
+                        android:gravity="center"
+                        android:text="5"
+                        android:textColor="@color/primary_text1"
+                        android:textSize="@dimen/textview_font_size" />
+
+                    <com.rey.material.widget.Slider
+                        android:id="@+id/distance_slider"
+                        style="@style/Material.Widget.Slider.Discrete"
+                        app:sl_maxValue="30"
+                        app:sl_minValue="1"
+                        app:sl_primaryColor="@color/primary"
+                        app:sl_secondaryColor="@color/secondary_text"
+                        app:sl_stepValue="1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_toLeftOf="@id/current_distance"
+                        android:gravity="center" />
+
+
+
+                </RelativeLayout>
+
+                <com.rey.material.widget.Spinner
+                    style="@style/Material.Widget.Spinner.Light"
+                    android:id="@+id/cover_spinner"
+                    android:layout_below="@+id/slidercontainer"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="128dp"
+                    app:rd_style="@style/Material.Drawable.Ripple.Wave.Light"
+                    app:rd_enable="true"
+                    app:spn_labelEnable="true"
+                    app:spn_label="Cover image"
+                    app:spn_arrowSwitchMode="true"
+                    app:spn_arrowAnimDuration="@android:integer/config_shortAnimTime"
+                    app:spn_arrowInterpolator="@android:anim/decelerate_interpolator"/>
+
+            </RelativeLayout>
+        </ScrollView>
+    </RelativeLayout>

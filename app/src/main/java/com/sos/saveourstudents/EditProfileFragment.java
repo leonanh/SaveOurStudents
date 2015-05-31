@@ -1,26 +1,29 @@
 package com.sos.saveourstudents;
 
 import android.app.Activity;
-import android.content.Context;
-import android.net.Uri;
-import android.os.Bundle;
 import android.app.Fragment;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.rey.material.widget.EditText;
 import com.rey.material.widget.FloatingActionButton;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
@@ -54,6 +57,10 @@ public class EditProfileFragment extends Fragment {
     private EditText mEditDescription;
     private android.widget.EditText mEditDescriptionInput;
 
+    private ImageView mCoverImageView;
+    private ImageView mProfileImage;
+    private String mProfilePictureUrl;
+
     private FloatingActionButton doneButton;
 
     /**
@@ -63,7 +70,7 @@ public class EditProfileFragment extends Fragment {
      * @param currStudent Parameter 2.
      * @return A new instance of fragment EditProfileFragment.
      */
-    // TODO: Rename and change types and number of parameters
+
     public static EditProfileFragment newInstance(Student currStudent) {
         EditProfileFragment fragment = new EditProfileFragment();
         Bundle args = new Bundle();
@@ -89,12 +96,17 @@ public class EditProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_edit_profile, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_edit_profile, container, false);
+        mProfileImage = (ImageView) rootView.findViewById(R.id.profile_editImage);
+        mCoverImageView = (ImageView) rootView.findViewById(R.id.cover_image);
+        mCoverImageView.setImageResource(getActivity().getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE)
+                .getInt("cover_photo", R.drawable.materialwallpaperdefault));
+        return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    public void onDoneButton() {
         if (mListener != null) {
             mListener.onDoneButton();
         }
@@ -121,6 +133,7 @@ public class EditProfileFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
+
         initializeMemberVariables();
 
         initializeEditTextWithEnterExit(mEditFirstName, mEditFirstNameInput);
@@ -128,29 +141,18 @@ public class EditProfileFragment extends Fragment {
         initializeEditTextWithEnterExit(mEditSchool, mEditSchoolInput);
         initializeEditTextWithEnterExit(mEditMajor, mEditMajorInput);
 
+        initializeProfileImageEdit();
         doneButton = (FloatingActionButton) getActivity().findViewById(R.id.profile_doneButton);
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mListener != null) {
-                    mListener.onDoneButton();
-                }
+                onDoneButton();
             }
         });
     }
 
 
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnDoneButtonListener {
         // TODO: Update argument type and name
         public void onDoneButton();
@@ -173,11 +175,15 @@ public class EditProfileFragment extends Fragment {
         mEditSchoolInput.setText(mCurrStudent.getSchool());
         mEditMajorInput.setText(mCurrStudent.getMajor());
         mEditDescriptionInput.setText(mCurrStudent.getDescription());
+
+        //mProfileImage = (ImageView) getActivity().findViewById(R.id.profile_editImage);
+        mProfileImage.setImageDrawable(mCurrStudent.getProfilePicture().getDrawable());
+        mProfilePictureUrl = mCurrStudent.getProfilePictureUrl();
+
     }
 
     /**
      * To be used after onDoneButton() call in ProfileActivity
-     *
      * @return Newly updated student
      */
 
@@ -188,6 +194,8 @@ public class EditProfileFragment extends Fragment {
         mCurrStudent.setSchool(mEditSchoolInput.getText().toString());
         mCurrStudent.setMajor(mEditMajorInput.getText().toString());
         mCurrStudent.setDescription(mEditDescriptionInput.getText().toString());
+        mCurrStudent.setProfilePicture(mProfileImage);
+        mCurrStudent.setProfilePictureUrl(mProfilePictureUrl);
 
         String newFirstName = "";
         String newLastName = "";
@@ -211,7 +219,7 @@ public class EditProfileFragment extends Fragment {
                         .getString(userIdTag_sharedPreferences, "")
                 + "&firstName=" + newFirstName + "&lastName=" + newLastName
                 + "&school=" + newSchool + "&major=" + newMajor
-                + "&description=" + newDescription + "&image=" + "";
+                + "&description=" + newDescription + "&image=" + mProfilePictureUrl;
 
         JsonObjectRequest studentRequest = new JsonObjectRequest(Request.Method.GET,
                 updateProfileUrl, (JSONObject) null, new EditProfileResponseListener(),
@@ -222,6 +230,11 @@ public class EditProfileFragment extends Fragment {
         return mCurrStudent;
     }
 
+    /**
+     * Initializes EditText onEditorActionListeners and onClickListeners
+     * @param editTextWrapper The wrapped EditText (i.e. the com.rey...EditText)
+     * @param editTextInput The input (et_inputId)
+     */
     private void initializeEditTextWithEnterExit(final EditText editTextWrapper,
                                                  final android.widget.EditText editTextInput) {
         editTextInput.setOnClickListener(new View.OnClickListener() {
@@ -253,10 +266,77 @@ public class EditProfileFragment extends Fragment {
             }
         });
     }
+
+    /**
+     * Initializes OnClickListener for the editable profile picture
+     */
+    private void initializeProfileImageEdit() {
+        mProfileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                new MaterialDialog.Builder(getActivity())
+                        .title("Edit Image")
+                        .content("Enter the URL for your new profile image")
+                        .input("Image URL", mProfilePictureUrl, new MaterialDialog.InputCallback() {
+                            @Override
+                            public void onInput(MaterialDialog materialDialog, CharSequence charSequence) {
+                                getUserImage(charSequence.toString(), mProfileImage);
+                            }
+                        }).show();
+
+
+            }
+
+        });
+    }
+
+
+    private void getUserImage(final String imageUrl, final ImageView imageView){
+
+        ImageLoader imageLoader = Singleton.getInstance().getImageLoader();
+
+        imageLoader.get(imageUrl, new ImageLoader.ImageListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getActivity(), "Invalid Image URL", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
+
+                if (response.getBitmap() != null) {
+                    imageView.setImageBitmap(response.getBitmap());
+                    mProfilePictureUrl = imageUrl;
+                } else {
+                    Toast.makeText(getActivity(), "Error processing your image URL", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+    }
+
+
+    private void updateSharedPrefs(){
+
+        System.out.println("Updating shared prefs");
+        SharedPreferences sharedPref = getActivity().getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("first_name", mCurrStudent.getFirstName());
+        editor.putString("last_name", mCurrStudent.getLastName());
+        editor.putString("image", mProfilePictureUrl);
+
+        editor.commit();
+
+    }
+
     class EditProfileResponseListener implements Response.Listener<JSONObject> {
 
         @Override
         public void onResponse(JSONObject response) {
+            updateSharedPrefs();
         }
     }
     class EditProfileErrorListener implements Response.ErrorListener {

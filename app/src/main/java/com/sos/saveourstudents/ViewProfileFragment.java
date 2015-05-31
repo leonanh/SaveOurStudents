@@ -1,15 +1,19 @@
 package com.sos.saveourstudents;
 
 import android.app.Activity;
-import android.os.Bundle;
 import android.app.Fragment;
+import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.rey.material.widget.FloatingActionButton;
 
 
@@ -30,6 +34,8 @@ public class ViewProfileFragment extends Fragment {
     private boolean mIsCurrentUser;
 
     private OnEditButtonListener mListener;
+    private ImageView mProfileImage;
+    private ImageView mCoverImageView;
 
     /**
      * Use this factory method to create a new instance of
@@ -68,12 +74,16 @@ public class ViewProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_view_profile, container, false);
+        mProfileImage = (ImageView) rootView.findViewById(R.id.profile_image);
+        mCoverImageView = (ImageView) rootView.findViewById(R.id.cover_image);
         return rootView;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        updateCoverImage();
         updateCurrentStudentView();
 
         LinearLayout aboutMeContents = (LinearLayout) getActivity()
@@ -97,6 +107,7 @@ public class ViewProfileFragment extends Fragment {
             });
 
         }
+
     }
 
     @Override
@@ -123,6 +134,28 @@ public class ViewProfileFragment extends Fragment {
                 .setText(mCurrStudent.getMajor());
         ((TextView) getActivity().findViewById(R.id.profile_myDescription))
                 .setText(mCurrStudent.getDescription());
+
+
+
+
+            //TODO
+        if (mCurrStudent.getProfilePictureUrl().equals(null) ||
+                mCurrStudent.getProfilePictureUrl().isEmpty()) {
+            mProfileImage.setImageResource(R.drawable.defaultprofile);
+            mCurrStudent.setProfilePicture(mProfileImage);
+        } else {
+            getUserImage(mCurrStudent.getProfilePictureUrl(), mProfileImage);
+            //new DownloadImageTask(mProfileImage).execute(mCurrStudent.getProfilePictureUrl());
+            //mCurrStudent.setProfilePicture(mProfileImage);
+        }
+    }
+
+    private void updateCoverImage(){
+        if(mIsCurrentUser)
+            mCoverImageView.setImageResource(getActivity().getSharedPreferences(
+                    getString(R.string.preference_file_key), Context.MODE_PRIVATE)
+                    .getInt("cover_photo", R.drawable.materialwallpaperdefault));
+
     }
 
     @Override
@@ -155,5 +188,71 @@ public class ViewProfileFragment extends Fragment {
     public interface OnEditButtonListener {
         void onEditButton();
     }
+
+
+
+
+    private void getUserImage(String imageUrl, final ImageView imageView){
+
+        ImageLoader imageLoader = Singleton.getInstance().getImageLoader();
+
+        imageLoader.get(imageUrl, new ImageLoader.ImageListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //Log.e(TAG, "Image Load Error: " + error.getMessage());
+            }
+
+            @Override
+            public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
+                if (response.getBitmap() != null) {
+
+                    imageView.setImageBitmap(response.getBitmap());
+                    mCurrStudent.setProfilePicture(imageView);
+                } else {
+                    // Default image...
+                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.defaultprofile));
+                }
+            }
+        });
+
+    }
+
+
+
+
+
+
+    /*
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                mIcon11 = null;
+                Log.e("Profile Activity", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            if (result != null) bmImage.setImageBitmap(result);
+            else {
+                bmImage.setImageResource(R.drawable.defaultprofile);
+            }
+        }
+    }*/
+
+
+
 
 }

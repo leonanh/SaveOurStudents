@@ -98,7 +98,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createUser?" +
                         "firstName=" + firstName  +
                         "&lastName=" + lastName  +
-                        "&password=" + Singleton.get_SHA_1_SecurePassword(passwordInput1) +
+                        "&password=" + Validations.get_SHA_1_SecurePassword(passwordInput1) +
                         "&image=" + "" +
                         "&email=" + emailInput1 +
                         "&deviceId=" + regid;
@@ -176,15 +176,17 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private boolean verifyEmail(String incomingEmail) {
-        boolean emailIsValid = validations.testEmailSignUp(incomingEmail);
+        //boolean emailIsValid = validations.testEmailSignUp(incomingEmail);
 
 
-        if (emailIsValid == false) {
+        if (!Validations.isValidEmail(incomingEmail)) {
             emailInput.setError("bad email");
             return false;
+        }else{
+            emailInput.clearError();
+            return true;
         }
-        emailInput.clearError();
-        return true;
+
 
     }
 

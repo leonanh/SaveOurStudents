@@ -19,6 +19,7 @@
             android:padding="5dp">
 
             <ImageView
+                android:id="@+id/cover_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:adjustViewBounds="false"
@@ -199,7 +200,7 @@
             android:layout_marginTop="-32dp"
             android:elevation="2dp"
             app:fab_backgroundColor="@color/accent"
-            app:fab_iconSrc="@drawable/ic_create_white_18dp"
+            app:fab_iconSrc="@drawable/ic_create_white_24dp"
             app:rd_enable="true"
             app:rd_style="@style/Material.Drawable.Ripple.Wave" />
 

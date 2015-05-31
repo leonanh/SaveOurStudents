@@ -1,18 +1,14 @@
 package com.sos.saveourstudents.supportclasses;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
+import android.text.TextUtils;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Created by HTPC on 4/26/2015.
  */
-public class Validations  {
+    public class Validations  {
     private static final int MIN_LENGTH = 3;
     private static final int MAX_LENGTH = 16;
 
@@ -33,19 +29,27 @@ public class Validations  {
         }
     }
 
-    public boolean testEmailSignUp(String incomingEmail) {
-        boolean isValid = false;
 
-        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
-        CharSequence inputStr = incomingEmail;
+    public final static boolean isValidEmail(CharSequence target) {
+        return !TextUtils.isEmpty(target) && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+    }
 
-        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(inputStr);
-        if (matcher.matches()) {
-            isValid = true;
+    public final static int areValidPasswords(String incomingPass1,String incomingPass2) {
+
+
+        if (incomingPass1.length() > MAX_LENGTH || incomingPass1.length() < MIN_LENGTH) {
+            return INCORRECT_LENGTH_TOP;
         }
-        return isValid;
 
+        if (incomingPass2.length() > MAX_LENGTH || incomingPass2.length() < MIN_LENGTH) {
+            return INCORRECT_LENGTH_BOT;
+        }
+
+        if (!(incomingPass1.equals(incomingPass2))) {
+            return REPEAT_NOT_SAME;
+        }
+
+        return VALIDATION_PASSED;
     }
 
     public boolean testUserName(String incomingUser) {
@@ -58,9 +62,9 @@ public class Validations  {
         }
     }
 
+
     public int testPass(String incomingPass1,String incomingPass2) {
         //TextView passBottom, passBottom2;
-
 
         if (incomingPass1.length() > MAX_LENGTH || incomingPass1.length() < MIN_LENGTH) {
             //passBottom.setText(R.string.create_password_promp_err);
@@ -82,6 +86,25 @@ public class Validations  {
     }
 
 
+    public static String get_SHA_1_SecurePassword(String passwordToHash){
+        String generatedPassword = null;
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-1");
+            //md.update(salt.getBytes()); //No salt....
+            byte[] bytes = md.digest(passwordToHash.getBytes());
+            StringBuilder sb = new StringBuilder();
+            for(int i=0; i< bytes.length ;i++)
+            {
+                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+            generatedPassword = sb.toString();
+        }
+        catch (NoSuchAlgorithmException e)
+        {
+            e.printStackTrace();
+        }
+        return generatedPassword;
+    }
 
 
 

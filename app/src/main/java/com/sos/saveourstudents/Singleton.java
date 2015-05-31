@@ -3,7 +3,6 @@ package com.sos.saveourstudents;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Typeface;
 import android.support.v4.util.LruCache;
 import android.text.TextUtils;
 
@@ -12,8 +11,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -33,9 +30,6 @@ public class Singleton {
 	private RequestQueue mRequestQueue;
 	private ImageLoader mImageLoader;
 
-
-	//static Typeface face;
-	static public android.graphics.Typeface face;
 	/**
 	 * To initialize the class. It must be called before call the method getInstance()
 	 * @param ctx The Context used
@@ -43,8 +37,6 @@ public class Singleton {
 
 	public static void initialize(Context ctx) {
 		mContext = ctx;
-		face = Typeface.createFromAsset(mContext.getAssets(), "CODE Bold.otf");
-		//buildGoogleApiClient();
 	}
 
 
@@ -135,26 +127,6 @@ public class Singleton {
 	}
 
 
-
-	static String get_SHA_1_SecurePassword(String passwordToHash){
-		String generatedPassword = null;
-		try {
-			MessageDigest md = MessageDigest.getInstance("SHA-1");
-			//md.update(salt.getBytes()); //No salt....
-			byte[] bytes = md.digest(passwordToHash.getBytes());
-			StringBuilder sb = new StringBuilder();
-			for(int i=0; i< bytes.length ;i++)
-			{
-				sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
-			}
-			generatedPassword = sb.toString();
-		}
-		catch (NoSuchAlgorithmException e)
-		{
-			e.printStackTrace();
-		}
-		return generatedPassword;
-	}
 
 	@SuppressLint("SimpleDateFormat")
 	public String doDateLogic(String theDate){
