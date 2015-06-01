@@ -204,11 +204,16 @@ public class EditProfileFragment extends Fragment {
         String newDescription = "";
 
         try {
-            newFirstName = java.net.URLEncoder.encode(mCurrStudent.getFirstName(), "utf-8");
-            newLastName = java.net.URLEncoder.encode(mCurrStudent.getLastName(), "utf-8");
-            newSchool = java.net.URLEncoder.encode(mCurrStudent.getSchool(), "utf-8");
-            newMajor = java.net.URLEncoder.encode(mCurrStudent.getMajor(), "utf-8");
-            newDescription = java.net.URLEncoder.encode(mCurrStudent.getDescription(), "utf-8");
+            newFirstName = java.net.URLEncoder.encode(mCurrStudent.getFirstName(), "utf-8")
+                    .replaceAll("%27", "%27%27");
+            newLastName = java.net.URLEncoder.encode(mCurrStudent.getLastName(), "utf-8")
+                    .replaceAll("%27", "%27%27");
+            newSchool = java.net.URLEncoder.encode(mCurrStudent.getSchool(), "utf-8")
+                    .replaceAll("%27", "%27%27");
+            newMajor = java.net.URLEncoder.encode(mCurrStudent.getMajor(), "utf-8")
+                    .replaceAll("%27", "%27%27");
+            newDescription = java.net.URLEncoder.encode(mCurrStudent.getDescription(), "utf-8")
+                    .replaceAll("%27", "%27%27");
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();

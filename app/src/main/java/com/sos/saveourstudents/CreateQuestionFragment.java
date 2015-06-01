@@ -365,7 +365,8 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
         params.add(new BasicNameValuePair("visibleLocation", (showLocation ? 1 : 0)+""));
 
 
-        String paramString = URLEncodedUtils.format(params, "utf-8").replace("+", "%20");
+        String paramString = URLEncodedUtils.format(params, "utf-8")
+                .replaceAll("%27", "%27%27");
 
         String url;
         if(isInEditMode)

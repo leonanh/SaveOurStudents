@@ -149,7 +149,6 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
         return rootView;
     }
 
-
     private void getQuestionData() {
 
 
@@ -358,8 +357,6 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
                     }
                 });
             }
-
-
         }
         fabButton.setVisibility(View.VISIBLE);
 
@@ -597,10 +594,10 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
         params.add(new BasicNameValuePair("userId", sharedPref.getString("user_id", "")));
         params.add(new BasicNameValuePair("comment", commentEditText.getText().toString()));
 
-        String paramString = URLEncodedUtils.format(params, "utf-8").replace("+", "%20");
-        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/addComment?"+paramString;
+        String paramString = URLEncodedUtils.format(params, "utf-8")
+                .replaceAll("%27", "%27%27");
 
-        //System.out.println("add comment url: " + url);
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/addComment?"+paramString;
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
                 (JSONObject)null,
@@ -695,7 +692,15 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
         if (requestCode == EDIT_QUESTION) {
             // Make sure the request was successful
             if (resultCode == getActivity().RESULT_OK) {
-                System.out.println("Returned from edit Question ok");
+                ((ViewQuestionActivity) getActivity()).getQuestionData();
+                mQuestionInfo = ((ViewQuestionActivity) getActivity()).mQuestionInfo;
+                tags = ((ViewQuestionActivity) getActivity()).tags;
+                try {
+                    showQuestionDetails(mQuestionInfo);
+                    showQuestionTags(tags);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

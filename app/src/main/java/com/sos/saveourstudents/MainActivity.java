@@ -319,7 +319,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                                 if(result.getString("expectResults").equalsIgnoreCase("1")){
                                     final String questionId = result.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("question_id");
-                                    fab.setIcon(getResources().getDrawable(R.drawable.ic_create_white_24dp), false);
+                                    fab.setIcon(getResources().getDrawable(R.drawable.ic_group_white_24dp), false);
                                     fab.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
