@@ -77,17 +77,26 @@ public class GcmIntentService extends IntentService {
 
         mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
-
         Intent newIntent = new Intent(this, MemberWantsToJoinActivity.class);
-        //newIntent.putExtra("extras", extras);
+
+        PendingIntent contentIntent = null;
+
         newIntent.putExtra("type", extras.getString("type"));
         newIntent.putExtra("userId", extras.getString("userId"));
         newIntent.putExtra("questionId", extras.getString("questionId"));
         newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
                 Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, newIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        if(extras.getString("type").equalsIgnoreCase(ADD_TUTOR) || extras.getString("type").equalsIgnoreCase(ADD_MEMBER)) {
+            contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, newIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        }
+        else{
+            Intent intent = new Intent();
+            intent.setAction("com.sos.saveourstudents.CUSTOM_INTENT");
+            sendBroadcast(intent);
+            contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), 0);
+        }
 
-
+        
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.mipmap.ic_launcher)
@@ -98,12 +107,13 @@ public class GcmIntentService extends IntentService {
                         .setTicker(message)
                                 .addExtras(extras)
                         //.setStyle(new Notification.BigPictureStyle()
-                        //        .bigPicture(aBigBitmap))
+                                        //        .bigPicture(aBigBitmap))
                         .setContentText(msg);
 
         mBuilder.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE);
-        if(extras.getString("type").equalsIgnoreCase(ADD_TUTOR) || extras.getString("type").equalsIgnoreCase(ADD_MEMBER))
-            mBuilder.setContentIntent(contentIntent);
+        mBuilder.setContentIntent(contentIntent);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
+
+
 }

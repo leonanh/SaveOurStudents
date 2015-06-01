@@ -1,7 +1,9 @@
 package com.sos.saveourstudents;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -19,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -49,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private final int VIEWQUESTION_ACTIVITY = 37;
     private boolean fabShowing = false;
 
+    private FabBroadcastReciever fabBroadcastReciever;
     private ViewPager mViewPager;
     private SlidingTabLayout mTabs;
 
@@ -91,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             setSupportActionBar(toolbar);
         }
 
+        fabBroadcastReciever = new FabBroadcastReciever();
         fab = (com.rey.material.widget.FloatingActionButton) findViewById(R.id.fab_image);
 
         hideFab();
@@ -170,14 +175,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         System.out.println("OnResume Main");
+        IntentFilter iff = new IntentFilter();
+        iff.addAction("com.sos.saveourstudents.CUSTOM_INTENT");
+        // Put whatever message you want to receive as the action
+        registerReceiver(fabBroadcastReciever, iff);
+        //registerReceiver(fabBroadcastReciever, new IntentFilter("com.sos.saveourstudents.CUSTOM_INTENT"));
         super.onResume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+
         if(mDrawer != null)
             mDrawer.closeDrawers();
+
+        unregisterReceiver(fabBroadcastReciever);
 
     }
 
@@ -210,7 +223,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (item.getItemId() == R.id.action_filter) {
 
-
             Set<String> filterList = new HashSet<String>(sharedPref.getStringSet("filter_list", new HashSet<String>()));
             ArrayList<String> myList = new ArrayList<String>();
             myList.addAll(filterList);
@@ -220,12 +232,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             newFragment.show(getSupportFragmentManager(), "dialog");
 
-
-        }
-
-        else if (item.getItemId() == R.id.add_member) {
-            Intent mIntent = new Intent(this, MemberWantsToJoinActivity.class);
-            startActivity(mIntent);
         }
 
         return super.onOptionsItemSelected(item);
@@ -284,6 +290,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     public void buildFab(){
+        hideFab();
         getQuestionActiveStatus();
     }
 
@@ -296,9 +303,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String paramString = URLEncodedUtils.format(params, "utf-8");
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/hasQuestion?"+paramString;
 
-
         System.out.println("url: " + url);
-
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
                 (JSONObject)null,
@@ -313,7 +318,73 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                             if(!result.getString("success").equalsIgnoreCase("1")){
                                 //Error...
+                            }
+                            else{
 
+                                if(result.getString("expectResults").equalsIgnoreCase("1")){
+                                    final String questionId = result.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("question_id");
+                                    fab.setIcon(getResources().getDrawable(R.drawable.ic_create_white_24dp), false);
+                                    fab.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            Intent mIntent = new Intent(MainActivity.this, ViewQuestionActivity.class);
+                                            mIntent.putExtra("questionId", questionId);
+                                            startActivityForResult(mIntent, EDIT_QUESTION);
+                                        }
+                                    });
+                                    showFab();
+                                }
+                                //Is in a group?
+                                else{
+                                    getGroupActiveStatus();
+                                }
+
+
+
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("Error with connection or url: " + error.toString());
+            }
+
+        });
+
+
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+
+
+    }
+    private void getGroupActiveStatus(){
+
+        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        params.add(new BasicNameValuePair("userId", sharedPref.getString("user_id", "")));
+
+        String paramString = URLEncodedUtils.format(params, "utf-8");
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/inGroup?"+paramString;
+
+        System.out.println("getGroupActiveStatus url: " + url);
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
+                (JSONObject)null,
+                new Response.Listener<JSONObject>(){
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+
+                            final JSONObject result = new JSONObject(response.toString());
+                            System.out.println("getGroupActiveStatus result "+result);
+
+                            if(!result.getString("success").equalsIgnoreCase("1")){
+                                System.out.println("Error getting active group status: "+result);
                             }
                             else{
 
@@ -345,7 +416,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 }
 
 
-
                             }
 
                         } catch (JSONException e) {
@@ -357,7 +427,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                System.out.println("Error with connection or url: " + error.toString());
+                Toast.makeText(MainActivity.this, "Connection Error", Toast.LENGTH_SHORT).show();
             }
 
         });
@@ -367,6 +437,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     }
+
+
 
 
     @Override
@@ -407,8 +479,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void updateNavDrawer(){
 
-        //System.out.println("materialWallpareID?: "+R.drawable.materialwallpaperdefault);
-
         String name = sharedPref.getString("first_name", "") + " "+ sharedPref.getString("last_name", "");
         mAdapter = new NavDrawerAdapter(TITLES, ICONS, name,
                 sharedPref.getString("email", "email"),
@@ -420,6 +490,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+
+    public class FabBroadcastReciever extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            System.out.println("Recieved custom broadcast in main ACtivity");
+            buildFab();
+        }
+    }
 
 
 }
@@ -438,8 +516,6 @@ class ViewPagerAdapter extends FragmentPagerAdapter {
             feedFragment,
             mapFragment;
 
-    //FeedFragment feed = new FeedFragment();
-    //MapFragment map = new MapFragment();
     String[] tabNames = {"Feed", "Map"};
 
 
@@ -475,5 +551,8 @@ class ViewPagerAdapter extends FragmentPagerAdapter {
         return POSITION_NONE;
     }
 
+
+
 }
+
 

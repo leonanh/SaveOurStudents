@@ -41,6 +41,8 @@ public class ViewQuestionActivity extends AppCompatActivity {
     private final int numPages = 3;
 
     private Menu menu;
+
+
     private SlidingTabLayout mSlidingTabLayout;
     private FragmentPagerAdapter mViewGroupPagerAdapter;
     private ViewPager mViewPager;
@@ -96,6 +98,19 @@ public class ViewQuestionActivity extends AppCompatActivity {
         getQuestionData();
 
 
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //registerReceiver(fabBroadcastReciever, new IntentFilter("UPDATE_FAB"));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //unregisterReceiver(fabBroadcastReciever);
     }
 
     public void getQuestionData() {
@@ -319,6 +334,8 @@ public class ViewQuestionActivity extends AppCompatActivity {
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
 
     }
+
+
 
 
 

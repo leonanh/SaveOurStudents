@@ -12,7 +12,6 @@
         android:required="true" />
 
     <!-- Mav View Permission -->
-    <!-- <uses-permission android:name="com.sos.saveourstudents.locationapi.maps.permission.MAPS_RECEIVE" /> -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -75,6 +74,11 @@
         <activity android:name=".ViewQuestionActivity"/>
 
 
+        <activity
+            android:name=".ProfileActivity"
+            android:label="@string/title_activity_profile"
+            android:windowSoftInputMode="adjustPan" >
+        </activity>
 
 
 
@@ -103,12 +107,18 @@
         </receiver>
 
         <service android:name=".supportclasses.GcmIntentService" />
+        
+        <!-- FAB Reciever
+        <receiver android:name="com.sos.saveourstudents.MainActivity$FabBroadcastReciever">
+            <intent-filter>
+                <action android:name="com.sos.saveourstudents.CUSTOM_INTENT"/>
+            </intent-filter>
 
-        <activity
-            android:name=".ProfileActivity"
-            android:label="@string/title_activity_profile"
-            android:windowSoftInputMode="adjustPan" >
-        </activity>
+        </receiver>
+-->
+
+        
+
     </application>
 
 </manifest>

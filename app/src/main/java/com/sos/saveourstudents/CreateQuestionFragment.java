@@ -404,10 +404,6 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
 
                             }
                             else{
-                                if(isInEditMode)
-                                    sendNotification("Successfully Edited Question");
-                                else
-                                    sendNotification("Successfully Created Question");
 
                                 getActivity().setResult(getActivity().RESULT_OK);
                                 getActivity().finish();
