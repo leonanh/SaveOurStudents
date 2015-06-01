@@ -467,6 +467,32 @@ public class ViewQuestionMembersFragment extends Fragment {
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 removeUser(userId);
+                if(mStudentList != null) {
+                    for (int i = 0; i < mStudentList.size(); i++) {
+                        try {
+                            if (mStudentList.get(i).getString("user_id").equals(userId)) {
+                                mStudentList.remove(i);
+                                mStudentsListViewArrayAdapter.notifyDataSetChanged();
+                            }
+                        } catch (JSONException e) {
+                            Log.e("ViewMembers", "Error removing student from list!");
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                if(mTutorList != null) {
+                    for (int i = 0; i < mTutorList.size(); i++) {
+                        try {
+                            if (mTutorList.get(i).getString("user_id").equals(userId)) {
+                                mTutorList.remove(i);
+                                mTutorsListViewArrayAdapter.notifyDataSetChanged();
+                            }
+                        } catch (JSONException e) {
+                            Log.e("ViewMembers", "Error removing student from list!");
+                            e.printStackTrace();
+                        }
+                    }
+                }
             }
         });
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -503,7 +529,6 @@ public class ViewQuestionMembersFragment extends Fragment {
                             JSONObject result = new JSONObject(response.toString());
                             System.out.println("removeUser result "+result);
                             if(result.getString("success").equalsIgnoreCase("1")){
-
                                 Toast.makeText(mContext, "User removed", Toast.LENGTH_SHORT);
                                 getMemberData();
                             }
