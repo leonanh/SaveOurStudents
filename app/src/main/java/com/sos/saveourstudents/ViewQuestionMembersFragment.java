@@ -56,7 +56,7 @@ public class ViewQuestionMembersFragment extends Fragment {
     private SharedPreferences sharedPref;
 
     private String mQuestionId;
-    private Context mContext;
+    public Context mContext;
     private boolean mEditable;
 
     private static final String mGetRateListUrl =
@@ -117,9 +117,7 @@ public class ViewQuestionMembersFragment extends Fragment {
 
     private void getMemberData() {
 
-
         //final String currentUserId = sharedPref.getString("user_id", "");
-
 
         List<NameValuePair> params = new LinkedList<NameValuePair>();
         params.add(new BasicNameValuePair("questionId", mQuestionId));
@@ -665,7 +663,7 @@ public class ViewQuestionMembersFragment extends Fragment {
 
     }
 
-    private void retrieveListOfRatedTutors() {
+    protected void retrieveListOfRatedTutors() {
         String getRateList = mGetRateListUrl + mViewerUserId;
         JsonObjectRequest rateListRequest = new JsonObjectRequest(Request.Method.GET,
                 getRateList, (JSONObject) null, new Response.Listener<JSONObject>() {

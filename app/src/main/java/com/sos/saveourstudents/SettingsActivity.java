@@ -61,6 +61,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        if(!Singleton.hasBeenInitialized()){
+            Singleton.initialize(this);
+        }
 
         toolbar = (Toolbar) findViewById(R.id.settings_toolbar);
         toolbar.setTitle(R.string.app_name);

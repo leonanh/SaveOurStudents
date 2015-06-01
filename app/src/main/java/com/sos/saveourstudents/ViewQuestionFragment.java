@@ -71,7 +71,7 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
 
     private boolean mEditable;
-    private Context mContext;
+    public Context mContext;
     private String mQuestionId;
 
     private JSONObject mQuestionInfo;
@@ -144,7 +144,7 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
             try {
                 showQuestionDetails(mQuestionInfo);
                 showQuestionTags(tags);
-                buildFab(mQuestionInfo.getString("user_id"));
+                buildFab();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -192,7 +192,7 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
                                 showQuestionDetails(mQuestionInfo);
 
-                                buildFab(mQuestionInfo.getString("user_id"));
+                                buildFab();
 
 
                             }
@@ -328,24 +328,26 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
         }
 
-
     }
 
 
-    //TODO
-    private void buildFab(String userId){
-
-        if(userId != null && !userId.equalsIgnoreCase("")){
+    public void buildFab() {
 
             String currentUserId = sharedPref.getString("user_id", "");
+            String questionOwner = "";
+        try {
+            questionOwner = mQuestionInfo.getString("user_id");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-            if(currentUserId.equalsIgnoreCase(userId)){
+
+        if(currentUserId.equalsIgnoreCase(questionOwner)){
                 //owner
                 fab.setIcon(getResources().getDrawable(R.drawable.ic_create_white_24dp), false);
                 fab.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //Do edit dialog??
                         Intent mIntent = new Intent(mContext, CreateQuestionActivity.class);
                         mIntent.putExtra("questionId", mQuestionId);
                         startActivityForResult(mIntent, EDIT_QUESTION);
@@ -354,20 +356,7 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
                 fab.setVisibility(View.VISIBLE);
             }else{
                 getGroupActiveStatus();
-                /*
-                fab.setIcon(getResources().getDrawable(R.drawable.ic_person_add_white_18dp), false);
-                fab.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showJoinDialog();
-                    }
-                });
-                */
             }
-
-
-        }
-        //
 
     }
 
@@ -590,7 +579,6 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
     private void showJoinDialog(){
 
-
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage("Would you like to join as a tutor or a group member?");
 
@@ -794,7 +782,7 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
     }
 
 
-        private void removeYourselfFromGroup(String userId) {
+        private void removeYourselfFromGroup(final String userId) {
 
             List<NameValuePair> params = new LinkedList<NameValuePair>();
             params.add(new BasicNameValuePair("userId", userId));
@@ -816,11 +804,12 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
                                 JSONObject result = new JSONObject(response.toString());
                                 System.out.println("removeUser result " + result);
                                 if (result.getString("success").equalsIgnoreCase("1")) {
-                                    Toast.makeText(mContext, "User removed", Toast.LENGTH_SHORT);
-                                    getActivity().setResult(getActivity().RESULT_OK);
-                                    getActivity().finish();
+                                    Toast.makeText(mContext, "User removed", Toast.LENGTH_SHORT).show();
+                                    buildFab();
+                                    //getActivity().setResult(getActivity().RESULT_OK);
+                                    //getActivity().finish();
                                 } else {
-                                    Toast.makeText(mContext, "Error removing user", Toast.LENGTH_SHORT);
+                                    Toast.makeText(mContext, "Error removing user", Toast.LENGTH_SHORT).show();
                                 }
 
                             } catch (JSONException e) {

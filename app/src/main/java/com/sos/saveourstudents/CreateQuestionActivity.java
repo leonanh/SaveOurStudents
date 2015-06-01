@@ -16,6 +16,9 @@ public class CreateQuestionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question);
 
+        if(!Singleton.hasBeenInitialized()){
+            Singleton.initialize(this);
+        }
 
         if (findViewById(R.id.fragment_container) != null) {
             String questionId ="";
@@ -24,7 +27,6 @@ public class CreateQuestionActivity extends AppCompatActivity {
             }
             Fragment theFragToShow = CreateQuestionFragment.newInstance(questionId);
             getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, theFragToShow).commit();
-
 
         }
 

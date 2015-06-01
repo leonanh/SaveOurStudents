@@ -30,6 +30,10 @@ public class ForgotLoginActivity extends Activity implements View.OnClickListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_login);
 
+        if(!Singleton.hasBeenInitialized()){
+            Singleton.initialize(this);
+        }
+
         sendEmailBtn = (Button)findViewById(R.id.send_credentials_to_email_btn);
         emailentry = (com.rey.material.widget.EditText) findViewById(R.id.forgot_login_email_textfield);
         sendEmailBtn.setOnClickListener(this);

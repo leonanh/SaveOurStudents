@@ -48,6 +48,10 @@ public class MemberWantsToJoinActivity extends AppCompatActivity implements View
         super.onCreate(savedInstanceState);
         setContentView(R.layout.member_join_layout);
 
+        if(!Singleton.hasBeenInitialized()){
+            Singleton.initialize(this);
+        }
+
         if (getIntent().getExtras() != null) {
 
             System.out.println("Extras: " + getIntent().getExtras());

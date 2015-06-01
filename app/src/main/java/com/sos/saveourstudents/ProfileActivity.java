@@ -38,6 +38,11 @@ public class ProfileActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+
+        if(!Singleton.hasBeenInitialized()){
+            Singleton.initialize(this);
+        }
+
         mUserId = getIntent().getStringExtra(userIdTag);
 
         String url = mUserURL + mUserId;
