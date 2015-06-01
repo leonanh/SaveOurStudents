@@ -465,6 +465,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         else if(requestCode == SETTINGS_ACTIVITY){
             updateNavDrawer();
+            updateFragments();
         }
 
         else {
