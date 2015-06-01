@@ -79,7 +79,7 @@ public class GcmIntentService extends IntentService {
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
         Intent newIntent = new Intent(this, MemberWantsToJoinActivity.class);
-        newIntent.putExtra("extras", extras);
+        //newIntent.putExtra("extras", extras);
         newIntent.putExtra("type", extras.getString("type"));
         newIntent.putExtra("userId", extras.getString("userId"));
         newIntent.putExtra("questionId", extras.getString("questionId"));
