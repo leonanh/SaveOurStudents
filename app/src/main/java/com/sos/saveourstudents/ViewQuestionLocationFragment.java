@@ -147,11 +147,7 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
 
     @Override
     public void onConnected(Bundle bundle) {
-        //mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(
-        //        mGoogleApiClient);
 
-        //System.out.println("Connected to GoogleApi: " + mCurrentLocation);
-        //getLocationUpdate();
     }
 
     @Override
@@ -167,10 +163,6 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
 
     @Override
     public void onLocationChanged(Location location) {
-
-        //System.out.println("Location: "+location);
-        //Stop updates after we get a location....
-        //showCustomMarker();
         stopLocationUpdates();
 
     }
@@ -238,18 +230,6 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
     }
 
 
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-
-        }
-        else {
-
-        }
-    }
-
-
     private void showChangeLocationDialog(){
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -305,12 +285,7 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             mMap.addMarker(markerOptions);
 
-
-
-
         }
-
-
 
     }
 
@@ -414,6 +389,8 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
             @Override
             public void onErrorResponse(VolleyError error) {
                 System.out.println("Error with connection or url: " + error.toString());
+                if( ((ViewQuestionActivity) getActivity()) != null)
+                    ((ViewQuestionActivity) getActivity()).mSnackBar.show();
             }
 
         });

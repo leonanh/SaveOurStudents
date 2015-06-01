@@ -88,8 +88,6 @@ public class MapFragment extends Fragment implements
     SharedPreferences sharedPref;
 
 
-
-
     public static MapFragment newInstance() {
         MapFragment fragment = new MapFragment();
         Bundle args = new Bundle();
@@ -157,9 +155,6 @@ public class MapFragment extends Fragment implements
     }
 
     public void getMapData() {
-
-
-
 
         Set<String> filterList = new HashSet<String>(sharedPref.getStringSet("filter_list", new HashSet<String>()));
 
@@ -231,7 +226,7 @@ public class MapFragment extends Fragment implements
 
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                showConnectionIssueDialog();
                 System.out.println("Error: " + error.toString());
 
             }
@@ -327,6 +322,8 @@ public class MapFragment extends Fragment implements
     public void onResume() {
         if(mMap != null && mMapView != null)
             mMapView.onResume();
+        if(detailsLayout.getVisibility() == View.VISIBLE)
+            ((MainActivity) getActivity()).hideFab();
         super.onResume();
 
     }
@@ -336,7 +333,7 @@ public class MapFragment extends Fragment implements
         if(mGoogleApiClient != null && mGoogleApiClient.isConnected())
             stopLocationUpdates();
         mMapView.onPause();
-        ((MainActivity) getActivity()).showFab();
+
         super.onPause();
     }
 
@@ -355,7 +352,6 @@ public class MapFragment extends Fragment implements
         Criteria criteria = new Criteria();
         Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
 
-        System.out.println("Current Zoom: "+mMap.getCameraPosition().zoom);
         float zoomDistance = mMap.getCameraPosition().zoom;
         if(zoomDistance == 2.0)
             zoomDistance = 16;
@@ -394,7 +390,7 @@ public class MapFragment extends Fragment implements
     }
 
     protected void createLocationRequest() {
-        System.out.println("Creating new locationRequest in maps");
+        //System.out.println("Creating new locationRequest in maps");
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(10000);
         mLocationRequest.setFastestInterval(5000);
@@ -417,28 +413,29 @@ public class MapFragment extends Fragment implements
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        showConnectionIssueDialog();
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
+        showConnectionIssueDialog();
+    }
 
+    private void showConnectionIssueDialog(){
+        ((MainActivity) getActivity()).showSnackbar();
     }
 
     @Override
     public void onLocationChanged(Location location) {
         mCurrentLocation = location;
-        //System.out.println("Location: "+location);
-        //Stop updates after we get a location....
-        getMapData();
         stopLocationUpdates();
+        getMapData();
         zoomToMyPosition();
     }
 
     protected void stopLocationUpdates() {
-        System.out.println("Stopping location updates in map");
         LocationServices.FusedLocationApi.removeLocationUpdates( mGoogleApiClient, this);
-        mLocationRequest = null; //TODO
+        //mLocationRequest = null; //TODO
     }
 
     @Override
@@ -451,6 +448,7 @@ public class MapFragment extends Fragment implements
         }
         else {
             //System.out.println("Map not visible");
+
             if((MainActivity) getActivity() != null) {
                 ((MainActivity) getActivity()).showFab();
                 detailsLayout.setVisibility(View.GONE);

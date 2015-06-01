@@ -191,6 +191,8 @@ public class ViewQuestionMembersFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 System.out.println("Error with connection or url: " + error.toString());
+                if( ((ViewQuestionActivity) getActivity()) != null)
+                ((ViewQuestionActivity) getActivity()).mSnackBar.show();
             }
 
         });
@@ -592,6 +594,8 @@ public class ViewQuestionMembersFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 System.out.println("Error with connection or url: " + error.toString());
+                if( ((ViewQuestionActivity) getActivity()) != null)
+                    ((ViewQuestionActivity) getActivity()).mSnackBar.show();
             }
 
         });
@@ -649,6 +653,8 @@ public class ViewQuestionMembersFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 System.out.println("Error with connection or url: " + error.toString());
+                if( ((ViewQuestionActivity) getActivity()) != null)
+                    ((ViewQuestionActivity) getActivity()).mSnackBar.show();
             }
 
         });
@@ -728,6 +734,8 @@ public class ViewQuestionMembersFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 System.out.println("Error with connection or url: " + error.toString());
+                if( ((ViewQuestionActivity) getActivity()) != null)
+                    ((ViewQuestionActivity) getActivity()).mSnackBar.show();
             }
 
         }

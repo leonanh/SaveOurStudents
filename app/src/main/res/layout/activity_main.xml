@@ -55,6 +55,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginRight="16dp"
             android:layout_marginBottom="16dp"
+            android:visibility="gone"
             android:elevation="2dp"
             app:fab_iconSrc="@drawable/ic_add_white_24dp"
             app:fab_backgroundColor="@color/accent"
@@ -65,7 +66,7 @@
             android:id="@+id/main_sn"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:visibility="visible"
+            android:visibility="invisible"
             android:layout_alignParentBottom="true"/>
 
 

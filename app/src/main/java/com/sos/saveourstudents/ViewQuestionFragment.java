@@ -211,6 +211,7 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
             @Override
             public void onErrorResponse(VolleyError error) {
                 System.out.println("Error with connection or url: " + error.toString());
+                showConnectionIssueDialog();
             }
 
         });
@@ -264,6 +265,7 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
             @Override
             public void onErrorResponse(VolleyError error) {
                 System.out.println("Error with connection or url: " + error.toString());
+                showConnectionIssueDialog();
             }
 
         });
@@ -420,12 +422,12 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        showConnectionIssueDialog();
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-
+        showConnectionIssueDialog();
     }
 
     @Override
@@ -453,6 +455,11 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
     }
 
+    private void showConnectionIssueDialog(){
+        Toast.makeText(mContext, "Connection error, try again", Toast.LENGTH_SHORT).show();
+        if( ((ViewQuestionActivity) getActivity()) != null)
+            ((ViewQuestionActivity) getActivity()).mSnackBar.show();
+    }
 
     public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.ViewHolder>{
 
@@ -641,6 +648,7 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
             @Override
             public void onErrorResponse(VolleyError error) {
+                //TODO
                 System.out.println("Error with connection or url: " + error.toString());
             }
 
@@ -691,6 +699,7 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
             @Override
             public void onErrorResponse(VolleyError error) {
+                //TODO
                 System.out.println("Error with connection or url: " + error.toString());
             }
 
@@ -760,7 +769,6 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
                                 }
 
-
                             }
 
                         } catch (JSONException e) {
@@ -773,6 +781,7 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
             @Override
             public void onErrorResponse(VolleyError error) {
                 System.out.println("Error with connection or url: " + error.toString());
+                showConnectionIssueDialog();
             }
 
         });
@@ -822,6 +831,7 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     System.out.println("Error with connection or url: " + error.toString());
+                    showConnectionIssueDialog();
                 }
 
             });

@@ -24,6 +24,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.rey.material.widget.SnackBar;
 import com.sos.saveourstudents.supportclasses.SlidingTabLayout;
 
 import org.apache.http.NameValuePair;
@@ -43,7 +44,7 @@ public class ViewQuestionActivity extends AppCompatActivity {
     private final int numPages = 3;
 
     private Menu menu;
-
+    protected SnackBar mSnackBar;
     private FabBroadcastReciever fabBroadcastReciever;
     private SlidingTabLayout mSlidingTabLayout;
     private FragmentPagerAdapter mViewGroupPagerAdapter;
@@ -69,6 +70,7 @@ public class ViewQuestionActivity extends AppCompatActivity {
         menuIsBuilt = false;
         fabBroadcastReciever = new FabBroadcastReciever();
 
+
         if(getIntent().getExtras() != null){
             if(getIntent().getExtras().containsKey("questionId")){
                 mQuestionId = getIntent().getExtras().getString("questionId");
@@ -82,6 +84,17 @@ public class ViewQuestionActivity extends AppCompatActivity {
             finish();
         }
 
+        mSnackBar = (SnackBar)findViewById(R.id.main_sn);
+        mSnackBar.text("Connection timed out")
+                .applyStyle(R.style.SnackBarSingleLine)
+                .actionText("RETRY")
+                .duration(0)
+                .actionClickListener(new SnackBar.OnActionClickListener() {
+                    @Override
+                    public void onActionClick(SnackBar snackBar, int i) {
+                        getQuestionData();
+                    }
+                });
 
         mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.view_group_tabPage);
         mViewPager = (ViewPager) findViewById(R.id.view_group_viewPager);
@@ -194,7 +207,7 @@ public class ViewQuestionActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 System.out.println("Error with connection or url: " + error.toString());
-
+                mSnackBar.show();
             }
 
         });
@@ -332,6 +345,7 @@ public class ViewQuestionActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 System.out.println("Error with connection or url: " + error.toString());
+                mSnackBar.show();
             }
 
         });
@@ -416,12 +430,6 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
 
         }
-    }
-
-    protected void showErrorSnackbar(){
-
-
-
     }
 
 
