@@ -101,8 +101,9 @@ public class GcmIntentService extends IntentService {
                         //        .bigPicture(aBigBitmap))
                         .setContentText(msg);
 
-        mBuilder.setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_LIGHTS|Notification.DEFAULT_VIBRATE);
-        mBuilder.setContentIntent(contentIntent);
+        mBuilder.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE);
+        if(extras.getString("type").equalsIgnoreCase(ADD_TUTOR) || extras.getString("type").equalsIgnoreCase(ADD_MEMBER))
+            mBuilder.setContentIntent(contentIntent);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
 }
