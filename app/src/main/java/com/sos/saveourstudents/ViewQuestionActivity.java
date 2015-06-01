@@ -1,8 +1,11 @@
 package com.sos.saveourstudents;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
@@ -40,6 +43,8 @@ public class ViewQuestionActivity extends AppCompatActivity {
     private final int numPages = 3;
 
     private Menu menu;
+
+    private FabBroadcastReciever fabBroadcastReciever;
     private SlidingTabLayout mSlidingTabLayout;
     private FragmentPagerAdapter mViewGroupPagerAdapter;
     private ViewPager mViewPager;
@@ -49,11 +54,20 @@ public class ViewQuestionActivity extends AppCompatActivity {
     public ArrayList tags;
     private boolean isEditable;
 
+    private boolean menuIsBuilt;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_group);
 
+
+        if(!Singleton.hasBeenInitialized()){
+            Singleton.initialize(this);
+        }
+
+        menuIsBuilt = false;
+        fabBroadcastReciever = new FabBroadcastReciever();
 
         if(getIntent().getExtras() != null){
             if(getIntent().getExtras().containsKey("questionId")){
@@ -91,11 +105,26 @@ public class ViewQuestionActivity extends AppCompatActivity {
         getQuestionData();
 
 
+    }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        IntentFilter iff = new IntentFilter();
+        iff.addAction("com.sos.saveourstudents.CUSTOM_INTENT");
+        registerReceiver(fabBroadcastReciever, iff);
 
     }
 
-    private void getQuestionData() {
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(fabBroadcastReciever);
+
+    }
+
+    public void getQuestionData() {
 
 
         List<NameValuePair> params = new LinkedList<NameValuePair>();
@@ -182,9 +211,10 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
     private void buildFragments(Location location, String userImageUrl, boolean isEditable){
 
-
-
-        onCreateOptionsMenu(menu);
+        if (!menuIsBuilt) {
+            onCreateOptionsMenu(menu);
+            menuIsBuilt = true;
+        }
 
         mViewGroupPagerAdapter = new ViewGroupPagerAdapter(getSupportFragmentManager(), location, userImageUrl, isEditable);
 
@@ -215,11 +245,6 @@ public class ViewQuestionActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -234,7 +259,10 @@ public class ViewQuestionActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
     private void showCloseGroupDialog(){
 
@@ -285,7 +313,9 @@ public class ViewQuestionActivity extends AppCompatActivity {
                             //System.out.println("remove group result: "+result);
                             if(result.getString("success").equalsIgnoreCase("1")){
 
-                                ViewQuestionActivity.this.finishActivity(ViewQuestionActivity.this.RESULT_OK);
+
+                                setResult(RESULT_OK);
+                                finish();
 
                             }
                             else{
@@ -314,22 +344,19 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
 
 
-    class ViewGroupPagerAdapter extends FragmentPagerAdapter {
 
+
+    class ViewGroupPagerAdapter extends FragmentPagerAdapter {
 
         private Fragment
                 mFragmentViewQuestion,
                 mViewGroupLocationFragment,
                 mViewGroupMembersFragment;
 
-        //private boolean isEditable;
-
         public ViewGroupPagerAdapter(FragmentManager fm, Location location, String userImageUrl, boolean isEditable) {
             super(fm);
-            //this.isEditable = isEditable;
             mFragmentViewQuestion = ViewQuestionFragment.newInstance(mQuestionId, isEditable);
             mViewGroupLocationFragment = ViewQuestionLocationFragment.newInstance(mQuestionId, location, userImageUrl, isEditable);
-            //mViewGroupMembersFragment = EditQuestionMembersFragment.newInstance(mQuestionId, isEditable);
             mViewGroupMembersFragment = ViewQuestionMembersFragment.newInstance(mQuestionId, isEditable);
 
         }
@@ -373,7 +400,24 @@ public class ViewQuestionActivity extends AppCompatActivity {
         }
     }
 
+    public class FabBroadcastReciever extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
 
+            SharedPreferences sharedPref = getSharedPreferences(
+                    getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
+            System.out.println("Recieved custom broadcast in question ACtivity");
+            if(((ViewQuestionFragment) mViewGroupPagerAdapter.getItem(0)).mContext != null) {
+                ((ViewQuestionFragment) mViewGroupPagerAdapter.getItem(0)).buildFab();
+            }
+            if(((ViewQuestionMembersFragment) mViewGroupPagerAdapter.getItem(2)).mContext != null) {
+                ((ViewQuestionMembersFragment) mViewGroupPagerAdapter.getItem(2)).retrieveListOfRatedTutors();
+            }
+
+
+        }
+    }
 
 
 }

@@ -51,12 +51,13 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
     private GoogleApiClient mGoogleApiClient;
     private Location mCurrentLocation;
+    private SharedPreferences sharedPref;
 
     private RecycleViewAdapter mAdapter;
     private RecyclerView mRecyclerView;
     private View rootView;
     private LinearLayout taglist;
-    private FloatingActionButton fabButton;
+    private FloatingActionButton fab;
     private ImageView sendButton;
     private EditText commentEditText;
     private TextView userName;
@@ -70,7 +71,7 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
 
     private boolean mEditable;
-    private Context mContext;
+    public Context mContext;
     private String mQuestionId;
 
     private JSONObject mQuestionInfo;
@@ -104,6 +105,9 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
             Toast.makeText(mContext, "QuestionId empty in viewQuestiomFrag" , Toast.LENGTH_SHORT).show();
         }
 
+        sharedPref = mContext.getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
         buildGoogleApiClient();
 
         userImage = (ImageView) rootView.findViewById(R.id.question_image);
@@ -121,8 +125,8 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        fabButton = (FloatingActionButton) rootView.findViewById(R.id.group_action);
-        fabButton.setVisibility(View.INVISIBLE);
+        fab = (FloatingActionButton) rootView.findViewById(R.id.group_action);
+        fab.setVisibility(View.INVISIBLE);
 
         sendButton = (ImageView) rootView.findViewById(R.id.send_button);
         sendButton.setOnClickListener(this);
@@ -140,7 +144,7 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
             try {
                 showQuestionDetails(mQuestionInfo);
                 showQuestionTags(tags);
-                buildFab(mQuestionInfo.getString("user_id"));
+                buildFab();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -148,7 +152,6 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
         return rootView;
     }
-
 
     private void getQuestionData() {
 
@@ -189,7 +192,7 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
                                 showQuestionDetails(mQuestionInfo);
 
-                                buildFab(mQuestionInfo.getString("user_id"));
+                                buildFab();
 
 
                             }
@@ -325,43 +328,35 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
         }
 
-
     }
 
 
+    public void buildFab() {
 
-    private void buildFab(String userId){
-
-        if(userId != null && !userId.equalsIgnoreCase("")){
-            SharedPreferences sharedPref = mContext.getSharedPreferences(
-                    getString(R.string.preference_file_key), Context.MODE_PRIVATE);
             String currentUserId = sharedPref.getString("user_id", "");
+            String questionOwner = "";
+        try {
+            questionOwner = mQuestionInfo.getString("user_id");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-            if(currentUserId.equalsIgnoreCase(userId)){
+
+        if(currentUserId.equalsIgnoreCase(questionOwner)){
                 //owner
-                fabButton.setIcon(getResources().getDrawable(R.drawable.ic_create_white_24dp), false);
-                fabButton.setOnClickListener(new View.OnClickListener() {
+                fab.setIcon(getResources().getDrawable(R.drawable.ic_create_white_24dp), false);
+                fab.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //Do edit dialog??
                         Intent mIntent = new Intent(mContext, CreateQuestionActivity.class);
                         mIntent.putExtra("questionId", mQuestionId);
                         startActivityForResult(mIntent, EDIT_QUESTION);
                     }
                 });
+                fab.setVisibility(View.VISIBLE);
             }else{
-                fabButton.setIcon(getResources().getDrawable(R.drawable.ic_person_add_white_18dp), false);
-                fabButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showJoinDialog();
-                    }
-                });
+                getGroupActiveStatus();
             }
-
-
-        }
-        fabButton.setVisibility(View.VISIBLE);
 
     }
 
@@ -556,16 +551,33 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
                 }
 
-
             }
         }
 
     }
 
+    private void showRemoveYourselfDialog(){
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage("Are you sure you want to remove yourself from this group?");
+
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                removeYourselfFromGroup(sharedPref.getString("user_id", ""));
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+    }
 
     private void showJoinDialog(){
-
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage("Would you like to join as a tutor or a group member?");
@@ -597,10 +609,10 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
         params.add(new BasicNameValuePair("userId", sharedPref.getString("user_id", "")));
         params.add(new BasicNameValuePair("comment", commentEditText.getText().toString()));
 
-        String paramString = URLEncodedUtils.format(params, "utf-8").replace("+", "%20");
-        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/addComment?"+paramString;
+        String paramString = URLEncodedUtils.format(params, "utf-8")
+                .replaceAll("%27", "%27%27");
 
-        //System.out.println("add comment url: " + url);
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/addComment?"+paramString;
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
                 (JSONObject)null,
@@ -646,7 +658,7 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
         List<NameValuePair> params = new LinkedList<NameValuePair>();
         params.add(new BasicNameValuePair("questionId", mQuestionId));
         params.add(new BasicNameValuePair("userId", sharedPref.getString("user_id", "")));
-        params.add(new BasicNameValuePair("tutor", type+""));
+        params.add(new BasicNameValuePair("tutor", type + ""));
 
         String paramString = URLEncodedUtils.format(params, "utf-8");
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/askToJoinGroup?"+paramString;
@@ -662,7 +674,7 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
                         try {
 
                             JSONObject result = new JSONObject(response.toString());
-                            //System.out.println("sending group result "+result);
+                            System.out.println("sending group result "+result);
                             if(result.getString("success").equalsIgnoreCase("1")){
                                 Toast.makeText(mContext, "Success sending group request", Toast.LENGTH_SHORT).show();
                             }
@@ -689,13 +701,151 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
     }
 
 
+
+    private void getGroupActiveStatus(){
+
+        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        params.add(new BasicNameValuePair("userId", sharedPref.getString("user_id", "")));
+
+        String paramString = URLEncodedUtils.format(params, "utf-8");
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/inGroup?"+paramString;
+
+        System.out.println("getGroupActiveStatus url: " + url);
+
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
+                (JSONObject)null,
+                new Response.Listener<JSONObject>(){
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+
+                            JSONObject result = new JSONObject(response.toString());
+
+
+
+
+                            System.out.println("getGroupActiveStatus result "+result);
+
+                            if(result.getString("success").equalsIgnoreCase("1")){
+                                if(result.getString("expectResults").equalsIgnoreCase("1")) {
+                                    String questionId = result.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("question_id");
+
+                                    if (questionId.equalsIgnoreCase(mQuestionId)) {
+                                        //show remove yourself button
+
+                                        fab.setIcon(getResources().getDrawable(R.drawable.ic_remove_white_24dp), false);
+                                        fab.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                //Do edit dialog??
+                                                showRemoveYourselfDialog();
+                                            }
+                                        });
+                                        fab.setVisibility(View.VISIBLE);
+                                    } else {
+                                        //Hide button, your in a group, but not this one.
+                                    }
+                                }
+                                else{//Not in a group. Show want to add button
+                                    fab.setIcon(getResources().getDrawable(R.drawable.ic_person_add_white_18dp), false);
+                                    fab.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            showJoinDialog();
+                                        }
+                                    });
+                                    fab.setVisibility(View.VISIBLE);
+
+                                }
+
+
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("Error with connection or url: " + error.toString());
+            }
+
+        });
+
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+
+    }
+
+
+        private void removeYourselfFromGroup(final String userId) {
+
+            List<NameValuePair> params = new LinkedList<NameValuePair>();
+            params.add(new BasicNameValuePair("userId", userId));
+
+            String paramString = URLEncodedUtils.format(params, "utf-8");
+            String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/removeUser?" + paramString;
+
+
+            System.out.println("removeUser url: " + url);
+
+            JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
+                    (JSONObject) null,
+                    new Response.Listener<JSONObject>() {
+
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+
+                                JSONObject result = new JSONObject(response.toString());
+                                System.out.println("removeUser result " + result);
+                                if (result.getString("success").equalsIgnoreCase("1")) {
+                                    Toast.makeText(mContext, "User removed", Toast.LENGTH_SHORT).show();
+                                    buildFab();
+                                    //getActivity().setResult(getActivity().RESULT_OK);
+                                    //getActivity().finish();
+                                } else {
+                                    Toast.makeText(mContext, "Error removing user", Toast.LENGTH_SHORT).show();
+                                }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    System.out.println("Error with connection or url: " + error.toString());
+                }
+
+            });
+
+            Singleton.getInstance().addToRequestQueue(jsObjRequest);
+
+        }
+
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
         if (requestCode == EDIT_QUESTION) {
             // Make sure the request was successful
             if (resultCode == getActivity().RESULT_OK) {
-                System.out.println("Returned from edit Question ok");
+                ((ViewQuestionActivity) getActivity()).getQuestionData();
+                mQuestionInfo = ((ViewQuestionActivity) getActivity()).mQuestionInfo;
+                tags = ((ViewQuestionActivity) getActivity()).tags;
+                try {
+                    showQuestionDetails(mQuestionInfo);
+                    showQuestionTags(tags);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

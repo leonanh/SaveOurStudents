@@ -189,52 +189,45 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
     public void onClick(View v) {
 
         if(v == sendButton){
-            //System.out.println("Location: " + mCurrentLocation);
-
             InputMethodManager imm = (InputMethodManager)mContext.getSystemService(
                     Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(questionEditText.getWindowToken(), 0);
 
-
-
             boolean error = false;
+
+            if(!tutorToggle.isSelected() && !groupToggle.isSelected()) {
+                Toast.makeText(getActivity(), "Please Request a Group and/or Tutor",
+                        Toast.LENGTH_SHORT)
+                        .show();
+                error = true;
+            }
             if(topicEditText.getText().toString().equalsIgnoreCase("")) {
-                topicEditText.setError("Topic is empty");
+                topicEditText.setError("Please write a topic");
                 error = true;
             }
             else{topicEditText.clearError();}
             if(questionEditText.getText().toString().equalsIgnoreCase("")) {
-                questionEditText.setError("Question is empty");
+                questionEditText.setError("You need to write a question!");
                 error = true;
             }
             else{questionEditText.clearError();}
             if(mCurrentLocation == null && showLocation){
-                Toast.makeText(mContext, "Cant find location", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "Cant find location!", Toast.LENGTH_SHORT).show();
                 error = true;
             }
 
             if(!error){
                 sendQuestionToServer();
+
             }
 
 
         }
         else if(v == addTagsButton){
 
-            //FragmentTransaction ft = getActivity().getFragmentManager().beginTransaction();
-            //DialogFragment newFragment = new TagDialogFragment(mContext, DIALOG_FRAGMENT);
-
             TagDialogFragment newFragment = TagDialogFragment.newInstance(1, tagList);
             newFragment.setTargetFragment(CreateQuestionFragment.this, 1);
             newFragment.show(getActivity().getSupportFragmentManager(), "");
-
-            /*newFragment.setTargetFragment(CreateQuestionFragment.this, DIALOG_FRAGMENT);
-            Bundle listbundle = new Bundle();
-            listbundle.putInt("type", DIALOG_FRAGMENT);
-            listbundle.putStringArrayList("list", tagList);
-            newFragment.setArguments(listbundle);*/
-
-
 
         }
         else if(v == locationToggle){
@@ -350,12 +343,16 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
 
 
         List<NameValuePair> params = new LinkedList<NameValuePair>();
-        params.add(new BasicNameValuePair("userId", sharedPref.getString("user_id", "")));
+
 
         if(!isInEditMode){
+
+            params.add(new BasicNameValuePair("userId", sharedPref.getString("user_id", "")));
             params.add(new BasicNameValuePair("latitude", latitude+""));
             params.add(new BasicNameValuePair("longitude", longitude + ""));
         }
+        else
+            params.add(new BasicNameValuePair("questionId", mQuestionId));
 
         params.add(new BasicNameValuePair("text", questionEditText.getText().toString()));
 
@@ -368,7 +365,8 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
         params.add(new BasicNameValuePair("visibleLocation", (showLocation ? 1 : 0)+""));
 
 
-        String paramString = URLEncodedUtils.format(params, "utf-8").replace("+", "%20");
+        String paramString = URLEncodedUtils.format(params, "utf-8")
+                .replaceAll("%27", "%27%27");
 
         String url;
         if(isInEditMode)
@@ -406,12 +404,9 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
 
                             }
                             else{
-                                if(isInEditMode)
-                                    sendNotification("Successfully Edited Question");
-                                else
-                                    sendNotification("Successfully Created Question");
 
-                                getActivity().finishActivity(getActivity().RESULT_OK);
+                                getActivity().setResult(getActivity().RESULT_OK);
+                                getActivity().finish();
                             }
 
                         } catch (JSONException e) {

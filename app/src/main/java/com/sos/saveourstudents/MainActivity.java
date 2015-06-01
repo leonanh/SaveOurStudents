@@ -1,7 +1,9 @@
 package com.sos.saveourstudents;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -15,10 +17,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -44,10 +48,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private final int SETTINGS_ACTIVITY = 363;
     private final int PROFILE_ACTIVITY = 505;
-    private final int CREATE_QUESTION = 987;
-    private final int EDIT_QUESTION = 567;
-    private boolean fabShowing = false;
+    private final int QUESTION_ACTIVITY = 3334;
+    private boolean fabShowing = true;
 
+    private FabBroadcastReciever fabBroadcastReciever;
     private ViewPager mViewPager;
     private SlidingTabLayout mTabs;
 
@@ -75,7 +79,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Singleton.initialize(this);
         }
 
-
+        fab = (com.rey.material.widget.FloatingActionButton) findViewById(R.id.fab_image);
+        hideFab();
         sharedPref = getSharedPreferences(
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
@@ -84,13 +89,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             finish();
         }
 
-        //Our AppCompat Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.the_toolbar);
-        setSupportActionBar(toolbar);
+        if (toolbar != null) {
+            toolbar.setTitle(R.string.app_name);
+            setSupportActionBar(toolbar);
+        }
 
-        fab = (com.rey.material.widget.FloatingActionButton) findViewById(R.id.fab_image);
+        fabBroadcastReciever = new FabBroadcastReciever();
 
-        hideFab();
+
+
         buildFab();
 
 
@@ -136,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             finish();
                         }
                         else if(position == 3){
-                            Intent intent = new Intent(MainActivity.this,SettingsActivityNew.class);
+                            Intent intent = new Intent(MainActivity.this,SettingsActivity.class);
                             startActivityForResult(intent, SETTINGS_ACTIVITY);
                         }
 
@@ -167,14 +175,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         System.out.println("OnResume Main");
+        IntentFilter iff = new IntentFilter();
+        iff.addAction("com.sos.saveourstudents.CUSTOM_INTENT");
+        // Put whatever message you want to receive as the action
+        registerReceiver(fabBroadcastReciever, iff);
+        //registerReceiver(fabBroadcastReciever, new IntentFilter("com.sos.saveourstudents.CUSTOM_INTENT"));
         super.onResume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+
         if(mDrawer != null)
             mDrawer.closeDrawers();
+
+        unregisterReceiver(fabBroadcastReciever);
 
     }
 
@@ -193,7 +209,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && mViewPager.getCurrentItem() != 0) {
+            mViewPager.setCurrentItem(0);
+            return false;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -207,7 +229,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (item.getItemId() == R.id.action_filter) {
 
-
             Set<String> filterList = new HashSet<String>(sharedPref.getStringSet("filter_list", new HashSet<String>()));
             ArrayList<String> myList = new ArrayList<String>();
             myList.addAll(filterList);
@@ -217,12 +238,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             newFragment.show(getSupportFragmentManager(), "dialog");
 
-
-        }
-
-        else if (item.getItemId() == R.id.add_member) {
-            Intent mIntent = new Intent(this, MemberWantsToJoinActivity.class);
-            startActivity(mIntent);
         }
 
         return super.onOptionsItemSelected(item);
@@ -254,7 +269,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //Fragment goes null after rotation within tagDialog - WTF
     public void updateFragments(){
 
-        System.out.println("nullcheck: "+viewPagerAdapter.getItem(0) == null);
+        System.out.println("nullcheck: " + viewPagerAdapter.getItem(0) == null);
 
 
         if(((FeedFragment) viewPagerAdapter.getItem(0)).mContext != null)
@@ -280,7 +295,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    private void buildFab(){
+    public void buildFab(){
+        hideFab();
         getQuestionActiveStatus();
     }
 
@@ -293,9 +309,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String paramString = URLEncodedUtils.format(params, "utf-8");
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/hasQuestion?"+paramString;
 
-
         System.out.println("url: " + url);
-
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
                 (JSONObject)null,
@@ -310,7 +324,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                             if(!result.getString("success").equalsIgnoreCase("1")){
                                 //Error...
-
                             }
                             else{
 
@@ -322,23 +335,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         public void onClick(View v) {
                                             Intent mIntent = new Intent(MainActivity.this, ViewQuestionActivity.class);
                                             mIntent.putExtra("questionId", questionId);
-                                            startActivityForResult(mIntent, EDIT_QUESTION);
+                                            startActivityForResult(mIntent, QUESTION_ACTIVITY);
                                         }
                                     });
+                                    showFab();
                                 }
-                                //Add question
+                                //Is in a group?
                                 else{
-                                    fab.setIcon(getResources().getDrawable(R.drawable.ic_add_white_24dp), false);
-                                    fab.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            Intent mIntent = new Intent(MainActivity.this, CreateQuestionActivity.class); //TODO rename, dialogize
-                                            mIntent.putExtra("questionId", "");
-                                            startActivityForResult(mIntent, CREATE_QUESTION);
-                                        }
-                                    });
+                                    getGroupActiveStatus();
                                 }
-                                showFab();
+
 
 
                             }
@@ -362,27 +368,97 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     }
+    private void getGroupActiveStatus(){
+
+        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        params.add(new BasicNameValuePair("userId", sharedPref.getString("user_id", "")));
+
+        String paramString = URLEncodedUtils.format(params, "utf-8");
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/inGroup?"+paramString;
+
+        System.out.println("getGroupActiveStatus url: " + url);
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
+                (JSONObject)null,
+                new Response.Listener<JSONObject>(){
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+
+                            final JSONObject result = new JSONObject(response.toString());
+                            System.out.println("getGroupActiveStatus result "+result);
+
+                            if(!result.getString("success").equalsIgnoreCase("1")){
+                                System.out.println("Error getting active group status: "+result);
+                            }
+                            else{
+
+                                if(result.getString("expectResults").equalsIgnoreCase("1")){
+                                    final String questionId = result.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("question_id");
+                                    fab.setIcon(getResources().getDrawable(R.drawable.ic_group_white_24dp), false);
+                                    fab.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            Intent mIntent = new Intent(MainActivity.this, ViewQuestionActivity.class);
+                                            mIntent.putExtra("questionId", questionId);
+                                            startActivityForResult(mIntent, QUESTION_ACTIVITY);
+                                        }
+                                    });
+                                    showFab();
+                                }
+                                //Add question
+                                else{
+                                    fab.setIcon(getResources().getDrawable(R.drawable.ic_add_white_24dp), false);
+                                    fab.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            Intent mIntent = new Intent(MainActivity.this, CreateQuestionActivity.class); //TODO rename, dialogize
+                                            mIntent.putExtra("questionId", "");
+                                            startActivityForResult(mIntent, QUESTION_ACTIVITY);
+                                        }
+                                    });
+                                    showFab();
+                                }
+
+
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(MainActivity.this, "Connection Error", Toast.LENGTH_SHORT).show();
+            }
+
+        });
+
+
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+
+
+    }
+
+
 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
-        if (requestCode == EDIT_QUESTION) {
+        if (requestCode == QUESTION_ACTIVITY) {
             System.out.println("Returned from edit Question");
+            buildFab();
             updateFragments();
             if (resultCode == RESULT_OK) {
                 System.out.println("Returned from edit Question ok");
             }
         }
 
-        else if (requestCode == CREATE_QUESTION) {
-            // Make sure the request was successful
-            buildFab();
-            System.out.println("Returned from create Question");
-            if (resultCode == RESULT_OK) {
-                System.out.println("Returned from create Question ok");
-            }
-        }
         else if(requestCode == PROFILE_ACTIVITY){
             updateNavDrawer();
             updateFragments();
@@ -391,13 +467,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             updateNavDrawer();
         }
 
+        else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
 
     }
 
 
     private void updateNavDrawer(){
-
-        //System.out.println("materialWallpareID?: "+R.drawable.materialwallpaperdefault);
 
         String name = sharedPref.getString("first_name", "") + " "+ sharedPref.getString("last_name", "");
         mAdapter = new NavDrawerAdapter(TITLES, ICONS, name,
@@ -410,6 +487,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+
+    public class FabBroadcastReciever extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            System.out.println("Recieved custom broadcast in main ACtivity");
+            buildFab();
+        }
+    }
 
 
 }
@@ -428,8 +513,6 @@ class ViewPagerAdapter extends FragmentPagerAdapter {
             feedFragment,
             mapFragment;
 
-    //FeedFragment feed = new FeedFragment();
-    //MapFragment map = new MapFragment();
     String[] tabNames = {"Feed", "Map"};
 
 
@@ -465,5 +548,8 @@ class ViewPagerAdapter extends FragmentPagerAdapter {
         return POSITION_NONE;
     }
 
+
+
 }
+
 

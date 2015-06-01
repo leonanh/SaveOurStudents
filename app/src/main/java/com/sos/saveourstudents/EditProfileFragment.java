@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Request;
@@ -204,11 +203,16 @@ public class EditProfileFragment extends Fragment {
         String newDescription = "";
 
         try {
-            newFirstName = java.net.URLEncoder.encode(mCurrStudent.getFirstName(), "utf-8");
-            newLastName = java.net.URLEncoder.encode(mCurrStudent.getLastName(), "utf-8");
-            newSchool = java.net.URLEncoder.encode(mCurrStudent.getSchool(), "utf-8");
-            newMajor = java.net.URLEncoder.encode(mCurrStudent.getMajor(), "utf-8");
-            newDescription = java.net.URLEncoder.encode(mCurrStudent.getDescription(), "utf-8");
+            newFirstName = java.net.URLEncoder.encode(mCurrStudent.getFirstName(), "utf-8")
+                    .replaceAll("%27", "%27%27");
+            newLastName = java.net.URLEncoder.encode(mCurrStudent.getLastName(), "utf-8")
+                    .replaceAll("%27", "%27%27");
+            newSchool = java.net.URLEncoder.encode(mCurrStudent.getSchool(), "utf-8")
+                    .replaceAll("%27", "%27%27");
+            newMajor = java.net.URLEncoder.encode(mCurrStudent.getMajor(), "utf-8")
+                    .replaceAll("%27", "%27%27");
+            newDescription = java.net.URLEncoder.encode(mCurrStudent.getDescription(), "utf-8")
+                    .replaceAll("%27", "%27%27");
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -299,7 +303,7 @@ public class EditProfileFragment extends Fragment {
         imageLoader.get(imageUrl, new ImageLoader.ImageListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getActivity(), "Invalid Image URL", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(), "Invalid Image URL", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -309,7 +313,7 @@ public class EditProfileFragment extends Fragment {
                     imageView.setImageBitmap(response.getBitmap());
                     mProfilePictureUrl = imageUrl;
                 } else {
-                    Toast.makeText(getActivity(), "Error processing your image URL", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(getActivity(), "Error processing your image URL", Toast.LENGTH_SHORT).show();
                 }
 
             }

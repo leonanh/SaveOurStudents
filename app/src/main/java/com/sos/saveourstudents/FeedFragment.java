@@ -53,6 +53,7 @@ import java.util.Set;
 public class FeedFragment extends Fragment implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private final int PROFILE_ACTIVITY = 505;
+    private final int VIEWQUESTION_ACTIVITY = 37;
     private SharedPreferences sharedPref;
     LocationRequest mLocationRequest;
     Location mCurrentLocation;
@@ -184,6 +185,13 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
         super.onDestroy();
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == VIEWQUESTION_ACTIVITY) {
+            ((MainActivity) getActivity()).updateFragments();
+            ((MainActivity) getActivity()).buildFab();
+        }
+    }
 
 
 
@@ -525,7 +533,7 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
                         String questionId = mQuestionList.getJSONObject(getAdapterPosition()).getJSONObject("map").getString("question_id");
                         Intent mIntent = new Intent(mContext, ViewQuestionActivity.class);
                         mIntent.putExtra("questionId", questionId);
-                        startActivity(mIntent);
+                        startActivityForResult(mIntent, VIEWQUESTION_ACTIVITY);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -556,9 +564,7 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
 
     }
 
-
-
-
-
-
+    public SwipeRefreshLayout getmSwipeRefreshLayout() {
+        return mSwipeRefreshLayout;
+    }
 }

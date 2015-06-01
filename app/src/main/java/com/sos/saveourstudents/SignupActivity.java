@@ -54,6 +54,10 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
+        if(!Singleton.hasBeenInitialized()){
+            Singleton.initialize(this);
+        }
+
         checkDeviceId();
 
         passInput1 = (EditText) findViewById(R.id.signup_password_textfield);

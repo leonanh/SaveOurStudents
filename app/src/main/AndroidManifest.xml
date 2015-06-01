@@ -12,7 +12,6 @@
         android:required="true" />
 
     <!-- Mav View Permission -->
-    <!-- <uses-permission android:name="com.sos.saveourstudents.locationapi.maps.permission.MAPS_RECEIVE" /> -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -48,7 +47,8 @@
 
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:configChanges="keyboardHidden|orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -59,22 +59,28 @@
 
 
 
-        <activity android:name=".LoginActivity"/>
+        <activity android:name=".LoginActivity" android:configChanges="keyboardHidden|orientation"/>
 
-        <activity android:name=".SignupActivity"/>
+        <activity android:name=".SignupActivity" android:configChanges="keyboardHidden|orientation"/>
 
-        <activity android:name=".ForgotLoginActivity"/>
+        <activity android:name=".ForgotLoginActivity" android:configChanges="keyboardHidden|orientation"/>
 
-        <activity android:name=".CreateQuestionActivity"
-            android:windowSoftInputMode="stateHidden"/>
+        <activity android:name=".CreateQuestionActivity" android:windowSoftInputMode="stateHidden"
+            android:configChanges="keyboardHidden|orientation"/>
 
-        <activity android:name=".MemberWantsToJoinActivity"/>
+        <activity android:name=".MemberWantsToJoinActivity" android:configChanges="keyboardHidden|orientation"/>
 
-        <activity android:name=".SettingsActivityNew"/>
+        <activity android:name=".SettingsActivity" android:configChanges="keyboardHidden|orientation"/>
 
-        <activity android:name=".ViewQuestionActivity"/>
+        <activity android:name=".ViewQuestionActivity" android:configChanges="keyboardHidden|orientation"/>
 
 
+        <activity
+            android:name=".ProfileActivity"
+            android:label="@string/title_activity_profile"
+            android:windowSoftInputMode="adjustPan"
+            android:configChanges="keyboardHidden|orientation">
+        </activity>
 
 
 
@@ -104,15 +110,7 @@
 
         <service android:name=".supportclasses.GcmIntentService" />
 
-        <activity
-            android:name=".ProfileActivity"
-            android:label="@string/title_activity_profile"
-            android:parentActivityName=".MainActivity"
-            android:windowSoftInputMode="adjustPan" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
+
     </application>
 
 </manifest>
