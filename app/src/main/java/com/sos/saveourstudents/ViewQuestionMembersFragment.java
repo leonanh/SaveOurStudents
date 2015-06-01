@@ -58,6 +58,7 @@ public class ViewQuestionMembersFragment extends Fragment {
     private String mQuestionId;
     public Context mContext;
     private boolean mEditable;
+    private boolean mIsMemberOfGroup;
 
     private static final String mGetRateListUrl =
             "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getRateList?userId=";
@@ -83,6 +84,7 @@ public class ViewQuestionMembersFragment extends Fragment {
         mViewerUserId = getActivity()
                 .getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
                 .getString("user_id", "");
+        mIsMemberOfGroup = false; // Initially false, to be determined in JSON call
 
     }
 
@@ -110,8 +112,7 @@ public class ViewQuestionMembersFragment extends Fragment {
         mRatedList = new ArrayList<>();
         mRatedHashMap = new HashMap<>();
 
-        retrieveListOfRatedTutors(); // Also getMemberData() inside
-
+        getGroupActiveStatus(); // Also retrieveListOfRatedTutors(), getMemberData()
         return rootView;
     }
 
@@ -153,17 +154,13 @@ public class ViewQuestionMembersFragment extends Fragment {
                                     if (memberList.getJSONObject(a).getJSONObject("map").getBoolean("tutor")) {
                                         if (mTutorList == null) {
                                             mTutorList = new ArrayList<JSONObject>();
-                                            mTutorList.add(currStudent);
-                                        } else {
-                                            mTutorList.add(currStudent);
                                         }
+                                        mTutorList.add(currStudent);
                                     } else {
                                         if (mStudentList == null) {
                                             mStudentList = new ArrayList<JSONObject>();
-                                            mStudentList.add(memberList.getJSONObject(a).getJSONObject("map"));
-                                        } else {
-                                            mStudentList.add(memberList.getJSONObject(a).getJSONObject("map"));
                                         }
+                                        mStudentList.add(memberList.getJSONObject(a).getJSONObject("map"));
                                     }
 
                                 }
@@ -344,13 +341,13 @@ public class ViewQuestionMembersFragment extends Fragment {
                 ImageView mThumbsUpButton = ((ImageView) convertView.findViewById(R.id.view_group_members_thumbs_up));
                 ImageView mThumbsDownButton = ((ImageView) convertView.findViewById(R.id.view_group_members_thumbs_down));
 
-                if (mEditable) {
+                if (mIsMemberOfGroup) {
                     mThumbsUpButton.setVisibility(View.VISIBLE);
                     mThumbsDownButton.setVisibility(View.VISIBLE);
                     setUpThumbsUpButton(mThumbsUpButton, mThumbsDownButton,
-                            currStudentMember.getString("user_id"), position, currStudentMember);
+                            currStudentMember.getString("user_id"), currStudentMember);
                     setUpThumbsDownButton(mThumbsUpButton, mThumbsDownButton,
-                            currStudentMember.getString("user_id"), position, currStudentMember);
+                            currStudentMember.getString("user_id"), currStudentMember);
 
                 } else {
                     mThumbsUpButton.setVisibility(View.GONE);
@@ -382,7 +379,7 @@ public class ViewQuestionMembersFragment extends Fragment {
 
         private void setUpThumbsUpButton(final ImageView mThumbsUpButton,
                                          final ImageView mThumbsDownButton, final String userId,
-                                         int position, final JSONObject userJson) {
+                                         final JSONObject userJson) {
             boolean rated = false;
             for (int i = 0; i < mRatedList.size(); i++) {
                 try {
@@ -390,14 +387,12 @@ public class ViewQuestionMembersFragment extends Fragment {
                         if (mRatedList.get(i).getInt("rating") == 1) {
                             mThumbsUpButton.setColorFilter(getResources().getColor(R.color.primary));
                             mThumbsUpButton.setSelected(true);
-                            rated = true;
-                            break;
                         } else {
                             mThumbsUpButton.setColorFilter(getResources().getColor(R.color.divider_color));
                             mThumbsUpButton.setSelected(false);
-                            rated = true;
-                            break;
                         }
+                        rated = true;
+                        break;
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -437,7 +432,7 @@ public class ViewQuestionMembersFragment extends Fragment {
 
         private void setUpThumbsDownButton(final ImageView mThumbsUpButton,
                                            final ImageView mThumbsDownButton, final String userId,
-                                           int position, final JSONObject userJson) {
+                                           final JSONObject userJson) {
             boolean rated = false;
             for (int i = 0; i < mRatedList.size(); i++) {
                 try {
@@ -457,12 +452,11 @@ public class ViewQuestionMembersFragment extends Fragment {
                 }
             }
 
-            if(!rated) {
+            if (!rated) {
                 mThumbsDownButton.setColorFilter(getResources().getColor(R.color.divider_color));
                 mThumbsDownButton.setSelected(false);
             }
 
-            mThumbsDownButton.setColorFilter(getResources().getColor(R.color.divider_color));
             mThumbsDownButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -615,7 +609,7 @@ public class ViewQuestionMembersFragment extends Fragment {
         params.add(new BasicNameValuePair("like", like.toString()));
 
         Boolean rated = false;
-        if(mRatedHashMap.containsKey(ratedUserId)) rated = true;
+        if (mRatedHashMap.containsKey(ratedUserId)) rated = true;
 
         params.add(new BasicNameValuePair("rated", rated.toString()));
 
@@ -671,6 +665,7 @@ public class ViewQuestionMembersFragment extends Fragment {
             public void onResponse(JSONObject response) {
                 try {
                     JSONObject result = new JSONObject(response.toString());
+                    System.out.println(result);
                     if (result.getInt("expectResults") > 0) {
                         JSONArray arrayOfRatedTutors = result.getJSONObject("result")
                                 .getJSONArray("myArrayList");
@@ -697,5 +692,47 @@ public class ViewQuestionMembersFragment extends Fragment {
                     }
                 });
         Singleton.getInstance().addToRequestQueue(rateListRequest);
+    }
+
+    private void getGroupActiveStatus() {
+
+        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        params.add(new BasicNameValuePair("userId", sharedPref.getString("user_id", "")));
+
+        String paramString = URLEncodedUtils.format(params, "utf-8");
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/inGroup?" + paramString;
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
+                (JSONObject) null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONObject result = new JSONObject(response.toString());
+
+                            if (result.getString("success").equalsIgnoreCase("1") && result.getString("expectResults").equalsIgnoreCase("1")) {
+                                String questionId = result.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("question_id");
+                                if (questionId.equalsIgnoreCase(mQuestionId)) {
+                                    mIsMemberOfGroup = true;
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        retrieveListOfRatedTutors();
+                    }
+                }, new Response.ErrorListener()
+
+        {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("Error with connection or url: " + error.toString());
+            }
+
+        }
+
+        );
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
     }
 }
