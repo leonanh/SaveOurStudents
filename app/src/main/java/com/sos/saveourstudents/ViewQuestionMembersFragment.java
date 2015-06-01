@@ -37,13 +37,16 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-
 public class ViewQuestionMembersFragment extends Fragment {
 
 
     ArrayList<JSONObject> mTutorList = null;
     ArrayList<JSONObject> mStudentList = null;
-    private HashMap<String, Integer> mTutorRatings;
+    private ArrayList<JSONObject> mRatedList;
+    private HashMap<String, JSONObject> mRatedHashMap;
+
+
+    private String mViewerUserId;
 
     private ListView mStudentsListView;
     private ListView mTutorsListView;
@@ -55,6 +58,9 @@ public class ViewQuestionMembersFragment extends Fragment {
     private String mQuestionId;
     private Context mContext;
     private boolean mEditable;
+
+    private static final String mGetRateListUrl =
+            "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getRateList?userId=";
 
 
     public static ViewQuestionMembersFragment newInstance(String questionId, boolean editable) {
@@ -74,8 +80,9 @@ public class ViewQuestionMembersFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        restore(savedInstanceState);
+        mViewerUserId = getActivity()
+                .getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
+                .getString("user_id", "");
 
     }
 
@@ -86,10 +93,9 @@ public class ViewQuestionMembersFragment extends Fragment {
         if (getArguments() != null) {
             mQuestionId = getArguments().getString("questionId");
             mEditable = getArguments().getBoolean("editable");
-        }else{
+        } else {
             //error
         }
-
 
 
         mContext = this.getActivity();
@@ -101,8 +107,10 @@ public class ViewQuestionMembersFragment extends Fragment {
         mStudentsListView = (ListView) rootView.findViewById(R.id.view_group_members_students_listView);
         mTutorsListView = (ListView) rootView.findViewById(R.id.view_group_members_tutors_listView);
 
+        mRatedList = new ArrayList<>();
+        mRatedHashMap = new HashMap<>();
 
-        getMemberData();
+        retrieveListOfRatedTutors(); // Also getMemberData() inside
 
         return rootView;
     }
@@ -117,14 +125,14 @@ public class ViewQuestionMembersFragment extends Fragment {
         params.add(new BasicNameValuePair("questionId", mQuestionId));
 
         String paramString = URLEncodedUtils.format(params, "utf-8");
-        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/viewMembers?"+paramString;
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/viewMembers?" + paramString;
 
 
         //System.out.println("view member url: " + url);
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
-                (JSONObject)null,
-                new Response.Listener<JSONObject>(){
+                (JSONObject) null,
+                new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {
@@ -134,38 +142,28 @@ public class ViewQuestionMembersFragment extends Fragment {
 
                             JSONObject result = new JSONObject(response.toString());
                             //System.out.println("Members result "+result);
-                            if(result.getString("success").equalsIgnoreCase("1")){
+                            if (result.getString("success").equalsIgnoreCase("1")) {
                                 mStudentList = null;
                                 mTutorList = null;
 
 
                                 JSONArray memberList = result.getJSONObject("result").getJSONArray("myArrayList");
-                                for(int a = 0; a < memberList.length();a++){
+                                for (int a = 0; a < memberList.length(); a++) {
 
                                     System.out.println("adding: " + memberList.getJSONObject(a).getJSONObject("map"));
                                     JSONObject currStudent = memberList.getJSONObject(a).getJSONObject("map");
-                                    if(memberList.getJSONObject(a).getJSONObject("map").getBoolean("tutor")){
-                                        if(mTutorList == null){
+                                    if (memberList.getJSONObject(a).getJSONObject("map").getBoolean("tutor")) {
+                                        if (mTutorList == null) {
                                             mTutorList = new ArrayList<JSONObject>();
                                             mTutorList.add(currStudent);
-
-                                            if(!mTutorRatings.containsKey(currStudent.getString("user_id"))) {
-                                                mTutorRatings.put(currStudent.getString("user_id"), 0);
-                                            }
-
-                                        }
-                                        else{
+                                        } else {
                                             mTutorList.add(currStudent);
-                                            if(!mTutorRatings.containsKey(currStudent.getString("user_id"))) {
-                                                mTutorRatings.put(currStudent.getString("user_id"), 0);
-                                            }
                                         }
-                                    }else{
-                                        if(mStudentList == null){
+                                    } else {
+                                        if (mStudentList == null) {
                                             mStudentList = new ArrayList<JSONObject>();
                                             mStudentList.add(memberList.getJSONObject(a).getJSONObject("map"));
-                                        }
-                                        else{
+                                        } else {
                                             mStudentList.add(memberList.getJSONObject(a).getJSONObject("map"));
                                         }
                                     }
@@ -173,19 +171,18 @@ public class ViewQuestionMembersFragment extends Fragment {
                                 }
 
 
-                                if(mTutorList != null && mTutorList.size() > 0) {
+                                if (mTutorList != null && mTutorList.size() > 0) {
                                     mTutorsListViewArrayAdapter = new TutorsArrayAdapter(mContext, mTutorList);
                                     mTutorsListView.setAdapter(mTutorsListViewArrayAdapter);
                                 }
 
-                                if(mStudentList != null && mStudentList.size() > 0) {
+                                if (mStudentList != null && mStudentList.size() > 0) {
                                     mStudentsListViewArrayAdapter = new StudentsArrayAdapter(mContext, mStudentList);
                                     mStudentsListView.setAdapter(mStudentsListViewArrayAdapter);
                                 }
 
 
-                            }
-                            else{
+                            } else {
                                 //Error...
                             }
 
@@ -248,11 +245,11 @@ public class ViewQuestionMembersFragment extends Fragment {
                         .inflate(R.layout.view_group_members_student_layout, parent, false);
             }
             try {
-                String name = currStudentMember.getString("first_name")+" " +
+                String name = currStudentMember.getString("first_name") + " " +
                         currStudentMember.getString("last_name");
                 ((TextView) convertView.findViewById(R.id.user_name)).setText(name);
 
-                if(currStudentMember.has("image"))
+                if (currStudentMember.has("image"))
                     getUserImage(currStudentMember.getString("image"), ((ImageView) convertView.findViewById(R.id.user_image)));
 
 
@@ -274,7 +271,6 @@ public class ViewQuestionMembersFragment extends Fragment {
             }
 
 
-
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -286,7 +282,6 @@ public class ViewQuestionMembersFragment extends Fragment {
                     }
                 }
             });
-
 
 
             return convertView;
@@ -328,12 +323,11 @@ public class ViewQuestionMembersFragment extends Fragment {
                         .setText(currStudentMember.getString("last_name"));
 
 
-                if(currStudentMember.has("image"))
+                if (currStudentMember.has("image"))
                     getUserImage(currStudentMember.getString("image"), ((ImageView) convertView.findViewById(R.id.tutor_profile_image)));
 
 
                 final String userId = currStudentMember.getString("user_id");
-
 
 
                 if (!userId.equalsIgnoreCase(sharedPref.getString("user_id", "")) && mEditable) {
@@ -349,24 +343,21 @@ public class ViewQuestionMembersFragment extends Fragment {
                 }
 
 
-
                 ImageView mThumbsUpButton = ((ImageView) convertView.findViewById(R.id.view_group_members_thumbs_up));
                 ImageView mThumbsDownButton = ((ImageView) convertView.findViewById(R.id.view_group_members_thumbs_down));
 
-                if(mEditable){
+                if (mEditable) {
                     mThumbsUpButton.setVisibility(View.VISIBLE);
                     mThumbsDownButton.setVisibility(View.VISIBLE);
                     setUpThumbsUpButton(mThumbsUpButton, mThumbsDownButton,
-                            currStudentMember.getString("user_id"), position);
+                            currStudentMember.getString("user_id"), position, currStudentMember);
                     setUpThumbsDownButton(mThumbsUpButton, mThumbsDownButton,
-                            currStudentMember.getString("user_id"), position);
+                            currStudentMember.getString("user_id"), position, currStudentMember);
 
-                }
-                else{
+                } else {
                     mThumbsUpButton.setVisibility(View.GONE);
                     mThumbsDownButton.setVisibility(View.GONE);
                 }
-
 
 
             } catch (JSONException e) {
@@ -391,18 +382,35 @@ public class ViewQuestionMembersFragment extends Fragment {
         }
 
 
-
         private void setUpThumbsUpButton(final ImageView mThumbsUpButton,
                                          final ImageView mThumbsDownButton, final String userId,
-                                         int position) {
-            if(mTutorRatings.get(userId).equals(0)) {
+                                         int position, final JSONObject userJson) {
+            boolean rated = false;
+            for (int i = 0; i < mRatedList.size(); i++) {
+                try {
+                    if (userId.equals(mRatedList.get(i).getString("rated_user"))) {
+                        if (mRatedList.get(i).getInt("rating") == 1) {
+                            mThumbsUpButton.setColorFilter(getResources().getColor(R.color.primary));
+                            mThumbsUpButton.setSelected(true);
+                            rated = true;
+                            break;
+                        } else {
+                            mThumbsUpButton.setColorFilter(getResources().getColor(R.color.divider_color));
+                            mThumbsUpButton.setSelected(false);
+                            rated = true;
+                            break;
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (!rated) {
                 mThumbsUpButton.setColorFilter(getResources().getColor(R.color.divider_color));
                 mThumbsUpButton.setSelected(false);
             }
-            else {
-                mThumbsUpButton.setColorFilter(getResources().getColor(R.color.primary));
-                mThumbsUpButton.setSelected(true);
-            }
+
             mThumbsUpButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -415,18 +423,15 @@ public class ViewQuestionMembersFragment extends Fragment {
                         if (mThumbsDownButton.isSelected()) {
                             mThumbsDownButton.setColorFilter(getResources().getColor(R.color.divider_color));
                             mThumbsDownButton.setSelected(false);
-                            rateTutor(userId, true);
                         }
-                        rateTutor(userId, true);
-                        mTutorRatings.put(userId, 1);
+                        rateTutor(mViewerUserId, userId, 1, userJson);
 
                     }
                     // Thumbs Up Button is currently clicked
                     else {
                         mThumbsUpButton.setColorFilter(getResources().getColor(R.color.divider_color));
                         mThumbsUpButton.setSelected(false);
-                        rateTutor(userId, false);
-                        mTutorRatings.put(userId, 0);
+                        rateTutor(mViewerUserId, userId, 0, userJson);
                     }
                 }
             });
@@ -434,15 +439,31 @@ public class ViewQuestionMembersFragment extends Fragment {
 
         private void setUpThumbsDownButton(final ImageView mThumbsUpButton,
                                            final ImageView mThumbsDownButton, final String userId,
-                                           int position) {
-            if(mTutorRatings.get(userId).equals(0)) {
+                                           int position, final JSONObject userJson) {
+            boolean rated = false;
+            for (int i = 0; i < mRatedList.size(); i++) {
+                try {
+                    if (userId.equals(mRatedList.get(i).getString("rated_user"))) {
+                        if (mRatedList.get(i).getInt("rating") == -1) {
+                            mThumbsDownButton.setColorFilter(getResources().getColor(R.color.red));
+                            mThumbsDownButton.setSelected(true);
+                        } else {
+                            mThumbsDownButton.setColorFilter(getResources().getColor(R.color.divider_color));
+                            mThumbsDownButton.setSelected(false);
+                        }
+                        rated = true;
+                        break;
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if(!rated) {
                 mThumbsDownButton.setColorFilter(getResources().getColor(R.color.divider_color));
                 mThumbsDownButton.setSelected(false);
             }
-            else {
-                mThumbsDownButton.setColorFilter(getResources().getColor(R.color.red));
-                mThumbsDownButton.setSelected(true);
-            }
+
             mThumbsDownButton.setColorFilter(getResources().getColor(R.color.divider_color));
             mThumbsDownButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -455,17 +476,15 @@ public class ViewQuestionMembersFragment extends Fragment {
                         if (mThumbsUpButton.isSelected()) {
                             mThumbsUpButton.setColorFilter(getResources().getColor(R.color.divider_color));
                             mThumbsUpButton.setSelected(false);
-                            rateTutor(userId, false);
                         }
-                        rateTutor(userId, false);
-                        mTutorRatings.put(userId, -1);
+
+                        rateTutor(mViewerUserId, userId, -1, userJson);
                     }
                     // Thumbs Down Button is currently clicked
                     else {
                         mThumbsDownButton.setColorFilter(getResources().getColor(R.color.divider_color));
                         mThumbsDownButton.setSelected(false);
-                        rateTutor(userId, true);
-                        mTutorRatings.put(userId, 0);
+                        rateTutor(mViewerUserId, userId, 0, userJson);
                     }
                 }
             });
@@ -473,7 +492,7 @@ public class ViewQuestionMembersFragment extends Fragment {
 
     }
 
-    private void getUserImage(String imageUrl, final ImageView imageView){
+    private void getUserImage(String imageUrl, final ImageView imageView) {
 
         ImageLoader imageLoader = Singleton.getInstance().getImageLoader();
         imageLoader.get(imageUrl, new ImageLoader.ImageListener() {
@@ -494,8 +513,7 @@ public class ViewQuestionMembersFragment extends Fragment {
     }
 
 
-
-    private void showRemoveUserDialog(final String userId){
+    private void showRemoveUserDialog(final String userId) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setCancelable(false);
@@ -504,7 +522,7 @@ public class ViewQuestionMembersFragment extends Fragment {
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 removeUser(userId);
-                if(mStudentList != null) {
+                if (mStudentList != null) {
                     for (int i = 0; i < mStudentList.size(); i++) {
                         try {
                             if (mStudentList.get(i).getString("user_id").equals(userId)) {
@@ -517,7 +535,7 @@ public class ViewQuestionMembersFragment extends Fragment {
                         }
                     }
                 }
-                if(mTutorList != null) {
+                if (mTutorList != null) {
                     for (int i = 0; i < mTutorList.size(); i++) {
                         try {
                             if (mTutorList.get(i).getString("user_id").equals(userId)) {
@@ -544,32 +562,31 @@ public class ViewQuestionMembersFragment extends Fragment {
     }
 
 
-    private void removeUser(String userId){
+    private void removeUser(String userId) {
 
         List<NameValuePair> params = new LinkedList<NameValuePair>();
         params.add(new BasicNameValuePair("userId", userId));
 
         String paramString = URLEncodedUtils.format(params, "utf-8");
-        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/removeUser?"+paramString;
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/removeUser?" + paramString;
 
 
         System.out.println("removeUser url: " + url);
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
-                (JSONObject)null,
-                new Response.Listener<JSONObject>(){
+                (JSONObject) null,
+                new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
 
                             JSONObject result = new JSONObject(response.toString());
-                            System.out.println("removeUser result "+result);
-                            if(result.getString("success").equalsIgnoreCase("1")){
+                            System.out.println("removeUser result " + result);
+                            if (result.getString("success").equalsIgnoreCase("1")) {
                                 Toast.makeText(mContext, "User removed", Toast.LENGTH_SHORT);
                                 getMemberData();
-                            }
-                            else{
+                            } else {
                                 Toast.makeText(mContext, "Error removing user", Toast.LENGTH_SHORT);
                             }
 
@@ -592,37 +609,41 @@ public class ViewQuestionMembersFragment extends Fragment {
     }
 
 
-
-
-
-    private void rateTutor(String userId, boolean like){
+    private void rateTutor(final String userId, final String ratedUserId, Integer like, final JSONObject userJson) {
 
         List<NameValuePair> params = new LinkedList<NameValuePair>();
         params.add(new BasicNameValuePair("userId", userId));
-        params.add(new BasicNameValuePair("like", like+""));
+        params.add(new BasicNameValuePair("ratedUserId", ratedUserId));
+        params.add(new BasicNameValuePair("like", like.toString()));
+
+        Boolean rated = false;
+        if(mRatedHashMap.containsKey(ratedUserId)) rated = true;
+
+        params.add(new BasicNameValuePair("rated", rated.toString()));
 
         String paramString = URLEncodedUtils.format(params, "utf-8");
-        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/rateTutor?"+paramString;
-
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/rateTutor?" + paramString;
 
         System.out.println("rateTutor url: " + url);
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
-                (JSONObject)null,
-                new Response.Listener<JSONObject>(){
+                (JSONObject) null,
+                new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
 
                             JSONObject result = new JSONObject(response.toString());
-                            System.out.println("rateTutor result "+result);
-                            if(result.getString("success").equalsIgnoreCase("1")){
-
+                            System.out.println("rateTutor result " + result);
+                            if (result.getString("success").equalsIgnoreCase("1")) {
+                                if (!mRatedHashMap.containsKey(ratedUserId)) {
+                                    mRatedHashMap.put(ratedUserId, userJson);
+                                    mRatedList.add(userJson);
+                                }
                                 Toast.makeText(mContext, "User rated", Toast.LENGTH_SHORT);
 
-                            }
-                            else{
+                            } else {
                                 Toast.makeText(mContext, "Error rating", Toast.LENGTH_SHORT);
                             }
 
@@ -644,19 +665,39 @@ public class ViewQuestionMembersFragment extends Fragment {
 
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        // Save the user's current rating states
-        savedInstanceState.putSerializable("tutorRatings", mTutorRatings);
-        // Always call the superclass so it can save the view hierarchy state
-        super.onSaveInstanceState(savedInstanceState);
-    }
+    private void retrieveListOfRatedTutors() {
+        String getRateList = mGetRateListUrl + mViewerUserId;
+        JsonObjectRequest rateListRequest = new JsonObjectRequest(Request.Method.GET,
+                getRateList, (JSONObject) null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONObject result = new JSONObject(response.toString());
+                    if (result.getInt("expectResults") > 0) {
+                        JSONArray arrayOfRatedTutors = result.getJSONObject("result")
+                                .getJSONArray("myArrayList");
+                        for (int i = 0; i < arrayOfRatedTutors.length(); i++) {
+                            JSONObject currStudent = arrayOfRatedTutors.getJSONObject(i)
+                                    .getJSONObject("map");
+                            mRatedList.add(currStudent);
+                            mRatedHashMap.put(currStudent.getString("rated_user"),
+                                    currStudent);
+                        }
+                    }
 
-    private void restore(Bundle savedInstanceState) {
-        if(savedInstanceState != null &&
-                (HashMap<String, Integer>) savedInstanceState.getSerializable("tutorRatings")
-                        != null)
-            mTutorRatings = (HashMap<String, Integer>) savedInstanceState.getSerializable("tutorRatings");
-        else mTutorRatings = new HashMap<>();
+                    getMemberData();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+        Singleton.getInstance().addToRequestQueue(rateListRequest);
     }
 }
