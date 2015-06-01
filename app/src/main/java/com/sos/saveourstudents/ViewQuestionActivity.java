@@ -101,9 +101,7 @@ public class ViewQuestionActivity extends AppCompatActivity {
         }
 
 
-        //Need to pass location/userImage to map frag, could be moved to service call?
         getQuestionData();
-
 
     }
 
@@ -196,6 +194,7 @@ public class ViewQuestionActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 System.out.println("Error with connection or url: " + error.toString());
+
             }
 
         });
@@ -417,6 +416,12 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
 
         }
+    }
+
+    protected void showErrorSnackbar(){
+
+
+
     }
 
 

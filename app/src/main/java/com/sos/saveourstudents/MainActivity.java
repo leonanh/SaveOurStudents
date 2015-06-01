@@ -28,6 +28,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.rey.material.widget.SnackBar;
 import com.sos.saveourstudents.supportclasses.NavDrawerAdapter;
 import com.sos.saveourstudents.supportclasses.RecyclerItemClickListener;
 import com.sos.saveourstudents.supportclasses.SlidingTabLayout;
@@ -64,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private com.rey.material.widget.FloatingActionButton fab;
 
+    SnackBar mSnackBar;
+
     int ICONS[] = {R.drawable.ic_person_black_24dp,R.drawable.ic_exit_to_app_black_24dp, R.drawable.ic_settings_black_24dp};
     String TITLES[] = {"Profile","Logout","Settings"};
 
@@ -98,9 +101,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fabBroadcastReciever = new FabBroadcastReciever();
 
 
+        mSnackBar = (SnackBar)findViewById(R.id.main_sn);
+        mSnackBar.applyStyle(R.style.SnackBarSingleLine);
+        mSnackBar.text("Connection timed out")
+                .actionText("RETRY")
+                .duration(5000)
+                .actionClickListener(new SnackBar.OnActionClickListener() {
+                    @Override
+                    public void onActionClick(SnackBar snackBar, int i) {
+                        System.out.println("hiding snackbar");
+                        hideSnackbar();
+                    }
+                });
+
 
         buildFab();
 
+        showSnackbar();
 
 
         mViewPager = (ViewPager) this.findViewById(R.id.pager);
@@ -266,26 +283,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    //Fragment goes null after rotation within tagDialog - WTF
+
     public void updateFragments(){
-
-        System.out.println("nullcheck: " + viewPagerAdapter.getItem(0) == null);
-
 
         if(((FeedFragment) viewPagerAdapter.getItem(0)).mContext != null)
             ((FeedFragment) viewPagerAdapter.getItem(0)).getQuestionData();
-        else{
-            //viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-            //viewPagerAdapter.feedFragment = FeedFragment.newInstance();
-            //mViewPager.setAdapter(viewPagerAdapter);
-        }
+
         if(((MapFragment) viewPagerAdapter.getItem(1)).getActivity() != null){
             System.out.println("Updating map?");
             ((MapFragment) viewPagerAdapter.getItem(1)).getMapData();
         }
-        else{
-            //viewPagerAdapter.notifyDataSetChanged();
-        }
+
     }
 
 
@@ -495,6 +503,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             buildFab();
         }
     }
+
+    protected void showSnackbar(){
+        mSnackBar.show();
+        hideFab();
+    }
+
+    protected void hideSnackbar(){
+        mSnackBar.dismiss();
+        showFab();
+    }
+
+
 
 
 }

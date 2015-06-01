@@ -8,6 +8,7 @@
         <item>@drawable/cover3</item>
         <item>@drawable/cover4</item>
         <item>@drawable/cover5</item>
+        <item>@drawable/cover6</item>
     </string-array>
 
 </resources>

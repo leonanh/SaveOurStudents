@@ -61,20 +61,13 @@
             app:fab_elevation="2dp"
             />
 
-        <!--
-            <com.rey.material.widget.ProgressView
-                android:id="@+id/progress_pv_circular_colors"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_gravity="center"
-                app:pv_autostart = "true"
-                app:pv_circular="true"
-                app:pv_progressStyle="@style/ColorsCircularProgressDrawableStyle"
-                app:pv_progressMode="indeterminate"
-                android:layout_below="@+id/tabs"
-                android:layout_centerInParent="true"
-                android:layout_marginTop="10dp"/>
-        -->
+        <com.rey.material.widget.SnackBar
+            android:id="@+id/main_sn"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:visibility="visible"
+            android:layout_alignParentBottom="true"/>
+
 
     </RelativeLayout>
 
@@ -88,6 +81,8 @@
         android:scrollbars="vertical">
 
     </android.support.v7.widget.RecyclerView>
+
+
 
 
 </android.support.v4.widget.DrawerLayout>

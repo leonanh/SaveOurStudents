@@ -563,7 +563,7 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(mContext)
                         .setAutoCancel(true)
-                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setSmallIcon(R.drawable.sos_icon)
                         .setContentTitle("SaveOurStudents")
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(msg))
