@@ -66,25 +66,27 @@ public class ProfileActivity extends AppCompatActivity
         }
     }
 
+
     /**
      * Overrides onBackPressed()
      * EditProfileFragment should go back to ViewProfileFragment
      */
     @Override
     public void onBackPressed() {
-        if (mViewProfileFragment != null && mEditProfileFragment != null) {
-            if (findViewById(R.id.profile_editProfile_overall).hasFocus()) {
-                FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.beginTransaction()
-                        .remove(mEditProfileFragment)
-                        .attach(mViewProfileFragment)
-                        .commit();
-                mEditProfileFragment = null;
-            } else {
-                findViewById(R.id.profile_editProfile_overall).requestFocus();
-            }
-        } else super.onBackPressed();
+
+        if (mEditProfileFragment != null) {
+            FragmentManager fragmentManager = getFragmentManager();
+            fragmentManager.beginTransaction()
+                    .remove(mEditProfileFragment)
+                    .attach(mViewProfileFragment)
+                    .commit();
+            mEditProfileFragment = null;
+        }
+        else
+            super.onBackPressed();
+
     }
+
 
     @Override
     protected void onStart() {
