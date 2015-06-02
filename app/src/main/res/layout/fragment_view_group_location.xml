@@ -5,7 +5,6 @@
 
 
 
-
     <com.google.android.gms.maps.MapView
         android:id="@+id/view_group_location_map"
         android:layout_width="match_parent"
