@@ -460,7 +460,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     .getCurrentPerson(mGoogleApiClient);
 
             //System.out.println("getImage: " + );
-            userImageUrl = currentPerson.getImage().getUrl();
+            userImageUrl = currentPerson.getImage().getUrl().replace("sz=50", "sz=200");
             String firstName = currentPerson.getName().getGivenName();
             String lastName = currentPerson.getName().getFamilyName();
             String userId = currentPerson.getId();

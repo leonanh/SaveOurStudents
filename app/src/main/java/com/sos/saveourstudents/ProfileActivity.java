@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -129,6 +130,12 @@ public class ProfileActivity extends AppCompatActivity
     public void onDoneButton() {
         if (mEditProfileFragment != null && mViewProfileFragment != null) {
             mEditProfileFragment.updateStudent();
+
+            if(getCurrentFocus() != null) {
+                InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                in.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+                        InputMethodManager.HIDE_NOT_ALWAYS);
+            }
             FragmentManager fragmentManager = getFragmentManager();
             fragmentManager.beginTransaction()
                     .remove(mEditProfileFragment)
