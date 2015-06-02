@@ -439,13 +439,18 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
 
 
                 //System.out.println("Question " + position + ": " + mQuestionList.getJSONObject(position).getJSONObject("map"));
-                viewHolder.nameText.setText(firstName + " " + lastName);
+                viewHolder.nameText.setText(firstName + " " + lastName.charAt(0) + '.');
 
                 //System.out.println("date: " + Singleton.getInstance().doDateLogic(theDate));
                 viewHolder.questionText.setText(text);
 
 
                 viewHolder.dateText.setText(Singleton.getInstance().doDateLogic(theDate));
+
+                if(topic.length() > 20) {
+                    topic = topic.substring(0, 19).concat("...");
+                }
+
                 viewHolder.topicText.setText(topic);
 
 
