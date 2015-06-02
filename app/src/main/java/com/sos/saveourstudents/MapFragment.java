@@ -250,7 +250,13 @@ public class MapFragment extends Fragment implements
 
                 try {
 
-                    //System.out.println("question: "+mQuestionList.getJSONObject(i).getJSONObject("map"));
+                    System.out.println("OVeRLAYS question: "+mQuestionList.getJSONObject(i).getJSONObject("map"));
+
+                    //TODO if(mQuestionList.getJSONObject(i).getJSONObject("map").has("location_visible") && isVisible)
+                    //TODO if(isActive)
+
+
+
                     double latitude = Double.parseDouble(mQuestionList.getJSONObject(i).getJSONObject("map").getString("latitude"));
                     double longitude = Double.parseDouble(mQuestionList.getJSONObject(i).getJSONObject("map").getString("longitude"));
 
