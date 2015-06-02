@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Request;
@@ -145,6 +146,8 @@ public class EditProfileFragment extends Fragment {
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                InputMethodManager in = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+//                in.hideSoftInputFromWindow(getView().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 onDoneButton();
             }
         });
@@ -303,7 +306,7 @@ public class EditProfileFragment extends Fragment {
         imageLoader.get(imageUrl, new ImageLoader.ImageListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                //Toast.makeText(getActivity(), "Invalid Image URL", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Invalid Image URL", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -312,8 +315,6 @@ public class EditProfileFragment extends Fragment {
                 if (response.getBitmap() != null) {
                     imageView.setImageBitmap(response.getBitmap());
                     mProfilePictureUrl = imageUrl;
-                } else {
-                   // Toast.makeText(getActivity(), "Error processing your image URL", Toast.LENGTH_SHORT).show();
                 }
 
             }
