@@ -10,7 +10,7 @@
         android:layout_height="45dp"
         android:src="@drawable/custom_info_bubble"
         android:scaleType="fitXY"
-        android:tint="@color/primary_text1"/>
+        android:tint="@color/primary"/>
 
     <ImageView
         android:id="@+id/question_image"

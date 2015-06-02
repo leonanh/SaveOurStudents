@@ -114,7 +114,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         forgotLoginBtn.setOnClickListener(this);
         signupBtn = (TextView) findViewById(R.id.signup_btn);
         signupBtn.setOnClickListener(this);
-        logoLabel = (TextView)findViewById(R.id.login_logo_label);
         usernameField = (com.rey.material.widget.EditText) findViewById(R.id.username_textfield);
         passwordField = (com.rey.material.widget.EditText) findViewById(R.id.password_textfield);
         loginBtn = (Button) findViewById(R.id.login_btn);
@@ -127,8 +126,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this).addApi(Plus.API)
                 .addScope(Plus.SCOPE_PLUS_LOGIN).build();
-
-
         //Clear shared prefs, logout of all accounts
         logoutAll();
 

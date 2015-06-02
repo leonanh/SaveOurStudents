@@ -16,18 +16,18 @@
         android:background="@color/primary"
         android:paddingTop="@dimen/container_padding" />
 
-    <TextView
-        android:id="@+id/login_logo_label"
-        android:layout_below="@id/login_logo"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/primary"
-        android:text="@string/app_name"
-        android:textColor="@color/primary_text1"
-        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-        android:gravity="center_horizontal"
-        android:textSize="@dimen/textview_font_size"
-        android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding_material"/>
+    <!--<TextView-->
+        <!--android:id="@+id/login_logo_label"-->
+        <!--android:layout_below="@id/login_logo"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="@color/primary"-->
+        <!--android:text="@string/app_name"-->
+        <!--android:textColor="@color/primary_text1"-->
+        <!--android:textAppearance="@style/TextAppearance.AppCompat.Headline"-->
+        <!--android:gravity="center_horizontal"-->
+        <!--android:textSize="@dimen/textview_font_size"-->
+        <!--android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding_material"/>-->
 
 
 
