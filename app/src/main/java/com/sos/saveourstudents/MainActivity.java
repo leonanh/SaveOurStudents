@@ -22,12 +22,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.rey.material.widget.SnackBar;
 import com.sos.saveourstudents.supportclasses.NavDrawerAdapter;
 import com.sos.saveourstudents.supportclasses.RecyclerItemClickListener;
 import com.sos.saveourstudents.supportclasses.SlidingTabLayout;
@@ -64,6 +64,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private com.rey.material.widget.FloatingActionButton fab;
 
+    private SnackBar mSnackBar;
+
     int ICONS[] = {R.drawable.ic_person_black_24dp,R.drawable.ic_exit_to_app_black_24dp, R.drawable.ic_settings_black_24dp};
     String TITLES[] = {"Profile","Logout","Settings"};
 
@@ -98,8 +100,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fabBroadcastReciever = new FabBroadcastReciever();
 
 
+        mSnackBar = (SnackBar)findViewById(R.id.main_sn);
+
+        mSnackBar.applyStyle(R.style.SnackBarSingleLine)
+                .text("Connection timed out")
+                .actionText("RETRY")
+                .duration(0)
+                .actionClickListener(new SnackBar.OnActionClickListener() {
+                    @Override
+                    public void onActionClick(SnackBar snackBar, int i) {
+                        hideSnackbar();
+                    }
+                });
+
 
         buildFab();
+
 
 
 
@@ -130,7 +146,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
                     //Nav drawer listener
                     @Override public void onItemClick(View view, int position) {
-                        System.out.println("clicked " + position);
 
                         if(position == 1){
                             Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
@@ -174,12 +189,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onResume() {
-        System.out.println("OnResume Main");
+        //Custom BC listener, if user gets removed or accepted to group
         IntentFilter iff = new IntentFilter();
         iff.addAction("com.sos.saveourstudents.CUSTOM_INTENT");
-        // Put whatever message you want to receive as the action
         registerReceiver(fabBroadcastReciever, iff);
-        //registerReceiver(fabBroadcastReciever, new IntentFilter("com.sos.saveourstudents.CUSTOM_INTENT"));
         super.onResume();
     }
 
@@ -193,7 +206,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         unregisterReceiver(fabBroadcastReciever);
 
     }
-
 
 
     @Override
@@ -246,17 +258,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void hideFab(){
         if(fabShowing){
+
             TranslateAnimation anim = new TranslateAnimation(0, 0, 0, 300);
             anim.setDuration(200);
             anim.setFillAfter(true);
             fab.startAnimation(anim);
+            fab.setVisibility(View.GONE);
             fabShowing = false;
         }
     }
 
     public void showFab(){
-        if(!fabShowing){
+
+        if(!fabShowing && mSnackBar.getState() != 1){
             TranslateAnimation anim = new TranslateAnimation( 0, 0 , 300, 0 );
+            fab.setVisibility(View.VISIBLE);
             anim.setDuration(200);
             anim.setFillAfter( true );
             fab.startAnimation(anim);
@@ -266,26 +282,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    //Fragment goes null after rotation within tagDialog - WTF
+
     public void updateFragments(){
-
-        System.out.println("nullcheck: " + viewPagerAdapter.getItem(0) == null);
-
 
         if(((FeedFragment) viewPagerAdapter.getItem(0)).mContext != null)
             ((FeedFragment) viewPagerAdapter.getItem(0)).getQuestionData();
-        else{
-            //viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-            //viewPagerAdapter.feedFragment = FeedFragment.newInstance();
-            //mViewPager.setAdapter(viewPagerAdapter);
-        }
+
         if(((MapFragment) viewPagerAdapter.getItem(1)).getActivity() != null){
-            System.out.println("Updating map?");
             ((MapFragment) viewPagerAdapter.getItem(1)).getMapData();
         }
-        else{
-            //viewPagerAdapter.notifyDataSetChanged();
-        }
+
     }
 
 
@@ -305,11 +311,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         List<NameValuePair> params = new LinkedList<NameValuePair>();
         params.add(new BasicNameValuePair("userId", sharedPref.getString("user_id", "")));
-
         String paramString = URLEncodedUtils.format(params, "utf-8");
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/hasQuestion?"+paramString;
-
-        System.out.println("url: " + url);
+        //System.out.println("url: " + url);
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
                 (JSONObject)null,
@@ -320,8 +324,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         try {
 
                             final JSONObject result = new JSONObject(response.toString());
-                            System.out.println("has questions result "+result);
-
+                            //System.out.println("has questions result "+result);
                             if(!result.getString("success").equalsIgnoreCase("1")){
                                 //Error...
                             }
@@ -345,24 +348,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     getGroupActiveStatus();
                                 }
 
-
-
                             }
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
                     }
                 }, new Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {
                 System.out.println("Error with connection or url: " + error.toString());
+                showSnackbar();
             }
 
         });
-
 
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
 
@@ -376,7 +376,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String paramString = URLEncodedUtils.format(params, "utf-8");
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/inGroup?"+paramString;
 
-        System.out.println("getGroupActiveStatus url: " + url);
+        //System.out.println("getGroupActiveStatus url: " + url);
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
                 (JSONObject)null,
@@ -387,10 +387,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         try {
 
                             final JSONObject result = new JSONObject(response.toString());
-                            System.out.println("getGroupActiveStatus result "+result);
+                            //System.out.println("getGroupActiveStatus result "+result);
 
                             if(!result.getString("success").equalsIgnoreCase("1")){
-                                System.out.println("Error getting active group status: "+result);
+                                //System.out.println("Error getting active group status: "+result);
                             }
                             else{
 
@@ -433,29 +433,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(MainActivity.this, "Connection Error", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "Connection Error", Toast.LENGTH_SHORT).show();
+                showSnackbar();
             }
 
         });
 
-
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
-
-
     }
-
-
 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
         if (requestCode == QUESTION_ACTIVITY) {
-            System.out.println("Returned from edit Question");
+            //System.out.println("Returned from edit Question");
             buildFab();
             updateFragments();
             if (resultCode == RESULT_OK) {
-                System.out.println("Returned from edit Question ok");
+                //System.out.println("Returned from edit Question ok");
             }
         }
 
@@ -465,6 +461,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         else if(requestCode == SETTINGS_ACTIVITY){
             updateNavDrawer();
+            updateFragments();
         }
 
         else {
@@ -484,17 +481,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mRecyclerView.setAdapter(mAdapter);
 
-
     }
 
 
     public class FabBroadcastReciever extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            System.out.println("Recieved custom broadcast in main ACtivity");
+            //System.out.println("Recieved custom broadcast in main ACtivity");
             buildFab();
         }
     }
+
+    protected void showSnackbar(){
+        mSnackBar.show();
+        fab.setVisibility(View.GONE);
+        hideFab();
+    }
+
+    protected void hideSnackbar(){
+        mSnackBar.dismiss();
+        fab.setVisibility(View.VISIBLE);
+        buildFab();
+        updateFragments();
+    }
+
 
 
 }

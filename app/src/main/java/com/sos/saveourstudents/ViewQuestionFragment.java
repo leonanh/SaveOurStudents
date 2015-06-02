@@ -69,6 +69,9 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
     private ImageView tutorIcon;
     private ImageView groupIcon;
 
+    private boolean mStudyGroupBool;
+    private boolean mTutorBool;
+
 
     private boolean mEditable;
     public Context mContext;
@@ -211,6 +214,7 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
             @Override
             public void onErrorResponse(VolleyError error) {
                 System.out.println("Error with connection or url: " + error.toString());
+                showConnectionIssueDialog();
             }
 
         });
@@ -264,6 +268,7 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
             @Override
             public void onErrorResponse(VolleyError error) {
                 System.out.println("Error with connection or url: " + error.toString());
+                showConnectionIssueDialog();
             }
 
         });
@@ -292,8 +297,8 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
             getUserImage(userImageUrl, userImage);
         }
 
-        boolean studyGroupBool = details.getBoolean("study_group");
-        boolean tutorGroupBool = details.getBoolean("tutor");
+        mStudyGroupBool = details.getBoolean("study_group");
+        mTutorBool = details.getBoolean("tutor");
 
 
         userName.setText(userNameText);
@@ -306,10 +311,10 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
         else
             questionDistance.setVisibility(View.INVISIBLE);
 
-        if(tutorGroupBool)
+        if(mTutorBool)
         tutorIcon.setColorFilter(getResources().getColor(R.color.primary));
 
-        if(studyGroupBool)
+        if(mStudyGroupBool)
         groupIcon.setColorFilter(getResources().getColor(R.color.primary));
 
     }
@@ -420,12 +425,12 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        showConnectionIssueDialog();
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-
+        showConnectionIssueDialog();
     }
 
     @Override
@@ -453,6 +458,11 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
     }
 
+    private void showConnectionIssueDialog(){
+        Toast.makeText(mContext, "Connection error, try again", Toast.LENGTH_SHORT).show();
+        if( ((ViewQuestionActivity) getActivity()) != null)
+            ((ViewQuestionActivity) getActivity()).mSnackBar.show();
+    }
 
     public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.ViewHolder>{
 
@@ -582,19 +592,34 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage("Would you like to join as a tutor or a group member?");
 
-        builder.setPositiveButton("Member", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
+        if(mStudyGroupBool && mTutorBool) {
+            builder.setPositiveButton("Member", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
 
-                sendAskToJoinGroup(0);
-            }
-        });
-        builder.setNegativeButton("Tutor", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
+                    sendAskToJoinGroup(0);
+                }
+            });
+            builder.setNegativeButton("Tutor", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
 
-                sendAskToJoinGroup(1);
-            }
-        });
+                    sendAskToJoinGroup(1);
+                }
+            });
+        } else if (mStudyGroupBool && !mTutorBool) {
+            builder.setPositiveButton("Member", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
 
+                    sendAskToJoinGroup(0);
+                }
+            });
+        } else if (!mStudyGroupBool && mTutorBool) {
+            builder.setPositiveButton("Tutor", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+
+                    sendAskToJoinGroup(1);
+                }
+            });
+        }
         AlertDialog dialog = builder.create();
         dialog.show();
 
@@ -641,6 +666,7 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
             @Override
             public void onErrorResponse(VolleyError error) {
+                //TODO
                 System.out.println("Error with connection or url: " + error.toString());
             }
 
@@ -691,6 +717,7 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
             @Override
             public void onErrorResponse(VolleyError error) {
+                //TODO
                 System.out.println("Error with connection or url: " + error.toString());
             }
 
@@ -760,7 +787,6 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
                                 }
 
-
                             }
 
                         } catch (JSONException e) {
@@ -773,6 +799,7 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
             @Override
             public void onErrorResponse(VolleyError error) {
                 System.out.println("Error with connection or url: " + error.toString());
+                showConnectionIssueDialog();
             }
 
         });
@@ -822,6 +849,7 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     System.out.println("Error with connection or url: " + error.toString());
+                    showConnectionIssueDialog();
                 }
 
             });

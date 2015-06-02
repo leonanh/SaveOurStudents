@@ -1,17 +1,12 @@
 package com.sos.saveourstudents;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -537,7 +532,7 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
 
 
     public void passTagList(Set<String> activeFilters) {
-        System.out.println("activeFilters: "+activeFilters.toString());
+        System.out.println("activeFilters: " + activeFilters.toString());
         if(activeFilters.size() > 0 ){
             tagList.clear();
             tagList.addAll(activeFilters);
@@ -551,41 +546,12 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
     }
 
 
-    private void sendNotification(String msg) {
-        NotificationManager mNotificationManager = (NotificationManager)
-                mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        PendingIntent contentIntent = PendingIntent.getActivity(mContext, 0,
-                new Intent(mContext, ViewQuestionActivity.class), 0);
-
-        //Add question ID to intent
-
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(mContext)
-                        .setAutoCancel(true)
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentTitle("SaveOurStudents")
-                        .setStyle(new NotificationCompat.BigTextStyle()
-                                .bigText(msg))
-                        .setTicker(msg)
-                        .setContentText(msg);
-
-        mBuilder.setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_LIGHTS|Notification.DEFAULT_VIBRATE);
-        mBuilder.setContentIntent(contentIntent);
-        mNotificationManager.notify(12345, mBuilder.build());
-    }
-
-
-
-
     private void showQuestionDetails(){
 
 
         System.out.println("ShowQuestionDetails: " +mQuestionInfo);
 
         try {
-
-
 
             boolean studyBool = mQuestionInfo.getBoolean("study_group");
             boolean tutorBool = mQuestionInfo.getBoolean("tutor");
@@ -606,8 +572,13 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
             }
 
 
+            int isVisible = mQuestionInfo.getInt("visible_location");
+            if(isVisible == 0)
+                locationToggle.setImageResource(R.drawable.ic_location_off_grey600_36dp);
+            else
+                locationToggle.setImageResource(R.drawable.ic_location_on_grey600_36dp);
 
-            //TODO need visibility bool
+
 
 
         } catch (JSONException e) {

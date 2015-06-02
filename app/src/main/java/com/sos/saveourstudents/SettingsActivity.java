@@ -87,7 +87,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
 
-        String[] items = new String[6];
+        String[] items = new String[7];
         for(int i = 0; i < items.length; i++)
             items[i] = "Cover " + String.valueOf(i + 1);
 

@@ -24,6 +24,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.rey.material.widget.SnackBar;
 import com.sos.saveourstudents.supportclasses.SlidingTabLayout;
 
 import org.apache.http.NameValuePair;
@@ -43,7 +44,7 @@ public class ViewQuestionActivity extends AppCompatActivity {
     private final int numPages = 3;
 
     private Menu menu;
-
+    protected SnackBar mSnackBar;
     private FabBroadcastReciever fabBroadcastReciever;
     private SlidingTabLayout mSlidingTabLayout;
     private FragmentPagerAdapter mViewGroupPagerAdapter;
@@ -53,6 +54,7 @@ public class ViewQuestionActivity extends AppCompatActivity {
     public JSONObject mQuestionInfo;
     public ArrayList tags;
     private boolean isEditable;
+    private boolean mIsActive;
 
     private boolean menuIsBuilt;
 
@@ -69,6 +71,7 @@ public class ViewQuestionActivity extends AppCompatActivity {
         menuIsBuilt = false;
         fabBroadcastReciever = new FabBroadcastReciever();
 
+
         if(getIntent().getExtras() != null){
             if(getIntent().getExtras().containsKey("questionId")){
                 mQuestionId = getIntent().getExtras().getString("questionId");
@@ -82,6 +85,17 @@ public class ViewQuestionActivity extends AppCompatActivity {
             finish();
         }
 
+        mSnackBar = (SnackBar)findViewById(R.id.main_sn);
+        mSnackBar.text("Connection timed out")
+                .applyStyle(R.style.SnackBarSingleLine)
+                .actionText("RETRY")
+                .duration(0)
+                .actionClickListener(new SnackBar.OnActionClickListener() {
+                    @Override
+                    public void onActionClick(SnackBar snackBar, int i) {
+                        getQuestionData();
+                    }
+                });
 
         mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.view_group_tabPage);
         mViewPager = (ViewPager) findViewById(R.id.view_group_viewPager);
@@ -101,9 +115,7 @@ public class ViewQuestionActivity extends AppCompatActivity {
         }
 
 
-        //Need to pass location/userImage to map frag, could be moved to service call?
         getQuestionData();
-
 
     }
 
@@ -134,8 +146,7 @@ public class ViewQuestionActivity extends AppCompatActivity {
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/viewQuestion?"+paramString;
 
 
-        //System.out.println("url: " + url);
-
+        System.out.println("url: " + url);
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
                 (JSONObject)null,
@@ -146,7 +157,7 @@ public class ViewQuestionActivity extends AppCompatActivity {
                         try {
 
                             JSONObject result = new JSONObject(response.toString());
-                            //System.out.println("edit questions result "+result);
+                            System.out.println("ViewQuestionActivity result "+result);
                             if(result.getString("success").equalsIgnoreCase("1")){
 
                                 JSONArray questionAndTags = result.getJSONObject("result").getJSONArray("myArrayList");
@@ -178,6 +189,12 @@ public class ViewQuestionActivity extends AppCompatActivity {
                                 String currentUserId = sharedPref.getString("user_id", "");
                                 isEditable = mQuestionInfo.getString("user_id").equalsIgnoreCase(currentUserId);
 
+
+                                //boolean isVisible = mQuestionInfo.getBoolean("visible_location");
+                                mIsActive = mQuestionInfo.getBoolean("active");
+
+
+
                                 buildFragments(location, userImageUrl, isEditable);
 
                             }
@@ -196,6 +213,7 @@ public class ViewQuestionActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 System.out.println("Error with connection or url: " + error.toString());
+                mSnackBar.show();
             }
 
         });
@@ -211,10 +229,8 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
     private void buildFragments(Location location, String userImageUrl, boolean isEditable){
 
-        if (!menuIsBuilt) {
-            onCreateOptionsMenu(menu);
-            menuIsBuilt = true;
-        }
+
+        invalidateOptionsMenu();
 
         mViewGroupPagerAdapter = new ViewGroupPagerAdapter(getSupportFragmentManager(), location, userImageUrl, isEditable);
 
@@ -239,8 +255,15 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
         if(menu != null) {
             this.menu = menu;
-            if (isEditable)
-                getMenuInflater().inflate(R.menu.menu_edit_question, menu);
+            if (isEditable && mIsActive) {
+                System.out.println("building active menu: "+mIsActive);
+                getMenuInflater().inflate(R.menu.menu_edit_public_question, menu);
+            }
+            else if(isEditable && !mIsActive){
+                System.out.println("building inactive menu: "+mIsActive);
+                getMenuInflater().inflate(R.menu.menu_edit_private_question, menu);
+            }
+
         }
         return true;
     }
@@ -248,11 +271,22 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-
+        System.out.println("clicked menu item:" + item);
 
         if (item.getItemId() == R.id.action_close_question) {
             showCloseGroupDialog();
+            return true;
+        }
+        else if (item.getItemId() == R.id.action_private_question) {
+            System.out.println("clicked private");
+            toggleGroupActive();
+            //toggleQuestionActive(false);
+            return true;
+        }
+        else if (item.getItemId() == R.id.action_public_question) {
+            System.out.println("clicked public");
+            toggleGroupActive();
+            //toggleQuestionActive(true);
             return true;
         }
 
@@ -333,6 +367,7 @@ public class ViewQuestionActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 System.out.println("Error with connection or url: " + error.toString());
+                mSnackBar.show();
             }
 
         });
@@ -342,6 +377,47 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
     }
 
+
+    private void toggleGroupActive() {
+
+        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        params.add(new BasicNameValuePair("questionId", mQuestionId));
+
+        String paramString = URLEncodedUtils.format(params, "utf-8");
+        String url = "";
+        if(mIsActive)
+            url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/closeGroup?" + paramString;
+        else
+            url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/openGroup?" + paramString;
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
+                (JSONObject) null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        try {
+                            JSONObject result = new JSONObject(response.toString());
+                            System.out.println("activeedit result "+result);
+                            if (result.getString("success").equalsIgnoreCase("1")) {
+                                mIsActive = !mIsActive;
+                                invalidateOptionsMenu();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener(){
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                mSnackBar.show();
+            }
+
+        });
+
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+    }
 
 
 
@@ -356,7 +432,7 @@ public class ViewQuestionActivity extends AppCompatActivity {
         public ViewGroupPagerAdapter(FragmentManager fm, Location location, String userImageUrl, boolean isEditable) {
             super(fm);
             mFragmentViewQuestion = ViewQuestionFragment.newInstance(mQuestionId, isEditable);
-            mViewGroupLocationFragment = ViewQuestionLocationFragment.newInstance(mQuestionId, location, userImageUrl, isEditable);
+            mViewGroupLocationFragment = ViewQuestionLocationFragment.newInstance(mQuestionId, location, userImageUrl, isEditable, false);//TODO
             mViewGroupMembersFragment = ViewQuestionMembersFragment.newInstance(mQuestionId, isEditable);
 
         }

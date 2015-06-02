@@ -49,7 +49,7 @@ import java.util.List;
 public class ViewQuestionLocationFragment extends android.support.v4.app.Fragment implements
         LocationListener,
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMarkerDragListener {
+        GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMarkerDragListener, View.OnClickListener {
 
 
     private static final String QUESTION_LOCATION = "paramCoordinates";
@@ -63,20 +63,25 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
     private Context mContext;
     private GoogleApiClient mGoogleApiClient;
     private View rootView;
+    private ImageView visibilityToggle;
 
     private Location mCurrentLocation;
     private Location newLocation;
     private String userImageUrl;
     private boolean mEditable;
+    private boolean mIsVisible;
     private String mQuestionId;
 
-    public static ViewQuestionLocationFragment newInstance(String questionId, Location location, String userImageUrl, boolean isEditable) {
+    public static ViewQuestionLocationFragment newInstance(String questionId,
+                                                           Location location, String userImageUrl,
+                                                           boolean isEditable, boolean isVisible) {
         ViewQuestionLocationFragment fragment = new ViewQuestionLocationFragment();
         Bundle args = new Bundle();
         args.putParcelable(QUESTION_LOCATION, location);
         args.putString(USER_IMAGE, userImageUrl);
         args.putBoolean("isEditable", isEditable);
         args.putString("questionId", questionId);
+        args.putBoolean("isVisible", isVisible);
         fragment.setArguments(args);
         return fragment;
     }
@@ -93,6 +98,7 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
             userImageUrl = getArguments().getString(USER_IMAGE);
             mEditable = getArguments().getBoolean("isEditable");
             mQuestionId = getArguments().getString("questionId");
+            mIsVisible = getArguments().getBoolean("isVisible");
         }
     }
 
@@ -103,11 +109,33 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
         mInflater = inflater;
         rootView =  inflater.inflate(R.layout.fragment_view_group_location, container, false);
         mMapView = (MapView) rootView.findViewById(R.id.view_group_location_map);
+
+        visibilityToggle = (ImageView) rootView.findViewById(R.id.visibility_toggle);
+
+        if(mEditable)
+            visibilityToggle.setOnClickListener(this);
+
+        if(mIsVisible)
+            visibilityToggle.setImageResource(R.drawable.ic_remove_red_eye_white_24dp);
+
         initializeMap();
 
 
-
         return rootView;
+    }
+
+    private void clickVisibilityToggle() {
+        if(visibilityToggle.isSelected()){
+            Toast.makeText(mContext, "Your location is now private", Toast.LENGTH_SHORT).show();
+            visibilityToggle.setImageResource(R.drawable.ic_visibility_off_white_24dp);
+        }
+        else{
+            Toast.makeText(mContext, "Your location is now public", Toast.LENGTH_SHORT).show();
+            visibilityToggle.setImageResource(R.drawable.ic_remove_red_eye_white_24dp);
+        }
+
+        //toggleLocationVisible(visibilityToggle.isSelected());
+
     }
 
     private void initializeMap(){
@@ -147,11 +175,7 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
 
     @Override
     public void onConnected(Bundle bundle) {
-        //mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(
-        //        mGoogleApiClient);
 
-        //System.out.println("Connected to GoogleApi: " + mCurrentLocation);
-        //getLocationUpdate();
     }
 
     @Override
@@ -167,10 +191,6 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
 
     @Override
     public void onLocationChanged(Location location) {
-
-        //System.out.println("Location: "+location);
-        //Stop updates after we get a location....
-        //showCustomMarker();
         stopLocationUpdates();
 
     }
@@ -238,18 +258,6 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
     }
 
 
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-
-        }
-        else {
-
-        }
-    }
-
-
     private void showChangeLocationDialog(){
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -305,12 +313,7 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             mMap.addMarker(markerOptions);
 
-
-
-
         }
-
-
 
     }
 
@@ -370,6 +373,85 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
     }
 
 
+/*
+
+    private void toggleLocationVisible(final boolean isVisible) {
+
+        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        params.add(new BasicNameValuePair("questionId", mQuestionId));
+        params.add(new BasicNameValuePair("visibility", (isVisible ? 1 : 0)+""));
+
+        String paramString = URLEncodedUtils.format(params, "utf-8");
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/setVisibility?" + paramString;
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
+                (JSONObject) null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        try {
+                            JSONObject result = new JSONObject(response.toString());
+                            System.out.println("setVisibility result "+result);
+                            if (result.getString("success").equalsIgnoreCase("1")) {
+                                visibilityToggle.setSelected(!visibilityToggle.isSelected());
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener(){
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if( ((ViewQuestionActivity) getActivity()) != null)
+                    ((ViewQuestionActivity) getActivity()).mSnackBar.show();
+            }
+
+        });
+
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+    }
+*/
+    /*
+    private void setLocationVisibility(boolean isVisible) {
+
+        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        params.add(new BasicNameValuePair("questionId", mQuestionId));
+        params.add(new BasicNameValuePair("visibility", (isVisible ? 1 : 0)+""));
+
+        String paramString = URLEncodedUtils.format(params, "utf-8");
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/setVisibility?" + paramString;
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
+                (JSONObject) null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        try {
+                            JSONObject result = new JSONObject(response.toString());
+                            //System.out.println("setVisibility result "+result);
+                            if (result.getString("success").equalsIgnoreCase("1")) {
+
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener(){
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("Error with connection or url: " + error.toString());
+                if( ((ViewQuestionActivity) getActivity()) != null)
+                    ((ViewQuestionActivity) getActivity()).mSnackBar.show();
+            }
+
+        });
+
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+    }*/
 
 
     private void editQuestionLocation(Location newLocation){
@@ -414,6 +496,8 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
             @Override
             public void onErrorResponse(VolleyError error) {
                 System.out.println("Error with connection or url: " + error.toString());
+                if( ((ViewQuestionActivity) getActivity()) != null)
+                    ((ViewQuestionActivity) getActivity()).mSnackBar.show();
             }
 
         });
@@ -423,8 +507,10 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
     }
 
 
-
-
-
-
+    @Override
+    public void onClick(View v) {
+        if(v == visibilityToggle){
+            clickVisibilityToggle();
+        }
+    }
 }

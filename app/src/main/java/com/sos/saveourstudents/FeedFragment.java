@@ -3,7 +3,6 @@ package com.sos.saveourstudents;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -69,7 +68,6 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
     private JSONArray mQuestionList;
 
 
-
     public static FeedFragment newInstance() {
         FeedFragment fragment = new FeedFragment();
         Bundle args = new Bundle();
@@ -91,9 +89,7 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
         //Save the fragment's state here
-
 
     }
 
@@ -126,17 +122,12 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
         mSwipeRefreshLayout.setRefreshing(true);
 
 
-
         LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         lastKnownLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
 
 
         buildGoogleApiClient();
-
-
-
-
 
 
         return rootView;
@@ -158,7 +149,10 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
         });
 
         mSwipeRefreshLayout.setColorSchemeColors(
-                Color.RED, Color.GREEN, Color.BLUE, Color.BLACK);
+                getResources().getColor(R.color.primary),
+                getResources().getColor(R.color.accent),
+                getResources().getColor(R.color.secondary_text),
+                getResources().getColor(R.color.primary_dark));
 
 
     }
@@ -167,8 +161,6 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
     @Override
     public void onResume() {
         super.onResume();
-        System.out.println("onresume feed");
-
     }
 
     @Override
@@ -231,7 +223,7 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getQuestions?"+paramString;
 
 
-        System.out.println("URL: "+url);
+        //System.out.println("URL: "+url);
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
                 url,
                 (JSONObject)null,
@@ -271,8 +263,8 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
             @Override
             public void onErrorResponse(VolleyError error) {
                 showConnectionIssueDialog();
-                System.out.println("Error: " + error.toString());
-                mSwipeRefreshLayout.setRefreshing(false);
+                //System.out.println("Error: " + error.toString());
+
             }
         });
 
@@ -318,7 +310,8 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
     }
 
     private void showConnectionIssueDialog(){
-        Toast.makeText(mContext, "Connection error, try again" ,Toast.LENGTH_SHORT).show();
+        mSwipeRefreshLayout.setRefreshing(false);
+        ((MainActivity) getActivity()).showSnackbar();
     }
 
 
@@ -339,13 +332,13 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
     }
 
     protected void stopLocationUpdates() {
-        System.out.println("Stopping location updates in feed");
+        //System.out.println("Stopping location updates in feed");
         LocationServices.FusedLocationApi.removeLocationUpdates(
                 mGoogleApiClient, this);
     }
 
     protected void createLocationRequest() {
-        System.out.println("Creating new locationRequest in feed");
+        //System.out.println("Creating new locationRequest in feed");
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(10000);
         mLocationRequest.setFastestInterval(5000);
@@ -446,18 +439,22 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
 
 
                 //System.out.println("Question " + position + ": " + mQuestionList.getJSONObject(position).getJSONObject("map"));
-                viewHolder.nameText.setText(firstName + " " + lastName);
+                viewHolder.nameText.setText(firstName + " " + lastName.charAt(0) + '.');
 
                 //System.out.println("date: " + Singleton.getInstance().doDateLogic(theDate));
                 viewHolder.questionText.setText(text);
 
 
                 viewHolder.dateText.setText(Singleton.getInstance().doDateLogic(theDate));
+
+                if(topic.length() > 20) {
+                    topic = topic.substring(0, 19).concat("...");
+                }
+
                 viewHolder.topicText.setText(topic);
 
 
                 String distanceType = sharedPref.getString("distanceType", "MI");
-
 
 
                 if(mCurrentLocation != null){
@@ -475,8 +472,6 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
                     viewHolder.distanceText.setVisibility(View.INVISIBLE);
                     System.out.println("mCurrentLocation and lastknown is null");
                 }
-
-
 
 
             } catch (JSONException e) {
@@ -564,7 +559,5 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
 
     }
 
-    public SwipeRefreshLayout getmSwipeRefreshLayout() {
-        return mSwipeRefreshLayout;
-    }
+
 }

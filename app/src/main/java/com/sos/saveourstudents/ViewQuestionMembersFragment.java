@@ -191,6 +191,8 @@ public class ViewQuestionMembersFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 System.out.println("Error with connection or url: " + error.toString());
+                if( ((ViewQuestionActivity) getActivity()) != null)
+                ((ViewQuestionActivity) getActivity()).mSnackBar.show();
             }
 
         });
@@ -341,7 +343,7 @@ public class ViewQuestionMembersFragment extends Fragment {
                 ImageView mThumbsUpButton = ((ImageView) convertView.findViewById(R.id.view_group_members_thumbs_up));
                 ImageView mThumbsDownButton = ((ImageView) convertView.findViewById(R.id.view_group_members_thumbs_down));
 
-                if (mIsMemberOfGroup) {
+                if (mIsMemberOfGroup && !userId.equals(mViewerUserId)) {
                     mThumbsUpButton.setVisibility(View.VISIBLE);
                     mThumbsDownButton.setVisibility(View.VISIBLE);
                     setUpThumbsUpButton(mThumbsUpButton, mThumbsDownButton,
@@ -592,6 +594,8 @@ public class ViewQuestionMembersFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 System.out.println("Error with connection or url: " + error.toString());
+                if( ((ViewQuestionActivity) getActivity()) != null)
+                    ((ViewQuestionActivity) getActivity()).mSnackBar.show();
             }
 
         });
@@ -649,6 +653,8 @@ public class ViewQuestionMembersFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 System.out.println("Error with connection or url: " + error.toString());
+                if( ((ViewQuestionActivity) getActivity()) != null)
+                    ((ViewQuestionActivity) getActivity()).mSnackBar.show();
             }
 
         });
@@ -728,6 +734,8 @@ public class ViewQuestionMembersFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 System.out.println("Error with connection or url: " + error.toString());
+                if( ((ViewQuestionActivity) getActivity()) != null)
+                    ((ViewQuestionActivity) getActivity()).mSnackBar.show();
             }
 
         }

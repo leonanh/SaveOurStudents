@@ -9,7 +9,7 @@
         android:id="@+id/login_logo"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/login_screen_main_logo"
-        android:src="@drawable/logo_placeholder"
+        android:src="@drawable/sos_logo"
         android:background="@color/primary"
         android:paddingTop="@dimen/container_padding" />
 

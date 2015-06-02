@@ -31,4 +31,11 @@
         android:layout_below="@id/view_group_tabPage"
         android:background="@android:color/white"/>
 
+    <com.rey.material.widget.SnackBar
+        android:id="@+id/main_sn"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true"/>
+
 </RelativeLayout>

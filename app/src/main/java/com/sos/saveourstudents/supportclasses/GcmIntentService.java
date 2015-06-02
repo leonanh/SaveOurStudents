@@ -99,7 +99,7 @@ public class GcmIntentService extends IntentService {
         
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setSmallIcon(R.drawable.sos_icon)
                         .setAutoCancel(true)
                         .setContentTitle("SaveOurStudents")
                         .setStyle(new NotificationCompat.BigTextStyle()
