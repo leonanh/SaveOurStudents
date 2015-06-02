@@ -13,8 +13,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by HTPC on 4/26/2015.
@@ -59,9 +65,14 @@ public class ForgotLoginActivity extends Activity implements View.OnClickListene
     {
         //find the valid url
         //http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getQuestions
-        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/forgotPassword?" +
-                "email=" + email;
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/forgotPassword?";
 
+
+        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        params.add(new BasicNameValuePair("email", email));
+        String paramString = URLEncodedUtils.format(params, "utf-8");
+
+        url = url + paramString;
 
         System.out.println("Url: "+url);
         final JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url,

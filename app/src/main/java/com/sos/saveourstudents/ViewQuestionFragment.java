@@ -702,10 +702,10 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
                             JSONObject result = new JSONObject(response.toString());
                             System.out.println("sending group result "+result);
                             if(result.getString("success").equalsIgnoreCase("1")){
-                                Toast.makeText(mContext, "Success sending group request", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(mContext, "Requested to join the group!", Toast.LENGTH_SHORT).show();
                             }
                             else{
-                                Toast.makeText(mContext, "Error sending group request", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(mContext, "Error Sending Group Request!", Toast.LENGTH_SHORT).show();
                             }
 
                         } catch (JSONException e) {
