@@ -69,6 +69,9 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
     private ImageView tutorIcon;
     private ImageView groupIcon;
 
+    private boolean mStudyGroupBool;
+    private boolean mTutorBool;
+
 
     private boolean mEditable;
     public Context mContext;
@@ -294,8 +297,8 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
             getUserImage(userImageUrl, userImage);
         }
 
-        boolean studyGroupBool = details.getBoolean("study_group");
-        boolean tutorGroupBool = details.getBoolean("tutor");
+        mStudyGroupBool = details.getBoolean("study_group");
+        mTutorBool = details.getBoolean("tutor");
 
 
         userName.setText(userNameText);
@@ -308,10 +311,10 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
         else
             questionDistance.setVisibility(View.INVISIBLE);
 
-        if(tutorGroupBool)
+        if(mTutorBool)
         tutorIcon.setColorFilter(getResources().getColor(R.color.primary));
 
-        if(studyGroupBool)
+        if(mStudyGroupBool)
         groupIcon.setColorFilter(getResources().getColor(R.color.primary));
 
     }
@@ -589,19 +592,34 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage("Would you like to join as a tutor or a group member?");
 
-        builder.setPositiveButton("Member", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
+        if(mStudyGroupBool && mTutorBool) {
+            builder.setPositiveButton("Member", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
 
-                sendAskToJoinGroup(0);
-            }
-        });
-        builder.setNegativeButton("Tutor", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
+                    sendAskToJoinGroup(0);
+                }
+            });
+            builder.setNegativeButton("Tutor", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
 
-                sendAskToJoinGroup(1);
-            }
-        });
+                    sendAskToJoinGroup(1);
+                }
+            });
+        } else if (mStudyGroupBool && !mTutorBool) {
+            builder.setPositiveButton("Member", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
 
+                    sendAskToJoinGroup(0);
+                }
+            });
+        } else if (!mStudyGroupBool && mTutorBool) {
+            builder.setPositiveButton("Tutor", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+
+                    sendAskToJoinGroup(1);
+                }
+            });
+        }
         AlertDialog dialog = builder.create();
         dialog.show();
 
