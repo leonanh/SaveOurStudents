@@ -154,6 +154,20 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
                 getResources().getColor(R.color.secondary_text),
                 getResources().getColor(R.color.primary_dark));
 
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                System.out.println("scroll state: "+newState);
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                System.out.println("scroll dx: " + dx);
+                System.out.println("scroll dy: " + dy);
+            }
+        });
+
+
+
 
     }
 
@@ -223,7 +237,7 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getQuestions?"+paramString;
 
 
-        //System.out.println("URL: "+url);
+        System.out.println("URL: "+url);
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
                 url,
                 (JSONObject)null,
