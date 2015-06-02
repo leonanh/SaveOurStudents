@@ -80,11 +80,10 @@ public class ForgotLoginActivity extends Activity implements View.OnClickListene
             @Override
             public void onResponse(JSONObject response) {
                 try {
-
+                    System.out.println(response.toString());
                     if(response.getString("expectResults").equalsIgnoreCase("0")) {
                         Toast.makeText(ForgotLoginActivity.this, R.string.invalidEmail, Toast.LENGTH_SHORT).show();
-                        //System.out.println("debug");
-                    } else if (response.getString("success").equalsIgnoreCase("1")) {
+                    } else if (response.getString("expectResults").equalsIgnoreCase("1")) {
                         //email exists
                         Toast.makeText(ForgotLoginActivity.this, R.string.emailSent, Toast.LENGTH_SHORT).show();
                         Intent loginActivity = new Intent(ForgotLoginActivity.this, LoginActivity.class);
