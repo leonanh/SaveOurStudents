@@ -343,7 +343,7 @@ public class ViewQuestionMembersFragment extends Fragment {
                 ImageView mThumbsUpButton = ((ImageView) convertView.findViewById(R.id.view_group_members_thumbs_up));
                 ImageView mThumbsDownButton = ((ImageView) convertView.findViewById(R.id.view_group_members_thumbs_down));
 
-                if (mIsMemberOfGroup) {
+                if (mIsMemberOfGroup && !userId.equals(mViewerUserId)) {
                     mThumbsUpButton.setVisibility(View.VISIBLE);
                     mThumbsDownButton.setVisibility(View.VISIBLE);
                     setUpThumbsUpButton(mThumbsUpButton, mThumbsDownButton,

@@ -621,7 +621,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                 try {
 
-                    if (response.getString("success").equalsIgnoreCase("1") && response.getString("expectResults").equalsIgnoreCase("1")) {
+                    if (response.getString("success").equalsIgnoreCase("1") && response.getInt("expectResults") >= 1){
                         System.out.println("Login success Response: " + response.toString());
                         SharedPreferences sharedPref = getSharedPreferences(
                                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
