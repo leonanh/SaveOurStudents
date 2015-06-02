@@ -353,22 +353,25 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
 
     protected void createLocationRequest() {
         //System.out.println("Creating new locationRequest in feed");
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(10000);
-        mLocationRequest.setFastestInterval(5000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        startLocationUpdates();
-    }
+        if(mLocationRequest == null) {
+            mLocationRequest = new LocationRequest();
+            mLocationRequest.setInterval(10000);
+            mLocationRequest.setFastestInterval(3000);
+            mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            startLocationUpdates();
+        }
 
+    }
 
 
     protected synchronized void buildGoogleApiClient() {
         mSwipeRefreshLayout.setRefreshing(true);
-        mGoogleApiClient = new GoogleApiClient.Builder(mContext)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
+        if (mGoogleApiClient == null)
+            mGoogleApiClient = new GoogleApiClient.Builder(mContext)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
 
         mGoogleApiClient.connect();
 
