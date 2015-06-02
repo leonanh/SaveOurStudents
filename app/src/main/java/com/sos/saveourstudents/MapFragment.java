@@ -53,7 +53,6 @@ import java.util.List;
 import java.util.Set;
 
 
-
 public class MapFragment extends Fragment implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener, View.OnClickListener {
@@ -120,7 +119,7 @@ public class MapFragment extends Fragment implements
         topicDetails = (TextView) rootView.findViewById(R.id.topic_text);
         questionDetails = (TextView) rootView.findViewById(R.id.question_text);
         timestampDetails = (TextView) rootView.findViewById(R.id.question_timestamp);
-        distanceDetails  = (TextView) rootView.findViewById(R.id.question_distance);
+        distanceDetails = (TextView) rootView.findViewById(R.id.question_distance);
 
 
         sharedPref = mContext.getSharedPreferences(
@@ -131,7 +130,7 @@ public class MapFragment extends Fragment implements
         return rootView;
     }
 
-    public void createAndShowMap(){
+    public void createAndShowMap() {
 
         buildGoogleApiClient();
 
@@ -165,11 +164,10 @@ public class MapFragment extends Fragment implements
         double latitude = 32.88006;
         double longitude = -117.2340133;
 
-        if(mCurrentLocation != null){
+        if (mCurrentLocation != null) {
             latitude = mCurrentLocation.getLatitude();
             longitude = mCurrentLocation.getLongitude();
-        }
-        else{
+        } else {
             System.out.println("Could not get location, using UCSD as default");
         }
 
@@ -184,15 +182,14 @@ public class MapFragment extends Fragment implements
 
 
         String paramString = URLEncodedUtils.format(params, "utf-8").replace("+", "%20");
-        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getQuestions?"+paramString;
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getQuestions?" + paramString;
 
 
-        //System.out.println("URL: " + url);
+        System.out.println("URL: " + url);
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
                 url,
-                (JSONObject)null,
-                new Response.Listener<JSONObject>()
-                {
+                (JSONObject) null,
+                new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {
@@ -201,15 +198,14 @@ public class MapFragment extends Fragment implements
                             JSONObject theResponse = new JSONObject(response.toString());
 
 
-                            if(!theResponse.getString("success").equalsIgnoreCase("1")){
+                            if (!theResponse.getString("success").equalsIgnoreCase("1")) {
                                 //Error getting data
                                 return;
                             }
-                            if(theResponse.getString("expectResults").equalsIgnoreCase("0")){
+                            if (theResponse.getString("expectResults").equalsIgnoreCase("0")) {
                                 //No results to show (empty array returned)
                                 mQuestionList = theResponse.getJSONObject("result").getJSONArray("myArrayList");
-                            }
-                            else{
+                            } else {
                                 mQuestionList = theResponse.getJSONObject("result").getJSONArray("myArrayList");
                             }
 
@@ -239,49 +235,50 @@ public class MapFragment extends Fragment implements
     }
 
 
-    private void showOverlays(){
+    private void showOverlays() {
 
-        if(mMap != null){
+        if (mMap != null) {
 
 
             mMap.clear();
 
-            for (int i = 0; i < mQuestionList.length(); i++){
+            for (int i = 0; i < mQuestionList.length(); i++) {
 
                 try {
 
-                    System.out.println("OVeRLAYS question: "+mQuestionList.getJSONObject(i).getJSONObject("map"));
+                    System.out.println("OVeRLAYS question: " + mQuestionList.getJSONObject(i).getJSONObject("map"));
 
                     //TODO if(mQuestionList.getJSONObject(i).getJSONObject("map").has("location_visible") && isVisible)
                     //TODO if(isActive)
 
+                    if (mQuestionList.getJSONObject(i).getJSONObject("map").has("visible_location") &&
+                            mQuestionList.getJSONObject(i).getJSONObject("map").getInt("visible_location") == 1) {
 
 
-                    double latitude = Double.parseDouble(mQuestionList.getJSONObject(i).getJSONObject("map").getString("latitude"));
-                    double longitude = Double.parseDouble(mQuestionList.getJSONObject(i).getJSONObject("map").getString("longitude"));
+                        double latitude = Double.parseDouble(mQuestionList.getJSONObject(i).getJSONObject("map").getString("latitude"));
+                        double longitude = Double.parseDouble(mQuestionList.getJSONObject(i).getJSONObject("map").getString("longitude"));
 
-                    String userImageUrl = "";
-                    if(mQuestionList.getJSONObject(i).getJSONObject("map").has("image")){
-                        userImageUrl = mQuestionList.getJSONObject(i).getJSONObject("map").getString("image");
+                        String userImageUrl = "";
+                        if (mQuestionList.getJSONObject(i).getJSONObject("map").has("image")) {
+                            userImageUrl = mQuestionList.getJSONObject(i).getJSONObject("map").getString("image");
+                        }
+
+
+                        View marker = minflater.inflate(R.layout.custom_map_marker, null, false);
+                        ImageView userImage = (ImageView) marker.findViewById(R.id.question_image);
+
+
+                        if (userImageUrl != null && !userImageUrl.equalsIgnoreCase("")) {
+                            setMarkerImage(userImageUrl, i, userImage, new LatLng(latitude, longitude));
+                        } else {
+                            mMap.addMarker(new MarkerOptions()
+                                    .position(new LatLng(latitude, longitude))
+                                    .snippet(i + "")
+                                    .icon(BitmapDescriptorFactory.fromBitmap(createDrawableFromView(mContext, marker))));
+
+                        }
+
                     }
-
-
-                    View marker = minflater.inflate(R.layout.custom_map_marker, null, false);
-                    ImageView userImage = (ImageView) marker.findViewById(R.id.question_image);
-
-
-
-                    if(userImageUrl != null && !userImageUrl.equalsIgnoreCase("")){
-                        setMarkerImage(userImageUrl, i, userImage, new LatLng(latitude, longitude));
-                    } else {
-                        mMap.addMarker(new MarkerOptions()
-                                .position(new LatLng(latitude, longitude))
-                                .snippet(i+"")
-                                .icon(BitmapDescriptorFactory.fromBitmap(createDrawableFromView(mContext, marker))));
-
-                    }
-
-
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -311,7 +308,7 @@ public class MapFragment extends Fragment implements
     }
 
     protected synchronized void buildGoogleApiClient() {
-        if(getActivity() != null) {
+        if (getActivity() != null) {
             mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
@@ -326,9 +323,9 @@ public class MapFragment extends Fragment implements
 
     @Override
     public void onResume() {
-        if(mMap != null && mMapView != null)
+        if (mMap != null && mMapView != null)
             mMapView.onResume();
-        if(detailsLayout.getVisibility() == View.VISIBLE)
+        if (detailsLayout.getVisibility() == View.VISIBLE)
             ((MainActivity) getActivity()).hideFab();
         super.onResume();
 
@@ -336,7 +333,7 @@ public class MapFragment extends Fragment implements
 
     @Override
     public void onPause() {
-        if(mGoogleApiClient != null && mGoogleApiClient.isConnected())
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected())
             stopLocationUpdates();
         mMapView.onPause();
 
@@ -345,24 +342,24 @@ public class MapFragment extends Fragment implements
 
     @Override
     public void onDestroy() {
-        if(mGoogleApiClient != null && mGoogleApiClient.isConnected())
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected())
             stopLocationUpdates();
         mMapView.onDestroy();
         super.onDestroy();
     }
 
 
-    private void zoomToMyPosition(){
+    private void zoomToMyPosition() {
 
         LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
 
         float zoomDistance = mMap.getCameraPosition().zoom;
-        if(zoomDistance == 2.0)
+        if (zoomDistance == 2.0)
             zoomDistance = 16;
 
-        if(mCurrentLocation != null){
+        if (mCurrentLocation != null) {
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()))      // Sets the center of the map to location user
                     .zoom(zoomDistance)                   // Sets the zoom
@@ -370,8 +367,7 @@ public class MapFragment extends Fragment implements
                     .tilt(40)                   // Sets the tilt of the camera to 30 degrees
                     .build();                   // Creates a CameraPosition from the builder
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-        }
-        else if (location != null){
+        } else if (location != null) {
             mCurrentLocation = location;
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()))      // Sets the center of the map to location user
@@ -383,16 +379,15 @@ public class MapFragment extends Fragment implements
         }
 
 
-
     }
 
 
     protected void startLocationUpdates() {
-        if(mGoogleApiClient == null){
+        if (mGoogleApiClient == null) {
             buildGoogleApiClient();
-        }else if(mGoogleApiClient.isConnected())
-        LocationServices.FusedLocationApi.requestLocationUpdates(
-                mGoogleApiClient, mLocationRequest, this);
+        } else if (mGoogleApiClient.isConnected())
+            LocationServices.FusedLocationApi.requestLocationUpdates(
+                    mGoogleApiClient, mLocationRequest, this);
     }
 
     protected void createLocationRequest() {
@@ -413,7 +408,7 @@ public class MapFragment extends Fragment implements
 
     }
 
-    public void getLocationUpdate(){
+    public void getLocationUpdate() {
         createLocationRequest();
     }
 
@@ -427,7 +422,7 @@ public class MapFragment extends Fragment implements
         showConnectionIssueDialog();
     }
 
-    private void showConnectionIssueDialog(){
+    private void showConnectionIssueDialog() {
         ((MainActivity) getActivity()).showSnackbar();
     }
 
@@ -440,7 +435,7 @@ public class MapFragment extends Fragment implements
     }
 
     protected void stopLocationUpdates() {
-        LocationServices.FusedLocationApi.removeLocationUpdates( mGoogleApiClient, this);
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         //mLocationRequest = null; //TODO
     }
 
@@ -451,11 +446,10 @@ public class MapFragment extends Fragment implements
             //System.out.println("Map is visible");
 
             //Update map?
-        }
-        else {
+        } else {
             //System.out.println("Map not visible");
 
-            if((MainActivity) getActivity() != null) {
+            if ((MainActivity) getActivity() != null) {
                 ((MainActivity) getActivity()).showFab();
                 detailsLayout.setVisibility(View.GONE);
             }
@@ -473,25 +467,23 @@ public class MapFragment extends Fragment implements
     public boolean onMarkerClick(Marker marker) {
 
 
-
         try {
             int position = Integer.parseInt(marker.getSnippet());
 
             String userImageUrl = "";
-            if(mQuestionList.getJSONObject(position).getJSONObject("map").has("image")){
+            if (mQuestionList.getJSONObject(position).getJSONObject("map").has("image")) {
                 userImageUrl = mQuestionList.getJSONObject(position).getJSONObject("map").getString("image");
             }
 
-            if(!userImageUrl.equalsIgnoreCase("")){
+            if (!userImageUrl.equalsIgnoreCase("")) {
                 getUserImage(userImageUrl, userImageDetails);
-            }else{
+            } else {
                 userImageDetails.setImageDrawable(getResources().getDrawable(R.drawable.defaultprofile));
             }
 
 
-
-            String name = mQuestionList.getJSONObject(position).getJSONObject("map").getString("first_name")+" "
-                    +mQuestionList.getJSONObject(position).getJSONObject("map").getString("last_name");
+            String name = mQuestionList.getJSONObject(position).getJSONObject("map").getString("first_name") + " "
+                    + mQuestionList.getJSONObject(position).getJSONObject("map").getString("last_name");
             userNameDetails.setText(name);
             topicDetails.setText(mQuestionList.getJSONObject(position).getJSONObject("map").getString("topic"));
             questionDetails.setText(mQuestionList.getJSONObject(position).getJSONObject("map").getString("text"));
@@ -504,16 +496,14 @@ public class MapFragment extends Fragment implements
             boolean group = mQuestionList.getJSONObject(position).getJSONObject("map").getBoolean("study_group");
             boolean tutor = mQuestionList.getJSONObject(position).getJSONObject("map").getBoolean("tutor");
 
-            if(group){
+            if (group) {
                 groupIcon.setColorFilter(getResources().getColor(R.color.primary));
-            }
-            else{
+            } else {
                 groupIcon.setColorFilter(getResources().getColor(R.color.hint_text_on_background));
             }
-            if(tutor){
+            if (tutor) {
                 tutorIcon.setColorFilter(getResources().getColor(R.color.primary));
-            }
-            else{
+            } else {
                 tutorIcon.setColorFilter(getResources().getColor(R.color.hint_text_on_background));
             }
 
@@ -525,17 +515,14 @@ public class MapFragment extends Fragment implements
 
             String distanceType = sharedPref.getString("distanceType", "MI");
 
-            if(mCurrentLocation != null){
+            if (mCurrentLocation != null) {
                 distanceDetails.setText(
                         Singleton.getInstance().doDistanceLogic(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(),
-                                latitude, longitude, distanceType)+""+distanceType);
-            }
-            else{
+                                latitude, longitude, distanceType) + "" + distanceType);
+            } else {
                 distanceDetails.setVisibility(View.INVISIBLE);
                 System.out.println("mCurrentLocation and lastknown is null");
             }
-
-
 
 
             showMapToolbar(marker.getPosition());
@@ -548,19 +535,17 @@ public class MapFragment extends Fragment implements
         }
 
 
-
         return false;
     }
 
     @Override
     public void onClick(View v) {
 
-        if(v == userImageDetails){
+        if (v == userImageDetails) {
             Intent mIntent = new Intent(mContext, ProfileActivity.class);
             mIntent.putExtra("userId", clickedUserId);
             startActivityForResult(mIntent, PROFILE_ACTIVITY);
-        }
-        else{
+        } else {
             Intent mIntent = new Intent(mContext, ViewQuestionActivity.class);
             mIntent.putExtra("questionId", clickedQuestionId);
             startActivity(mIntent);
@@ -569,7 +554,7 @@ public class MapFragment extends Fragment implements
 
     }
 
-    private void setMarkerImage(String imageUrl, final int position, final ImageView imageView, final LatLng location){
+    private void setMarkerImage(String imageUrl, final int position, final ImageView imageView, final LatLng location) {
 
         ImageLoader imageLoader = Singleton.getInstance().getImageLoader();
 
@@ -586,14 +571,14 @@ public class MapFragment extends Fragment implements
                     imageView.setImageBitmap(response.getBitmap());
                     mMap.addMarker(new MarkerOptions()
                             .position(location)
-                            .snippet(position+"")
+                            .snippet(position + "")
                             .icon(BitmapDescriptorFactory.fromBitmap(createDrawableFromView(mContext, (View) imageView.getParent()))));
 
                 } else {
                     // Default image...
                     mMap.addMarker(new MarkerOptions()
                             .position(location)
-                            .snippet(position+"")
+                            .snippet(position + "")
                             .icon(BitmapDescriptorFactory.fromBitmap(createDrawableFromView(mContext, (View) imageView.getParent()))));
                 }
             }
@@ -601,7 +586,7 @@ public class MapFragment extends Fragment implements
 
     }
 
-    private void getUserImage(String imageUrl, final ImageView imageView){
+    private void getUserImage(String imageUrl, final ImageView imageView) {
 
         ImageLoader imageLoader = Singleton.getInstance().getImageLoader();
 
@@ -627,7 +612,7 @@ public class MapFragment extends Fragment implements
     }
 
     //TODO directions get covered by fab/details. Future fix custom toolbar
-    private void showMapToolbar(LatLng location){
+    private void showMapToolbar(LatLng location) {
 
         /*
         // Directions
@@ -641,7 +626,6 @@ public class MapFragment extends Fragment implements
         startActivity(intent);
         */
     }
-
 
 
 }
