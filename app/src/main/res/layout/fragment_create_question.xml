@@ -115,6 +115,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         style="@style/Material.Widget.EditText.Light"
         android:id="@+id/topic_edit_text"
+        app:et_inputId="@+id/topic_edit_text_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
@@ -129,8 +130,9 @@
         app:et_dividerPadding="4dp"
         android:layout_below="@+id/header_view"
         app:et_supportTextErrorColor="#FFFF0000"
+        app:et_supportMaxChars="20"
         app:et_dividerErrorColor="#FFFF0000"
-        app:et_supportMode="helper"
+        app:et_supportMode="charCounter"
         />
 
     <!--app:et_dividerColor="@color/primary"

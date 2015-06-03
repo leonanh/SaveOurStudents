@@ -284,7 +284,12 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
     private void showQuestionDetails(JSONObject details) throws JSONException {
 
         //System.out.println("Details:" + details);
-        String userNameText = details.getString("first_name")+ " "+details.getString("last_name");
+        String firstName = details.getString("first_name");
+
+        if(firstName.length() > 14) {
+            firstName = firstName.substring(0, 13).concat("...");
+        }
+        String userNameText = firstName + " " +details.getString("last_name");
         String topicText = details.getString("topic");
         String question = details.getString("text");
         String dateText = details.getString("date");
