@@ -175,20 +175,22 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
 
     @Override
     public void onResume() {
+        buildGoogleApiClient();
+        startLocationUpdates();
         super.onResume();
     }
 
     @Override
     public void onPause() {
         //if(mGoogleApiClient != null && mGoogleApiClient.isConnected())
-            stopLocationUpdates();
+        stopLocationUpdates();
         super.onPause();
     }
 
     @Override
     public void onDestroy() {
         //if(mGoogleApiClient != null && mGoogleApiClient.isConnected())
-            stopLocationUpdates();
+        stopLocationUpdates();
         super.onDestroy();
     }
 
@@ -299,6 +301,7 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
 
     @Override
     public void onLocationChanged(Location location) {
+        System.out.println("Location changed in Feed");
         mCurrentLocation = location;
         getQuestionData();
         stopLocationUpdates();
@@ -338,15 +341,14 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
 
 
     protected void startLocationUpdates() {
-        if (mGoogleApiClient == null) {
-            buildGoogleApiClient();
-        } else if (mGoogleApiClient.isConnected())
+        System.out.println("starting location updates in Feed");
+        if (mGoogleApiClient.isConnected())
             LocationServices.FusedLocationApi.requestLocationUpdates(
                     mGoogleApiClient, mLocationRequest, this);
     }
 
     protected void stopLocationUpdates() {
-        //System.out.println("Stopping location updates in feed");
+        System.out.println("Stopping location updates in feed");
         LocationServices.FusedLocationApi.removeLocationUpdates(
                 mGoogleApiClient, this);
     }

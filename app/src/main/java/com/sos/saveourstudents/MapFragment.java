@@ -540,15 +540,6 @@ public class MapFragment extends Fragment implements
         ((MainActivity) getActivity()).showSnackbar();
     }
 
-    /*
-    @Override
-    public void onLocationChanged(Location location) {
-        mCurrentLocation = location;
-        stopLocationUpdates();
-        getMapData();
-        zoomToMyPosition();
-    }
-*/
 
     protected void stopLocationUpdates() {
         if(mGoogleApiClient.isConnected())
