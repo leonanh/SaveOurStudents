@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -285,12 +286,19 @@ public class EditProfileFragment extends Fragment {
                 new MaterialDialog.Builder(getActivity())
                         .title("Edit Image")
                         .content("Enter the URL for your new profile image")
+                        .inputType(InputType.TYPE_TEXT_VARIATION_URI)
                         .input("Image URL", mProfilePictureUrl, new MaterialDialog.InputCallback() {
-                            @Override
-                            public void onInput(MaterialDialog materialDialog, CharSequence charSequence) {
-                                getUserImage(charSequence.toString(), mProfileImage);
-                            }
-                        }).show();
+                                    @Override
+                                    public void onInput(MaterialDialog materialDialog, CharSequence charSequence) {
+                                        String imageUrl = charSequence.toString();
+                                        if (!(imageUrl.contains("http://") || imageUrl.contains("https://"))) {
+                                            imageUrl = "http://" + imageUrl;
+                                        }
+                                        getUserImage(imageUrl, mProfileImage);
+                                    }
+                                }
+                        )
+                        .show();
 
 
             }
@@ -301,7 +309,9 @@ public class EditProfileFragment extends Fragment {
 
     private void getUserImage(final String imageUrl, final ImageView imageView){
 
+
         ImageLoader imageLoader = Singleton.getInstance().getImageLoader();
+
 
         imageLoader.get(imageUrl, new ImageLoader.ImageListener() {
             @Override

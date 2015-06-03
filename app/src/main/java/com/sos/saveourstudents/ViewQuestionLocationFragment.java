@@ -124,6 +124,7 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
         return rootView;
     }
 
+
     private void clickVisibilityToggle() {
         if(visibilityToggle.isSelected()){
             Toast.makeText(mContext, "Your location is now private", Toast.LENGTH_SHORT).show();
@@ -145,8 +146,8 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
         if(mEditable)
             mMap.setOnMarkerDragListener(this);
 
-        //mMap.setMyLocationEnabled(true); //TODO THIS IS KILLING BATTERY. Need custom locationSource
-
+        mMap.setMyLocationEnabled(true); //TODO THIS IS KILLING BATTERY. Need custom locationSource
+        mMap.getUiSettings().setIndoorLevelPickerEnabled(true);
         try {
             MapsInitializer.initialize(mContext);
         } catch (Exception e) {

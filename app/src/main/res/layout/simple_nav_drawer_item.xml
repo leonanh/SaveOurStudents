@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-
+<!--
 <com.balysv.materialripple.MaterialRippleLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -14,11 +14,12 @@
     app:mrl_rippleHover="false"
     app:mrl_rippleOverlay="true"
     app:mrl_ripplePersistent="false">
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@android:color/white">
+-->
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:background="@android:color/white"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
         <ImageView
             android:id="@+id/imageview"
@@ -41,5 +42,4 @@
             android:text="TESTSTES"
             android:textColor="@android:color/black" />
     </RelativeLayout>
-</com.balysv.materialripple.MaterialRippleLayout>
 

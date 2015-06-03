@@ -121,11 +121,11 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
         mSwipeRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(typed_value.resourceId));
         mSwipeRefreshLayout.setRefreshing(true);
 
-
+/*
         LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         lastKnownLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-
+*/
 
         buildGoogleApiClient();
 
@@ -144,8 +144,8 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getQuestionData();
-                getLocationUpdate();
+                buildGoogleApiClient(); //Get current location and update UI
+                //getQuestionData();
             }
         });
 
@@ -158,12 +158,13 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                System.out.println("scroll state: "+newState);
+                //System.out.println("scroll state: "+newState);
                 super.onScrollStateChanged(recyclerView, newState);
             }
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                System.out.println("scroll dx: " + dx);
-                System.out.println("scroll dy: " + dy);
+                //System.out.println("scroll dx: " + dx);
+                //System.out.println("scroll dy: " + dy);
+                //TODO implement FAB/toolbar hide on scroll
             }
         });
 
@@ -181,14 +182,14 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
     @Override
     public void onPause() {
         //if(mGoogleApiClient != null && mGoogleApiClient.isConnected())
-            stopLocationUpdates();
+        stopLocationUpdates();
         super.onPause();
     }
 
     @Override
     public void onDestroy() {
         //if(mGoogleApiClient != null && mGoogleApiClient.isConnected())
-            stopLocationUpdates();
+        stopLocationUpdates();
         super.onDestroy();
     }
 
@@ -204,6 +205,9 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
 
     public void getQuestionData() {
 
+        LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        lastKnownLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
 
         Set<String> filterList = new HashSet<String>(sharedPref.getStringSet("filter_list", new HashSet<String>()));
 
@@ -217,6 +221,10 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
         if(mCurrentLocation != null){
             latitude = mCurrentLocation.getLatitude();
             longitude = mCurrentLocation.getLongitude();
+        }
+        else if(lastKnownLocation != null){
+            latitude = lastKnownLocation.getLatitude();
+            longitude = lastKnownLocation.getLongitude();
         }
         else{
             System.out.println("Could not get location, using UCSD as default");
@@ -237,7 +245,7 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getQuestions?"+paramString;
 
 
-        System.out.println("URL: "+url);
+        System.out.println("feed get question URL: "+url);
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
                 url,
                 (JSONObject)null,
@@ -290,6 +298,7 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
 
 
     private void showQuestions(){
+        mSwipeRefreshLayout.setRefreshing(false);
 
         mAdapter = new RecycleViewAdapter(R.layout.feed_item_layout);
         mRecyclerView.setAdapter(mAdapter);
@@ -338,36 +347,34 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
 
 
     protected void startLocationUpdates() {
-        if (mGoogleApiClient == null) {
-            buildGoogleApiClient();
-        } else if (mGoogleApiClient.isConnected())
+        if (mGoogleApiClient.isConnected())
             LocationServices.FusedLocationApi.requestLocationUpdates(
                     mGoogleApiClient, mLocationRequest, this);
     }
 
     protected void stopLocationUpdates() {
-        //System.out.println("Stopping location updates in feed");
+        if(mGoogleApiClient.isConnected())
         LocationServices.FusedLocationApi.removeLocationUpdates(
                 mGoogleApiClient, this);
     }
 
     protected void createLocationRequest() {
         //System.out.println("Creating new locationRequest in feed");
-        if(mLocationRequest == null) {
+        //if(mLocationRequest == null) {
             mLocationRequest = new LocationRequest();
             mLocationRequest.setInterval(10000);
-            mLocationRequest.setFastestInterval(3000);
+            mLocationRequest.setFastestInterval(5000);
             mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
             startLocationUpdates();
-        }
+        //}
 
     }
 
 
     protected synchronized void buildGoogleApiClient() {
         mSwipeRefreshLayout.setRefreshing(true);
-        //if (mGoogleApiClient == null)
-            mGoogleApiClient = new GoogleApiClient.Builder(mContext)
+
+        mGoogleApiClient = new GoogleApiClient.Builder(mContext)
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)

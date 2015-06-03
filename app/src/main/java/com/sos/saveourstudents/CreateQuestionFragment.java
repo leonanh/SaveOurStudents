@@ -605,8 +605,8 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
             public void onResponse(JSONObject response) {
                 try {
                     JSONObject result = new JSONObject(response.toString());
-
-                    if(result.getInt("expectResults") != 0) {
+                    System.out.println("group check: "+result);
+                    if(result.getInt("expectResults") != 0 && !isInEditMode) {
                         Toast.makeText(getActivity(), "You are already in a group!", Toast.LENGTH_LONG)
                                 .show();
                         getActivity().finishActivity(getActivity().RESULT_CANCELED);

@@ -113,12 +113,12 @@
         android:id="@+id/google_login_btn"
         android:layout_width="@dimen/fb_and_gplus_icon_size"
         android:layout_height="@dimen/fb_and_gplus_icon_size"
-        android:layout_alignParentRight="true"
+        android:layout_alignRight="@id/login_btn"
         android:layout_marginTop="10dp"
         android:layout_below="@+id/login_btn"
         android:scaleType="fitXY"
         android:padding="5dp"
-        android:layout_marginRight="@dimen/container_padding" />
+        />
 
     <TextView
         android:id="@+id/signup_btn"
