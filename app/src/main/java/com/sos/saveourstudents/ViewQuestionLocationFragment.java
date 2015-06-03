@@ -172,7 +172,7 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
             showCustomMarker();
         }
         else{
-            //Toast.makeText(mContext, )
+            //dont show
         }
 
 
