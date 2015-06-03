@@ -1,7 +1,6 @@
 package com.sos.saveourstudents;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -86,8 +85,8 @@ public class ForgotLoginActivity extends Activity implements View.OnClickListene
                     } else if (response.getString("expectResults").equalsIgnoreCase("1")) {
                         //email exists
                         Toast.makeText(ForgotLoginActivity.this, R.string.emailSent, Toast.LENGTH_SHORT).show();
-                        Intent loginActivity = new Intent(ForgotLoginActivity.this, LoginActivity.class);
-                        startActivity(loginActivity);
+                        //Intent loginActivity = new Intent(ForgotLoginActivity.this, LoginActivity.class);
+                        //startActivity(loginActivity);
                         finish();
 
                         return;

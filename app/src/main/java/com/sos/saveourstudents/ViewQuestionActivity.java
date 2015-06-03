@@ -56,6 +56,7 @@ public class ViewQuestionActivity extends AppCompatActivity {
     public ArrayList tags;
     private boolean isEditable;
     private boolean mIsActive;
+    private boolean mIsInGroup;
 
     private boolean menuIsBuilt;
 
@@ -147,7 +148,7 @@ public class ViewQuestionActivity extends AppCompatActivity {
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/viewQuestion?"+paramString;
 
 
-        System.out.println("url: " + url);
+        //System.out.println("url: " + url);
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
                 (JSONObject)null,
@@ -158,7 +159,7 @@ public class ViewQuestionActivity extends AppCompatActivity {
                         try {
 
                             JSONObject result = new JSONObject(response.toString());
-                            System.out.println("ViewQuestionActivity result "+result);
+                            //System.out.println("ViewQuestionActivity result "+result);
                             if(result.getInt("expectResults") == 0) {
                                 Toast.makeText(ViewQuestionActivity.this, "This question doesn't exist anymore!", Toast.LENGTH_SHORT)
                                         .show();
@@ -278,20 +279,20 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        System.out.println("clicked menu item:" + item);
+        //System.out.println("clicked menu item:" + item);
 
         if (item.getItemId() == R.id.action_close_question) {
             showCloseGroupDialog();
             return true;
         }
         else if (item.getItemId() == R.id.action_private_question) {
-            System.out.println("clicked private");
+            //System.out.println("clicked private");
             toggleGroupActive();
             //toggleQuestionActive(false);
             return true;
         }
         else if (item.getItemId() == R.id.action_public_question) {
-            System.out.println("clicked public");
+            //System.out.println("clicked public");
             toggleGroupActive();
             //toggleQuestionActive(true);
             return true;
@@ -405,7 +406,7 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
                         try {
                             JSONObject result = new JSONObject(response.toString());
-                            System.out.println("activeedit result "+result);
+                            //System.out.println("activeedit result "+result);
                             if (result.getString("success").equalsIgnoreCase("1")) {
                                 mIsActive = !mIsActive;
                                 invalidateOptionsMenu();

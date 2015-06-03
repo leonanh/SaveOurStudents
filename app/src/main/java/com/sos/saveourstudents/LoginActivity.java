@@ -432,7 +432,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
 
         } else if (v == signupBtn) {
-            startActivity(new Intent(this, SignupActivity.class));
+            startActivity(new Intent(this, SignupActivity.class)); //TODO retrieve newly created account if success from signup.
 
         } else if (v == forgotLoginBtn) {
             startActivity(new Intent(this, ForgotLoginActivity.class));
@@ -558,22 +558,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         String paramString = URLEncodedUtils.format(params, "utf-8");//.replace("+", "%20");
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createUser?"+paramString;
 
-
-
-
-        System.out.println("createUser URL: "+url);
+        //System.out.println("createUser URL: "+url);
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url,
                 (JSONObject) null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                System.out.println("Response: " + response.toString());
+                //System.out.println("Response: " + response.toString());
                 try {
 
                     //If success = 1, result = success string
                     //If success = 0, result = error string
                     if (response.getString("success").equalsIgnoreCase("1")) {
-                        System.out.println("Successful create");
+                        //System.out.println("Successful create");
                     } else {
                         if (response.getString("result").substring(0, response.getString("result").indexOf(" ")).equalsIgnoreCase("Duplicate")) {
                             isLogging = false;
