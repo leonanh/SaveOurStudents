@@ -71,17 +71,22 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
     private boolean mEditable;
     private boolean mIsVisible;
     private String mQuestionId;
+    private boolean mIsMemberOfGroup;
 
     public static ViewQuestionLocationFragment newInstance(String questionId,
                                                            Location location, String userImageUrl,
-                                                           boolean isEditable, boolean isVisible) {
+                                                           boolean isEditable, boolean isVisible,
+                                                           boolean isMember) {
         ViewQuestionLocationFragment fragment = new ViewQuestionLocationFragment();
+        System.out.println("member frag: "+isMember);
+        System.out.println("visible frag: "+isVisible);
         Bundle args = new Bundle();
         args.putParcelable(QUESTION_LOCATION, location);
         args.putString(USER_IMAGE, userImageUrl);
         args.putBoolean("isEditable", isEditable);
         args.putString("questionId", questionId);
         args.putBoolean("isVisible", isVisible);
+        args.putBoolean("isMember", isMember);
         fragment.setArguments(args);
         return fragment;
     }
@@ -99,6 +104,7 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
             mEditable = getArguments().getBoolean("isEditable");
             mQuestionId = getArguments().getString("questionId");
             mIsVisible = getArguments().getBoolean("isVisible");
+            mIsMemberOfGroup = getArguments().getBoolean("isMember");
         }
     }
 
@@ -117,6 +123,7 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
 
         if(mIsVisible)
             visibilityToggle.setImageResource(R.drawable.ic_remove_red_eye_white_24dp);
+
 
         initializeMap();
 
@@ -158,7 +165,17 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
         mMapView.onResume();
 
 
-        showCustomMarker();
+        if(mIsVisible){
+            showCustomMarker();
+        }
+        else if(mIsMemberOfGroup){
+            showCustomMarker();
+        }
+        else{
+            //Toast.makeText(mContext, )
+        }
+
+
 
 
     }
@@ -176,7 +193,7 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
 
     @Override
     public void onConnected(Bundle bundle) {
-
+        //createLocationRequest(); //not needed for this fragment?
     }
 
     @Override
@@ -206,16 +223,13 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
         mLocationRequest.setInterval(10000);
         mLocationRequest.setFastestInterval(5000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        startLocationUpdates();
     }
 
     protected void startLocationUpdates() {
         LocationServices.FusedLocationApi.requestLocationUpdates(
                 mGoogleApiClient, mLocationRequest, this);
-    }
-
-    public void getLocationUpdate(){
-        createLocationRequest();
-        startLocationUpdates();
     }
 
     @Override

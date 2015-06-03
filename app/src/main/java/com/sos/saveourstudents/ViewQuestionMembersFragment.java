@@ -64,12 +64,13 @@ public class ViewQuestionMembersFragment extends Fragment {
             "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getRateList?userId=";
 
 
-    public static ViewQuestionMembersFragment newInstance(String questionId, boolean editable) {
+    public static ViewQuestionMembersFragment newInstance(String questionId, boolean editable, boolean isMember) {
 
         ViewQuestionMembersFragment fragment = new ViewQuestionMembersFragment();
         Bundle args = new Bundle();
         args.putString("questionId", questionId);
         args.putBoolean("editable", editable);
+        args.putBoolean("isMember", isMember);
         fragment.setArguments(args);
         return fragment;
     }
@@ -84,7 +85,7 @@ public class ViewQuestionMembersFragment extends Fragment {
         mViewerUserId = getActivity()
                 .getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
                 .getString("user_id", "");
-        mIsMemberOfGroup = false; // Initially false, to be determined in JSON call
+
 
     }
 
@@ -95,6 +96,7 @@ public class ViewQuestionMembersFragment extends Fragment {
         if (getArguments() != null) {
             mQuestionId = getArguments().getString("questionId");
             mEditable = getArguments().getBoolean("editable");
+            mIsMemberOfGroup = getArguments().getBoolean("isMember");
         } else {
             //error
         }
@@ -112,7 +114,8 @@ public class ViewQuestionMembersFragment extends Fragment {
         mRatedList = new ArrayList<>();
         mRatedHashMap = new HashMap<>();
 
-        getGroupActiveStatus(); // Also retrieveListOfRatedTutors(), getMemberData()
+        //getGroupActiveStatus(); // Also retrieveListOfRatedTutors(), getMemberData()
+        retrieveListOfRatedTutors();
         return rootView;
     }
 
@@ -700,6 +703,8 @@ public class ViewQuestionMembersFragment extends Fragment {
         Singleton.getInstance().addToRequestQueue(rateListRequest);
     }
 
+
+    /*
     private void getGroupActiveStatus() {
 
         List<NameValuePair> params = new LinkedList<NameValuePair>();
@@ -743,4 +748,7 @@ public class ViewQuestionMembersFragment extends Fragment {
         );
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
     }
+    */
+
+
 }
