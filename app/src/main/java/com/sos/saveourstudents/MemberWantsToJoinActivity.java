@@ -38,7 +38,7 @@ public class MemberWantsToJoinActivity extends AppCompatActivity implements View
     FloatingActionButton declineButton;
     RelativeLayout userProfile;
 
-    private String mIsGroupUrl =
+    private String mInGroupUrl =
             "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/inGroup?userId=";
     private String mRemoveMemberUrl =
             "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/removeUser?userId=";
@@ -229,7 +229,7 @@ public class MemberWantsToJoinActivity extends AppCompatActivity implements View
     }
 
     private void removeUserFromCurrentGroup() {
-        String isJoinerInGroup = mIsGroupUrl + mUserId;
+        String isJoinerInGroup = mInGroupUrl + mUserId;
         JsonObjectRequest inGroupRequest = new JsonObjectRequest(Request.Method.GET, isJoinerInGroup,
                 (JSONObject) null, new Response.Listener<JSONObject>() {
             @Override
