@@ -454,6 +454,9 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
                     getUserImage(userImageUrl, viewHolder.userImage);
                 }
 
+                if(firstName.length() > 14) {
+                    firstName = firstName.substring(0, 13).concat("...");
+                }
 
                 //System.out.println("Question " + position + ": " + mQuestionList.getJSONObject(position).getJSONObject("map"));
                 viewHolder.nameText.setText(firstName + " " + lastName.charAt(0) + '.');
@@ -464,12 +467,7 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
 
                 viewHolder.dateText.setText(Singleton.getInstance().doDateLogic(theDate));
 
-                if(topic.length() > 20) {
-                    topic = topic.substring(0, 19).concat("...");
-                }
-
                 viewHolder.topicText.setText(topic);
-
 
                 String distanceType = sharedPref.getString("distanceType", "MI");
 

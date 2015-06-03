@@ -114,6 +114,9 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
         buildGoogleApiClient();
 
         userImage = (ImageView) rootView.findViewById(R.id.question_image);
+
+
+
         userName = (TextView) rootView.findViewById(R.id.question_name_text);
         questionText = (TextView) rootView.findViewById(R.id.question_text);
         questionDate = (TextView) rootView.findViewById(R.id.question_timestamp);
@@ -148,9 +151,23 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
                 showQuestionDetails(mQuestionInfo);
                 showQuestionTags(tags);
                 buildFab();
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            userImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        String ownerId = mQuestionInfo.getString("user_id");
+                        Intent intent = new Intent(mContext, ProfileActivity.class);
+                        intent.putExtra("userId", ownerId);
+                        startActivity(intent);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
 
         return rootView;
@@ -192,6 +209,20 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
                                     showQuestionTags(tags);
                                 }
+
+                                userImage.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        try {
+                                            String ownerId = mQuestionInfo.getString("user_id");
+                                            Intent intent = new Intent(mContext, ProfileActivity.class);
+                                            intent.putExtra("userId", ownerId);
+                                            startActivity(intent);
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
 
                                 showQuestionDetails(mQuestionInfo);
 
@@ -284,7 +315,12 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
     private void showQuestionDetails(JSONObject details) throws JSONException {
 
         //System.out.println("Details:" + details);
-        String userNameText = details.getString("first_name")+ " "+details.getString("last_name");
+        String firstName = details.getString("first_name");
+
+        if(firstName.length() > 14) {
+            firstName = firstName.substring(0, 13).concat("...");
+        }
+        String userNameText = firstName + " " +details.getString("last_name");
         String topicText = details.getString("topic");
         String question = details.getString("text");
         String dateText = details.getString("date");

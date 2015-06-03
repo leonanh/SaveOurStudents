@@ -203,10 +203,15 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
                 error = true;
             }
             if(topicEditText.getText().toString().equalsIgnoreCase("")) {
-                topicEditText.setError("Please write a topic");
+                Toast.makeText(getActivity(), "Please write a topic!", Toast.LENGTH_SHORT).show();
                 error = true;
             }
-            else{topicEditText.clearError();}
+
+            if(topicEditText.getText().toString().length() > 20) {
+                Toast.makeText(getActivity(), "Your topic is too long!", Toast.LENGTH_SHORT).show();
+                error = true;
+            }
+
             if(questionEditText.getText().toString().equalsIgnoreCase("")) {
                 questionEditText.setError("You need to write a question!");
                 error = true;
