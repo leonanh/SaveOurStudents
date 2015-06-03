@@ -259,7 +259,7 @@ public class MapFragment extends Fragment implements
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getQuestions?" + paramString;
 
 
-        System.out.println("URL: " + url);
+        //System.out.println("URL: " + url);
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
                 url,
                 (JSONObject) null,
@@ -270,7 +270,7 @@ public class MapFragment extends Fragment implements
                         try {
 
                             JSONObject theResponse = new JSONObject(response.toString());
-                            System.out.println("getQuestions: " + theResponse);
+                            //System.out.println("getQuestions: " + theResponse);
 
                             if (!theResponse.getString("success").equalsIgnoreCase("1")) {
                                 //Error getting data
@@ -319,7 +319,7 @@ public class MapFragment extends Fragment implements
 
                 try {
 
-                    System.out.println("OVeRLAYS question: " + mQuestionList.getJSONObject(i).getJSONObject("map"));
+                    //System.out.println("OVeRLAYS question: " + mQuestionList.getJSONObject(i).getJSONObject("map"));
 
 
                     if (mQuestionList.getJSONObject(i).getJSONObject("map").has("visible_location") &&
@@ -546,15 +546,46 @@ public class MapFragment extends Fragment implements
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-
+            if (mMap != null && mMapView != null)
+                mMapView.onResume();
+            if (detailsLayout.getVisibility() == View.VISIBLE)
+                ((MainActivity) getActivity()).hideFab();
         } else {
 
             if ((MainActivity) getActivity() != null) {
                 ((MainActivity) getActivity()).showFab();
                 detailsLayout.setVisibility(View.GONE);
+                if (mGoogleApiClient != null && mGoogleApiClient.isConnected())
+                    stopLocationUpdates();
+                mMapView.onPause();
             }
         }
     }
+
+
+
+    /*
+    @Override
+    public void onResume() {
+        if (mMap != null && mMapView != null)
+            mMapView.onResume();
+        if (detailsLayout.getVisibility() == View.VISIBLE)
+            ((MainActivity) getActivity()).hideFab();
+        super.onResume();
+
+    }
+
+    @Override
+    public void onPause() {
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected())
+            stopLocationUpdates();
+        mMapView.onPause();
+
+        super.onPause();
+    }
+
+     */
+
 
     @Override
     public void onMapClick(LatLng latLng) {
