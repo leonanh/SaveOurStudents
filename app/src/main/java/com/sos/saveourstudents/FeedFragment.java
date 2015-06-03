@@ -121,11 +121,11 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
         mSwipeRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(typed_value.resourceId));
         mSwipeRefreshLayout.setRefreshing(true);
 
-
+/*
         LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         lastKnownLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-
+*/
 
         buildGoogleApiClient();
 
@@ -145,7 +145,6 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
             @Override
             public void onRefresh() {
                 getQuestionData();
-                getLocationUpdate();
             }
         });
 
@@ -158,12 +157,13 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                System.out.println("scroll state: "+newState);
+                //System.out.println("scroll state: "+newState);
                 super.onScrollStateChanged(recyclerView, newState);
             }
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                System.out.println("scroll dx: " + dx);
-                System.out.println("scroll dy: " + dy);
+                //System.out.println("scroll dx: " + dx);
+                //System.out.println("scroll dy: " + dy);
+                //TODO implement FAB/toolbar hide on scroll
             }
         });
 
@@ -175,8 +175,6 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
 
     @Override
     public void onResume() {
-        buildGoogleApiClient();
-        startLocationUpdates();
         super.onResume();
     }
 
@@ -206,6 +204,9 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
 
     public void getQuestionData() {
 
+        LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        lastKnownLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
 
         Set<String> filterList = new HashSet<String>(sharedPref.getStringSet("filter_list", new HashSet<String>()));
 
@@ -219,6 +220,10 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
         if(mCurrentLocation != null){
             latitude = mCurrentLocation.getLatitude();
             longitude = mCurrentLocation.getLongitude();
+        }
+        else if(lastKnownLocation != null){
+            latitude = lastKnownLocation.getLatitude();
+            longitude = lastKnownLocation.getLongitude();
         }
         else{
             System.out.println("Could not get location, using UCSD as default");
@@ -292,6 +297,7 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
 
 
     private void showQuestions(){
+        mSwipeRefreshLayout.setRefreshing(false);
 
         mAdapter = new RecycleViewAdapter(R.layout.feed_item_layout);
         mRecyclerView.setAdapter(mAdapter);
@@ -301,7 +307,6 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
 
     @Override
     public void onLocationChanged(Location location) {
-        System.out.println("Location changed in Feed");
         mCurrentLocation = location;
         getQuestionData();
         stopLocationUpdates();
@@ -341,14 +346,13 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
 
 
     protected void startLocationUpdates() {
-        System.out.println("starting location updates in Feed");
         if (mGoogleApiClient.isConnected())
             LocationServices.FusedLocationApi.requestLocationUpdates(
                     mGoogleApiClient, mLocationRequest, this);
     }
 
     protected void stopLocationUpdates() {
-        System.out.println("Stopping location updates in feed");
+        if(mGoogleApiClient.isConnected())
         LocationServices.FusedLocationApi.removeLocationUpdates(
                 mGoogleApiClient, this);
     }
@@ -368,8 +372,8 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
 
     protected synchronized void buildGoogleApiClient() {
         mSwipeRefreshLayout.setRefreshing(true);
-        //if (mGoogleApiClient == null)
-            mGoogleApiClient = new GoogleApiClient.Builder(mContext)
+
+        mGoogleApiClient = new GoogleApiClient.Builder(mContext)
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
