@@ -315,8 +315,7 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
 
     @Override
     public void onConnected(Bundle bundle) {
-        mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
+        mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
         getLocationUpdate();
 
