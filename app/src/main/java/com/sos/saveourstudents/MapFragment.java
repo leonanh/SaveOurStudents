@@ -259,7 +259,7 @@ public class MapFragment extends Fragment implements
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getQuestions?" + paramString;
 
 
-        //System.out.println("URL: " + url);
+        System.out.println("map get question URL: "+url);
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
                 url,
                 (JSONObject) null,

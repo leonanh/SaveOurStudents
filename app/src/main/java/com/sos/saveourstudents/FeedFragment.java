@@ -244,7 +244,7 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getQuestions?"+paramString;
 
 
-        System.out.println("URL: "+url);
+        System.out.println("feed get question URL: "+url);
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET,
                 url,
                 (JSONObject)null,
@@ -362,7 +362,7 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
         if(mLocationRequest == null) {
             mLocationRequest = new LocationRequest();
             mLocationRequest.setInterval(10000);
-            mLocationRequest.setFastestInterval(3000);
+            mLocationRequest.setFastestInterval(5000);
             mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
             startLocationUpdates();
         }

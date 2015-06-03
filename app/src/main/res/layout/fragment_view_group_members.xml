@@ -47,7 +47,6 @@
                     android:id="@+id/view_group_members_tutors_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/view_group_members_students_listView"
                     android:paddingTop="24dp"
                     android:paddingLeft="24dp"
                     android:text="@string/view_group_members_tutors"
