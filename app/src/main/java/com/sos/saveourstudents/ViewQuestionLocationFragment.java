@@ -145,7 +145,7 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
         if(mEditable)
             mMap.setOnMarkerDragListener(this);
 
-        mMap.setMyLocationEnabled(true);
+        //mMap.setMyLocationEnabled(true); //TODO THIS IS KILLING BATTERY. Need custom locationSource
 
         try {
             MapsInitializer.initialize(mContext);

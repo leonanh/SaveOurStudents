@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -158,6 +159,12 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
                             JSONObject result = new JSONObject(response.toString());
                             System.out.println("ViewQuestionActivity result "+result);
+                            if(result.getInt("expectResults") == 0) {
+                                Toast.makeText(ViewQuestionActivity.this, "This question doesn't exist anymore!", Toast.LENGTH_SHORT)
+                                        .show();
+                                setResult(RESULT_OK);
+                                finish();
+                            }
                             if(result.getString("success").equalsIgnoreCase("1")){
 
                                 JSONArray questionAndTags = result.getJSONObject("result").getJSONArray("myArrayList");

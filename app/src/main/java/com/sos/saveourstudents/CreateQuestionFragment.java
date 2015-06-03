@@ -63,6 +63,10 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
     LayoutInflater inflater;
     View rootView;
 
+    private String mInGroupUrl =
+            "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/inGroup?userId=";
+    private String mCurrentUserId;
+
 
     public static CreateQuestionFragment newInstance(String questionId) {
         CreateQuestionFragment fragment = new CreateQuestionFragment();
@@ -84,6 +88,8 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
 
         sharedPref = mContext.getSharedPreferences(
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
+        mCurrentUserId = sharedPref.getString("user_id", "");
 
         rootView = inflater.inflate(R.layout.fragment_create_question, container,
                 false);
@@ -212,8 +218,7 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
             }
 
             if(!error){
-                sendQuestionToServer();
-
+                checkIfUserIsInGroup();
             }
 
 
@@ -585,18 +590,35 @@ public class CreateQuestionFragment extends Fragment implements View.OnClickList
             e.printStackTrace();
         }
 
-
-
-
-
-
-
-
     }
 
+    private void checkIfUserIsInGroup() {
+        String isJoinerInGroup = mInGroupUrl + mCurrentUserId;
+        JsonObjectRequest inGroupRequest = new JsonObjectRequest(Request.Method.GET, isJoinerInGroup,
+                (JSONObject) null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONObject result = new JSONObject(response.toString());
 
+                    if(result.getInt("expectResults") != 0) {
+                        Toast.makeText(getActivity(), "You are already in a group!", Toast.LENGTH_LONG)
+                                .show();
+                        getActivity().finishActivity(getActivity().RESULT_CANCELED);
+                    }
+                    else {
+                        sendQuestionToServer();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
 
-
-
-
+            }
+        });
+        Singleton.getInstance().addToRequestQueue(inGroupRequest);
+    }
 }
