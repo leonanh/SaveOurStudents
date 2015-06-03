@@ -155,7 +155,6 @@ public class EditProfileFragment extends Fragment {
     }
 
 
-
     public interface OnDoneButtonListener {
         // TODO: Update argument type and name
         public void onDoneButton();
@@ -187,6 +186,7 @@ public class EditProfileFragment extends Fragment {
 
     /**
      * To be used after onDoneButton() call in ProfileActivity
+     *
      * @return Newly updated student
      */
 
@@ -240,8 +240,9 @@ public class EditProfileFragment extends Fragment {
 
     /**
      * Initializes EditText onEditorActionListeners and onClickListeners
+     *
      * @param editTextWrapper The wrapped EditText (i.e. the com.rey...EditText)
-     * @param editTextInput The input (et_inputId)
+     * @param editTextInput   The input (et_inputId)
      */
     private void initializeEditTextWithEnterExit(final EditText editTextWrapper,
                                                  final android.widget.EditText editTextInput) {
@@ -283,9 +284,22 @@ public class EditProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                new MaterialDialog.Builder(getActivity())
-                        .title("Edit Image")
-                        .content("Enter the URL for your new profile image")
+                MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity())
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onNegative(MaterialDialog dialog) {
+                                super.onNegative(dialog);
+                            }
+
+                            @Override
+                            public void onNeutral(MaterialDialog dialog) {
+                                mProfileImage.setImageResource(R.drawable.defaultprofile);
+                                mProfilePictureUrl = "";
+                                super.onNeutral(dialog);
+                            }
+                        });
+
+                builder.title("Edit Image").content("Enter the URL for your new profile image")
                         .inputType(InputType.TYPE_TEXT_VARIATION_URI)
                         .input("Image URL", mProfilePictureUrl, new MaterialDialog.InputCallback() {
                                     @Override
@@ -298,6 +312,8 @@ public class EditProfileFragment extends Fragment {
                                     }
                                 }
                         )
+                        .negativeText("Cancel")
+                        .neutralText("Use Default")
                         .show();
 
 
@@ -307,7 +323,7 @@ public class EditProfileFragment extends Fragment {
     }
 
 
-    private void getUserImage(final String imageUrl, final ImageView imageView){
+    private void getUserImage(final String imageUrl, final ImageView imageView) {
 
 
         ImageLoader imageLoader = Singleton.getInstance().getImageLoader();
@@ -333,7 +349,7 @@ public class EditProfileFragment extends Fragment {
     }
 
 
-    private void updateSharedPrefs(){
+    private void updateSharedPrefs() {
 
         System.out.println("Updating shared prefs");
         SharedPreferences sharedPref = getActivity().getSharedPreferences(
@@ -354,6 +370,7 @@ public class EditProfileFragment extends Fragment {
             updateSharedPrefs();
         }
     }
+
     class EditProfileErrorListener implements Response.ErrorListener {
 
         @Override
@@ -361,7 +378,6 @@ public class EditProfileFragment extends Fragment {
 
         }
     }
-
 
 
 }
