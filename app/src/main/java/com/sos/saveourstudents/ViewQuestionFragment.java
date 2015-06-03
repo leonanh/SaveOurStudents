@@ -626,33 +626,43 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
     private void showJoinDialog(){
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage("Would you like to join as a tutor or a group member?");
 
         if(mStudyGroupBool && mTutorBool) {
+            builder.setMessage("Would you like to join as a tutor or a group member?");
             builder.setPositiveButton("Member", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-
                     sendAskToJoinGroup(0);
                 }
             });
             builder.setNegativeButton("Tutor", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-
                     sendAskToJoinGroup(1);
                 }
             });
         } else if (mStudyGroupBool && !mTutorBool) {
-            builder.setPositiveButton("Member", new DialogInterface.OnClickListener() {
+            builder.setMessage("Would you like to join as a group member?");
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-
                     sendAskToJoinGroup(0);
                 }
             });
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
         } else if (!mStudyGroupBool && mTutorBool) {
-            builder.setPositiveButton("Tutor", new DialogInterface.OnClickListener() {
+            builder.setMessage("Would you like to join as a tutor?");
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-
                     sendAskToJoinGroup(1);
+                }
+            });
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
                 }
             });
         }
