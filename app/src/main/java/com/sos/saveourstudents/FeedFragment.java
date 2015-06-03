@@ -144,6 +144,7 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                getQuestionData();
                 getLocationUpdate();
             }
         });
@@ -179,14 +180,14 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
 
     @Override
     public void onPause() {
-        if(mGoogleApiClient != null && mGoogleApiClient.isConnected())
+        //if(mGoogleApiClient != null && mGoogleApiClient.isConnected())
             stopLocationUpdates();
         super.onPause();
     }
 
     @Override
     public void onDestroy() {
-        if(mGoogleApiClient != null && mGoogleApiClient.isConnected())
+        //if(mGoogleApiClient != null && mGoogleApiClient.isConnected())
             stopLocationUpdates();
         super.onDestroy();
     }
@@ -202,7 +203,6 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
 
 
     public void getQuestionData() {
-
 
 
         Set<String> filterList = new HashSet<String>(sharedPref.getStringSet("filter_list", new HashSet<String>()));
@@ -338,9 +338,9 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
 
 
     protected void startLocationUpdates() {
-        if(mGoogleApiClient == null){
+        if (mGoogleApiClient == null) {
             buildGoogleApiClient();
-        }else if(mGoogleApiClient.isConnected())
+        } else if (mGoogleApiClient.isConnected())
             LocationServices.FusedLocationApi.requestLocationUpdates(
                     mGoogleApiClient, mLocationRequest, this);
     }
@@ -366,7 +366,7 @@ public class FeedFragment extends Fragment implements LocationListener, GoogleAp
 
     protected synchronized void buildGoogleApiClient() {
         mSwipeRefreshLayout.setRefreshing(true);
-        if (mGoogleApiClient == null)
+        //if (mGoogleApiClient == null)
             mGoogleApiClient = new GoogleApiClient.Builder(mContext)
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)

@@ -169,17 +169,6 @@ public class MapFragment extends Fragment implements
         };
 
 
-        /*
-        mOnLocationChangedListener = new LocationSource.OnLocationChangedListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                mCurrentLocation = location;
-                zoomToMyPosition();
-            }
-        };
-*/
-
-
 
         createAndShowMap();
 
