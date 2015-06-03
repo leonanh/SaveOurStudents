@@ -51,11 +51,15 @@ public class ViewQuestionActivity extends AppCompatActivity {
     private FragmentPagerAdapter mViewGroupPagerAdapter;
     private ViewPager mViewPager;
 
+    private SharedPreferences sharedPref;
+
     private String mQuestionId;
     public JSONObject mQuestionInfo;
     public ArrayList tags;
     private boolean isEditable;
     private boolean mIsActive;
+    private boolean mIsLocationViewable;
+    private boolean mIsMemberOfGroup = false;
 
     private boolean menuIsBuilt;
 
@@ -68,6 +72,9 @@ public class ViewQuestionActivity extends AppCompatActivity {
         if(!Singleton.hasBeenInitialized()){
             Singleton.initialize(this);
         }
+
+        sharedPref = getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
         menuIsBuilt = false;
         fabBroadcastReciever = new FabBroadcastReciever();
@@ -94,7 +101,8 @@ public class ViewQuestionActivity extends AppCompatActivity {
                 .actionClickListener(new SnackBar.OnActionClickListener() {
                     @Override
                     public void onActionClick(SnackBar snackBar, int i) {
-                        getQuestionData();
+                        //getQuestionData();
+                        getGroupActiveStatus();
                     }
                 });
 
@@ -115,8 +123,8 @@ public class ViewQuestionActivity extends AppCompatActivity {
             });
         }
 
+        getGroupActiveStatus();
 
-        getQuestionData();
 
     }
 
@@ -197,12 +205,14 @@ public class ViewQuestionActivity extends AppCompatActivity {
                                 isEditable = mQuestionInfo.getString("user_id").equalsIgnoreCase(currentUserId);
 
 
-                                //boolean isVisible = mQuestionInfo.getBoolean("visible_location");
+                                if(mQuestionInfo.getInt("visible_location") == 1)
+                                    mIsLocationViewable = true;
+
                                 mIsActive = mQuestionInfo.getBoolean("active");
 
+                                buildFragments(location, userImageUrl);
 
 
-                                buildFragments(location, userImageUrl, isEditable);
 
                             }
                             else{
@@ -234,12 +244,12 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
 
 
-    private void buildFragments(Location location, String userImageUrl, boolean isEditable){
+    private void buildFragments(Location location, String userImageUrl){
 
 
         invalidateOptionsMenu();
 
-        mViewGroupPagerAdapter = new ViewGroupPagerAdapter(getSupportFragmentManager(), location, userImageUrl, isEditable);
+        mViewGroupPagerAdapter = new ViewGroupPagerAdapter(getSupportFragmentManager(), location, userImageUrl);
 
         // Setting up sliding tabs feature
         mViewPager.setAdapter(mViewGroupPagerAdapter);
@@ -278,20 +288,20 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        System.out.println("clicked menu item:" + item);
+        //System.out.println("clicked menu item:" + item);
 
         if (item.getItemId() == R.id.action_close_question) {
             showCloseGroupDialog();
             return true;
         }
         else if (item.getItemId() == R.id.action_private_question) {
-            System.out.println("clicked private");
+            //System.out.println("clicked private");
             toggleGroupActive();
             //toggleQuestionActive(false);
             return true;
         }
         else if (item.getItemId() == R.id.action_public_question) {
-            System.out.println("clicked public");
+            //System.out.println("clicked public");
             toggleGroupActive();
             //toggleQuestionActive(true);
             return true;
@@ -405,7 +415,7 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
                         try {
                             JSONObject result = new JSONObject(response.toString());
-                            System.out.println("activeedit result "+result);
+                            //System.out.println("activeedit result "+result);
                             if (result.getString("success").equalsIgnoreCase("1")) {
                                 mIsActive = !mIsActive;
                                 invalidateOptionsMenu();
@@ -436,11 +446,11 @@ public class ViewQuestionActivity extends AppCompatActivity {
                 mViewGroupLocationFragment,
                 mViewGroupMembersFragment;
 
-        public ViewGroupPagerAdapter(FragmentManager fm, Location location, String userImageUrl, boolean isEditable) {
+        public ViewGroupPagerAdapter(FragmentManager fm, Location location, String userImageUrl) {
             super(fm);
             mFragmentViewQuestion = ViewQuestionFragment.newInstance(mQuestionId, isEditable);
-            mViewGroupLocationFragment = ViewQuestionLocationFragment.newInstance(mQuestionId, location, userImageUrl, isEditable, false);//TODO
-            mViewGroupMembersFragment = ViewQuestionMembersFragment.newInstance(mQuestionId, isEditable);
+            mViewGroupLocationFragment = ViewQuestionLocationFragment.newInstance(mQuestionId, location, userImageUrl, isEditable, mIsLocationViewable, mIsMemberOfGroup);//TODO
+            mViewGroupMembersFragment = ViewQuestionMembersFragment.newInstance(mQuestionId, isEditable, mIsMemberOfGroup);
 
         }
 
@@ -501,6 +511,52 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
         }
     }
+
+
+    private void getGroupActiveStatus() {
+
+        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        params.add(new BasicNameValuePair("userId", sharedPref.getString("user_id", "")));
+
+        String paramString = URLEncodedUtils.format(params, "utf-8");
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/inGroup?" + paramString;
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
+                (JSONObject) null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONObject result = new JSONObject(response.toString());
+
+                            if (result.getString("success").equalsIgnoreCase("1") && result.getString("expectResults").equalsIgnoreCase("1")) {
+                                String questionId = result.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("question_id");
+                                if (questionId.equalsIgnoreCase(mQuestionId)) {
+                                    mIsMemberOfGroup = true;
+                                }
+
+                            }
+                            getQuestionData();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener()
+
+        {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("Error with connection or url: " + error.toString());
+                mSnackBar.show();
+            }
+
+        }
+
+        );
+        Singleton.getInstance().addToRequestQueue(jsObjRequest);
+    }
+
 
 
 }

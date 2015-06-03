@@ -380,7 +380,7 @@ public class MapFragment extends Fragment implements
     }
 
     protected synchronized void buildGoogleApiClient() {
-        //if (getActivity() != null) {
+
                 mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                         .addConnectionCallbacks(this)
                         .addOnConnectionFailedListener(this)
@@ -388,7 +388,6 @@ public class MapFragment extends Fragment implements
                         .build();
 
                 mGoogleApiClient.connect();
-        //}
 
     }
 

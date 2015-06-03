@@ -286,10 +286,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void updateFragments(){
 
         if(((FeedFragment) viewPagerAdapter.getItem(0)).mContext != null)
-            ((FeedFragment) viewPagerAdapter.getItem(0)).getQuestionData();
+            ((FeedFragment) viewPagerAdapter.getItem(0)).buildGoogleApiClient();
 
         if(((MapFragment) viewPagerAdapter.getItem(1)).getActivity() != null){
-            ((MapFragment) viewPagerAdapter.getItem(1)).getMapData();
+            ((MapFragment) viewPagerAdapter.getItem(1)).buildGoogleApiClient();
         }
 
     }

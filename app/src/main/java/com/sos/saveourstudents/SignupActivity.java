@@ -1,7 +1,6 @@
 package com.sos.saveourstudents;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -119,8 +118,8 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
                                     if(response.getString("success").equalsIgnoreCase("1")){
                                         // Sign Up successful
-                                        Intent loginActivity = new Intent(SignupActivity.this, LoginActivity.class);
-                                        startActivity(loginActivity);
+                                        //Intent loginActivity = new Intent(SignupActivity.this, LoginActivity.class);
+                                        //startActivity(loginActivity);
                                         finish();
 
                                         return;
