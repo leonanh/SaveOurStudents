@@ -157,6 +157,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                             }
                         }
                     })
+                    .negativeText("Cancel")
                     .show();
 
         }
@@ -169,34 +170,31 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     private void showEditPasswordDialog() {
 
-        Dialog.Builder builder = new SimpleDialog.Builder(R.style.SimpleDialogLight){
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(this)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        passwordEditText = (EditText) dialog.findViewById(R.id.password_edittext);
+                        passwordConfirmEditText = (EditText) dialog.findViewById(R.id.confirm_password_edittext);
+                        if(areValidPasswords(passwordEditText.getText().toString(), passwordConfirmEditText.getText().toString())){
+                            updatePassword(passwordEditText.getText().toString());
+                        }
+                        else
+                            Toast.makeText(SettingsActivity.this, "Invalid password", Toast.LENGTH_SHORT).show();
+                        super.onPositive(dialog);
+                    }
 
-            @Override
-            public void onPositiveActionClicked(DialogFragment fragment) {
-                passwordEditText = (EditText) fragment.getDialog().findViewById(R.id.password_edittext);
-                passwordConfirmEditText = (EditText) fragment.getDialog().findViewById(R.id.confirm_password_edittext);
-                if(areValidPasswords(passwordEditText.getText().toString(), passwordConfirmEditText.getText().toString())){
-                    Toast.makeText(SettingsActivity.this, "VALID password", Toast.LENGTH_SHORT).show();
-                    updatePassword(passwordEditText.getText().toString());
-                }
-                else
-                    Toast.makeText(SettingsActivity.this, "Invalid password", Toast.LENGTH_SHORT).show();
-                //super.onPositiveActionClicked(fragment);
-            }
-
-            @Override
-            public void onNegativeActionClicked(DialogFragment fragment) {
-                super.onNegativeActionClicked(fragment);
-            }
-        };
+                    @Override
+                    public void onNegative(MaterialDialog dialog) {
+                        super.onNegative(dialog);
+                    }
+                });
 
         builder.title("Change Password")
-                .positiveAction("DONE")
-                .negativeAction("CANCEL")
-                .contentView(R.layout.layout_dialog_custom);
-        DialogFragment fragment = DialogFragment.newInstance(builder);
-
-        fragment.show(getSupportFragmentManager(), "");
+                .positiveText("Done")
+                .negativeText("Cancel")
+                .customView(R.layout.layout_dialog_custom, false)
+                .show();
 
     }
 
@@ -250,11 +248,11 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                             if(result.getString("success").equalsIgnoreCase("1")){
 
                                 //JSONArray questionAndTags = result.getJSONObject("result").getJSONArray("myArrayList");
-                                Toast.makeText(SettingsActivity.this, "PW updated", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SettingsActivity.this, "Your password has been updated!", Toast.LENGTH_SHORT).show();
 
                             }
                             else{
-                                Toast.makeText(SettingsActivity.this, "Couldnt update password", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SettingsActivity.this, "Error updating your password!", Toast.LENGTH_SHORT).show();
                             }
 
                         } catch (JSONException e) {
@@ -308,11 +306,10 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                                 SharedPreferences.Editor editor = sharedPref.edit();
                                 editor.putString("email", newEmail);
                                 editor.commit();
-                                Toast.makeText(SettingsActivity.this, "Email updated", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SettingsActivity.this, "Your email has been updated!", Toast.LENGTH_SHORT).show();
                             }
                             else{
-
-                                Toast.makeText(SettingsActivity.this, "Couldnt update email", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SettingsActivity.this, "Error updating your email!", Toast.LENGTH_SHORT).show();
                             }
 
                         } catch (JSONException e) {
