@@ -94,7 +94,7 @@ public class ViewQuestionActivity extends AppCompatActivity {
         }
 
         mSnackBar = (SnackBar)findViewById(R.id.main_sn);
-        mSnackBar.text("Connection timed out")
+        mSnackBar.text("Connection Timed Out!")
                 .applyStyle(R.style.SnackBarSingleLine)
                 .actionText("RETRY")
                 .duration(0)

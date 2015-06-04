@@ -83,7 +83,9 @@ public class MemberWantsToJoinActivity extends AppCompatActivity implements View
         } else if (v == declineButton) {
             finish();
         } else if (v == userProfile) {
-            startActivity(new Intent(this, ProfileActivity.class));
+            Intent profile = new Intent(this, ProfileActivity.class);
+            profile.putExtra("userId", mUserId);
+            startActivity(profile);
         }
 
     }
