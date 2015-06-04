@@ -28,8 +28,8 @@
     </style>
 
     <style name="SnackBarSingleLine" parent="Material.Widget.SnackBar.Mobile">
-        <item name="sb_text">This is single-line snackbar.</item>
-        <item name="sb_actionText">CLOSE</item>
+        <item name="sb_text">Connection Timed Out!</item>
+        <item name="sb_actionText">Retry</item>
         <item name="sb_duration">0</item>
     </style>
 
