@@ -92,16 +92,25 @@ public class ViewQuestionMembersFragment extends Fragment {
         // Required empty public constructor
     }
 
+    /**
+     * Retrieves the userId of the viewer through shared preferences
+     * @param savedInstanceState Unused for this fragment
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewerUserId = getActivity()
                 .getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
                 .getString("user_id", "");
-
-
     }
 
+    /**
+     * Sets up member variables once views have been inflated
+     * @param inflater The LayoutInflater of the current activity
+     * @param container The ViewGroup that will contain both ListViews
+     * @param savedInstanceState Unused
+     * @return The root view of the fragment
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

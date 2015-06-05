@@ -44,6 +44,10 @@ public class MemberWantsToJoinActivity extends AppCompatActivity implements View
     private String mRemoveMemberUrl =
             "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/removeUser?userId=";
 
+    /**
+     * Initializes the singleton and begin setting up member variables
+     * @param savedInstanceState Unused, necessary for method
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +76,10 @@ public class MemberWantsToJoinActivity extends AppCompatActivity implements View
         declineButton.setOnClickListener(this);
     }
 
+    /**
+     * Setup for all OnClickListeners for the views of the activity
+     * @param v The view in question
+     */
     public void onClick(View v) {
 
         if (v == acceptButton) {
