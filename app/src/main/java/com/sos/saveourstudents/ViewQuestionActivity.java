@@ -42,9 +42,6 @@ import java.util.List;
 
 public class ViewQuestionActivity extends AppCompatActivity {
 
-    private final int numPages = 3;
-
-    private Menu menu;
     protected SnackBar mSnackBar;
     private FabBroadcastReciever fabBroadcastReciever;
     private SlidingTabLayout mSlidingTabLayout;
@@ -61,8 +58,10 @@ public class ViewQuestionActivity extends AppCompatActivity {
     private boolean mIsLocationViewable;
     private boolean mIsMemberOfGroup = false;
 
-    private boolean menuIsBuilt;
-
+    /**
+     * Initialize the Singleton and start setting up Activity-common ViewGroups
+     * @param savedInstanceState The saved instance state of the activity, unused
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,7 +75,6 @@ public class ViewQuestionActivity extends AppCompatActivity {
         sharedPref = getSharedPreferences(
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
-        menuIsBuilt = false;
         fabBroadcastReciever = new FabBroadcastReciever();
 
 
@@ -128,7 +126,9 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
     }
 
-
+    /**
+     * On resume, set up the broadcast receiver
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -138,6 +138,9 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * On pause, unregister the receiver to save battery
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -145,10 +148,13 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Grabs the current question details from the database
+     */
     public void getQuestionData() {
 
 
-        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        List<NameValuePair> params = new LinkedList<>();
         params.add(new BasicNameValuePair("questionId", mQuestionId));
 
         String paramString = URLEncodedUtils.format(params, "utf-8");
@@ -215,11 +221,6 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
 
                             }
-                            else{
-
-                                //Error...
-                            }
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -240,10 +241,11 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
     }
 
-
-
-
-
+    /**
+     * Begins setting up the fragments after necessary variables have been retrieved
+     * @param location The location of the question
+     * @param userImageUrl The image URL of the group owner
+     */
     private void buildFragments(Location location, String userImageUrl){
 
 
@@ -266,18 +268,21 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
     }
 
-
+    /**
+     * If group owner, show overflow menu options for managing the group
+     * @param menu The overflow menu
+     * @return True if successful creating the menu
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
         if(menu != null) {
-            this.menu = menu;
             if (isEditable && mIsActive) {
-                System.out.println("building active menu: "+mIsActive);
+                System.out.println("building active menu: "+ true);
                 getMenuInflater().inflate(R.menu.menu_edit_public_question, menu);
             }
-            else if(isEditable && !mIsActive){
-                System.out.println("building inactive menu: "+mIsActive);
+            else if(isEditable){
+                System.out.println("building inactive menu: "+ false);
                 getMenuInflater().inflate(R.menu.menu_edit_private_question, menu);
             }
 
@@ -285,7 +290,11 @@ public class ViewQuestionActivity extends AppCompatActivity {
         return true;
     }
 
-
+    /**
+     * On menu option selected, perform the appropriate action
+     * @param item The selected menu option
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         //System.out.println("clicked menu item:" + item);
@@ -310,11 +319,20 @@ public class ViewQuestionActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Perform Fragment's onActivityResult() instead
+     * @param requestCode The requestCode of the started Activity
+     * @param resultCode The resultCode of the finish()'d Activity
+     * @param data The data sent back
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    /**
+     * Displays the close group dialog after clicking the menu option
+     */
     private void showCloseGroupDialog(){
 
 
@@ -339,11 +357,12 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
     }
 
-
-
+    /**
+     * Deletes the question from the server after requesting to close the group
+     */
     private void deleteQuestion() {
 
-        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        List<NameValuePair> params = new LinkedList<>();
         params.add(new BasicNameValuePair("questionId", mQuestionId));
 
         String paramString = URLEncodedUtils.format(params, "utf-8");
@@ -369,11 +388,6 @@ public class ViewQuestionActivity extends AppCompatActivity {
                                 finish();
 
                             }
-                            else{
-
-                                //Error...
-                            }
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -394,14 +408,16 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
     }
 
-
+    /**
+     * Informs the server that the group has been set to private or public
+     */
     private void toggleGroupActive() {
 
-        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        List<NameValuePair> params = new LinkedList<>();
         params.add(new BasicNameValuePair("questionId", mQuestionId));
 
         String paramString = URLEncodedUtils.format(params, "utf-8");
-        String url = "";
+        String url;
         if(mIsActive)
             url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/closeGroup?" + paramString;
         else
@@ -436,15 +452,15 @@ public class ViewQuestionActivity extends AppCompatActivity {
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
     }
 
-
-
-
+    /**
+     * The PagerAdapter that manages the SlidingTabLayout ViewGroups
+     */
     class ViewGroupPagerAdapter extends FragmentPagerAdapter {
 
-        private Fragment
-                mFragmentViewQuestion,
-                mViewGroupLocationFragment,
-                mViewGroupMembersFragment;
+        private final Fragment
+                mFragmentViewQuestion;
+        private final Fragment mViewGroupLocationFragment;
+        private final Fragment mViewGroupMembersFragment;
 
         public ViewGroupPagerAdapter(FragmentManager fm, Location location, String userImageUrl) {
             super(fm);
@@ -489,16 +505,16 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return numPages;
+            return 3;
         }
     }
 
+    /**
+     * Sets up the BroadcastReceiver for the FAB
+     */
     public class FabBroadcastReciever extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-
-            SharedPreferences sharedPref = getSharedPreferences(
-                    getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
             System.out.println("Recieved custom broadcast in question ACtivity");
             if(((ViewQuestionFragment) mViewGroupPagerAdapter.getItem(0)).mContext != null) {
@@ -512,10 +528,12 @@ public class ViewQuestionActivity extends AppCompatActivity {
         }
     }
 
-
+    /**
+     * Checks to see whether the current viewer is in the group
+     */
     private void getGroupActiveStatus() {
 
-        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        List<NameValuePair> params = new LinkedList<>();
         params.add(new BasicNameValuePair("userId", sharedPref.getString("user_id", "")));
 
         String paramString = URLEncodedUtils.format(params, "utf-8");
@@ -556,7 +574,4 @@ public class ViewQuestionActivity extends AppCompatActivity {
         );
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
     }
-
-
-
 }
