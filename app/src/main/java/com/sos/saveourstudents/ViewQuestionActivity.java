@@ -39,9 +39,13 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-
+/**
+ * Activity that contains the pagerAdapter that shows the fragments and tabs associated with all the question information.
+ */
 public class ViewQuestionActivity extends AppCompatActivity {
 
+
+    private Menu menu;
     protected SnackBar mSnackBar;
     private FabBroadcastReciever fabBroadcastReciever;
     private SlidingTabLayout mSlidingTabLayout;
@@ -58,17 +62,15 @@ public class ViewQuestionActivity extends AppCompatActivity {
     private boolean mIsLocationViewable;
     private boolean mIsMemberOfGroup = false;
 
-    /**
-     * Initialize the Singleton and start setting up Activity-common ViewGroups
-     * @param savedInstanceState The saved instance state of the activity, unused
-     */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_group);
 
 
-        if(!Singleton.hasBeenInitialized()){
+        //Singleton must be initialized prior to any Activity/Fragment doing anything
+        if (!Singleton.hasBeenInitialized()) {
             Singleton.initialize(this);
         }
 
@@ -77,21 +79,20 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
         fabBroadcastReciever = new FabBroadcastReciever();
 
-
-        if(getIntent().getExtras() != null){
-            if(getIntent().getExtras().containsKey("questionId")){
+        //Get passed in values
+        if (getIntent().getExtras() != null) {
+            if (getIntent().getExtras().containsKey("questionId")) {
                 mQuestionId = getIntent().getExtras().getString("questionId");
-            }
-            else{
+            } else {
                 System.out.println("Could not find QuestionId, finishing editQuestion");
                 finish();
             }
-        }else{
+        } else {
             System.out.println("Could not find QuestionId, finishing editQuestion");
             finish();
         }
 
-        mSnackBar = (SnackBar)findViewById(R.id.main_sn);
+        mSnackBar = (SnackBar) findViewById(R.id.main_sn);
         mSnackBar.text("Connection Timed Out!")
                 .applyStyle(R.style.SnackBarSingleLine)
                 .actionText("RETRY")
@@ -99,7 +100,6 @@ public class ViewQuestionActivity extends AppCompatActivity {
                 .actionClickListener(new SnackBar.OnActionClickListener() {
                     @Override
                     public void onActionClick(SnackBar snackBar, int i) {
-                        //getQuestionData();
                         getGroupActiveStatus();
                     }
                 });
@@ -121,13 +121,13 @@ public class ViewQuestionActivity extends AppCompatActivity {
             });
         }
 
+        //Begin to build FAB, this also initiates getQuestionData
         getGroupActiveStatus();
-
 
     }
 
     /**
-     * On resume, set up the broadcast receiver
+     * Overridden onResume to start broadcast listener
      */
     @Override
     protected void onResume() {
@@ -138,8 +138,9 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
     }
 
+
     /**
-     * On pause, unregister the receiver to save battery
+     * Overridden onPause to stop broadcast listener
      */
     @Override
     protected void onPause() {
@@ -149,54 +150,45 @@ public class ViewQuestionActivity extends AppCompatActivity {
     }
 
     /**
-     * Grabs the current question details from the database
+     * Volley call to retrieve question info from server
      */
     public void getQuestionData() {
-
 
         List<NameValuePair> params = new LinkedList<>();
         params.add(new BasicNameValuePair("questionId", mQuestionId));
 
         String paramString = URLEncodedUtils.format(params, "utf-8");
-        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/viewQuestion?"+paramString;
-
-
-        System.out.println("url: " + url);
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/viewQuestion?" + paramString;
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
-                (JSONObject)null,
-                new Response.Listener<JSONObject>(){
+                (JSONObject) null,
+                new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
 
                             JSONObject result = new JSONObject(response.toString());
-                            System.out.println("ViewQuestionActivity result "+result);
-                            if(result.getInt("expectResults") == 0) {
+                            if (result.getInt("expectResults") == 0) {
                                 Toast.makeText(ViewQuestionActivity.this, "This question doesn't exist anymore!", Toast.LENGTH_SHORT)
                                         .show();
                                 setResult(RESULT_OK);
                                 finish();
                             }
-                            if(result.getString("success").equalsIgnoreCase("1")){
+                            if (result.getString("success").equalsIgnoreCase("1")) {
 
                                 JSONArray questionAndTags = result.getJSONObject("result").getJSONArray("myArrayList");
-
                                 mQuestionInfo = questionAndTags.getJSONObject(0).getJSONObject("map");
-
                                 tags = new ArrayList<>();
-                                if(questionAndTags.length() > 1){
-                                    for(int a = 1; a < questionAndTags.length(); a++){
+                                if (questionAndTags.length() > 1) {
+                                    for (int a = 1; a < questionAndTags.length(); a++) {
                                         tags.add(questionAndTags.getJSONObject(a).getJSONObject("map").getString("tag"));
                                     }
                                 }
 
-
                                 String userImageUrl = "";
-                                if(mQuestionInfo.has("image"))
+                                if (mQuestionInfo.has("image"))
                                     userImageUrl = mQuestionInfo.getString("image");
-
 
                                 String latitude = mQuestionInfo.getString("latitude");
                                 String longitude = mQuestionInfo.getString("longitude");
@@ -210,21 +202,17 @@ public class ViewQuestionActivity extends AppCompatActivity {
                                 String currentUserId = sharedPref.getString("user_id", "");
                                 isEditable = mQuestionInfo.getString("user_id").equalsIgnoreCase(currentUserId);
 
-
-                                if(mQuestionInfo.getInt("visible_location") == 1)
+                                if (mQuestionInfo.getInt("visible_location") == 1)
                                     mIsLocationViewable = true;
-
                                 mIsActive = mQuestionInfo.getBoolean("active");
-
                                 buildFragments(location, userImageUrl);
-
-
-
+                            } else {
+                                //Error...
                             }
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
                     }
                 }, new Response.ErrorListener() {
 
@@ -236,21 +224,19 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
         });
 
-
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
 
     }
 
+
     /**
-     * Begins setting up the fragments after necessary variables have been retrieved
-     * @param location The location of the question
-     * @param userImageUrl The image URL of the group owner
+     * Reusable call to rebuild UI after data changes
+     * @param location Google Location object of question location
+     * @param userImageUrl url string of user image
      */
-    private void buildFragments(Location location, String userImageUrl){
+    private void buildFragments(Location location, String userImageUrl) {
 
-
-        invalidateOptionsMenu();
-
+        invalidateOptionsMenu();//rebuild menu options
         mViewGroupPagerAdapter = new ViewGroupPagerAdapter(getSupportFragmentManager(), location, userImageUrl);
 
         // Setting up sliding tabs feature
@@ -268,87 +254,66 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
     }
 
+
     /**
-     * If group owner, show overflow menu options for managing the group
-     * @param menu The overflow menu
-     * @return True if successful creating the menu
+     * Dynamically created menu options
+     * @param menu menu to create
+     * @return boolean
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        if(menu != null) {
+        if (menu != null) {
+            this.menu = menu;
             if (isEditable && mIsActive) {
-                System.out.println("building active menu: "+ true);
                 getMenuInflater().inflate(R.menu.menu_edit_public_question, menu);
-            }
-            else if(isEditable){
-                System.out.println("building inactive menu: "+ false);
+            } else if (isEditable && !mIsActive) {
                 getMenuInflater().inflate(R.menu.menu_edit_private_question, menu);
             }
-
         }
         return true;
     }
 
+
     /**
-     * On menu option selected, perform the appropriate action
-     * @param item The selected menu option
-     * @return
+     * Menu item click listener
+     * @param item menu item that is clicked
+     * @return boolean
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        //System.out.println("clicked menu item:" + item);
 
         if (item.getItemId() == R.id.action_close_question) {
             showCloseGroupDialog();
             return true;
-        }
-        else if (item.getItemId() == R.id.action_private_question) {
-            //System.out.println("clicked private");
+        } else if (item.getItemId() == R.id.action_private_question) {
             toggleGroupActive();
-            //toggleQuestionActive(false);
             return true;
-        }
-        else if (item.getItemId() == R.id.action_public_question) {
-            //System.out.println("clicked public");
+        } else if (item.getItemId() == R.id.action_public_question) {
             toggleGroupActive();
-            //toggleQuestionActive(true);
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Perform Fragment's onActivityResult() instead
-     * @param requestCode The requestCode of the started Activity
-     * @param resultCode The resultCode of the finish()'d Activity
-     * @param data The data sent back
-     */
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-    }
 
     /**
-     * Displays the close group dialog after clicking the menu option
+     * Display confirmation dialog if user selects remove self FAB
      */
-    private void showCloseGroupDialog(){
-
+    private void showCloseGroupDialog() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Are you sure you want to delete this question?");
 
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-
                 deleteQuestion();
-
             }
         });
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                //dont do shit...
+                //close dialog
             }
         });
 
@@ -357,8 +322,9 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
     }
 
+
     /**
-     * Deletes the question from the server after requesting to close the group
+     * Volley call to remove question from server
      */
     private void deleteQuestion() {
 
@@ -366,32 +332,26 @@ public class ViewQuestionActivity extends AppCompatActivity {
         params.add(new BasicNameValuePair("questionId", mQuestionId));
 
         String paramString = URLEncodedUtils.format(params, "utf-8");
-        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/removeGroup?"+paramString;
-
-
-        //System.out.println("url: " + url);
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/removeGroup?" + paramString;
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
-                (JSONObject)null,
-                new Response.Listener<JSONObject>(){
+                (JSONObject) null,
+                new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
 
                             JSONObject result = new JSONObject(response.toString());
-                            //System.out.println("remove group result: "+result);
-                            if(result.getString("success").equalsIgnoreCase("1")){
-
-
+                            if (result.getString("success").equalsIgnoreCase("1")) {
                                 setResult(RESULT_OK);
                                 finish();
-
+                            } else {
+                                //Error...
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
                     }
                 }, new Response.ErrorListener() {
 
@@ -400,16 +360,13 @@ public class ViewQuestionActivity extends AppCompatActivity {
                 System.out.println("Error with connection or url: " + error.toString());
                 mSnackBar.show();
             }
-
         });
-
-
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
-
     }
 
+
     /**
-     * Informs the server that the group has been set to private or public
+     * Volley call to update group active
      */
     private void toggleGroupActive() {
 
@@ -417,8 +374,8 @@ public class ViewQuestionActivity extends AppCompatActivity {
         params.add(new BasicNameValuePair("questionId", mQuestionId));
 
         String paramString = URLEncodedUtils.format(params, "utf-8");
-        String url;
-        if(mIsActive)
+        String url = "";
+        if (mIsActive)
             url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/closeGroup?" + paramString;
         else
             url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/openGroup?" + paramString;
@@ -431,7 +388,6 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
                         try {
                             JSONObject result = new JSONObject(response.toString());
-                            //System.out.println("activeedit result "+result);
                             if (result.getString("success").equalsIgnoreCase("1")) {
                                 mIsActive = !mIsActive;
                                 invalidateOptionsMenu();
@@ -439,9 +395,8 @@ public class ViewQuestionActivity extends AppCompatActivity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
                     }
-                }, new Response.ErrorListener(){
+                }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 mSnackBar.show();
@@ -453,51 +408,46 @@ public class ViewQuestionActivity extends AppCompatActivity {
     }
 
     /**
-     * The PagerAdapter that manages the SlidingTabLayout ViewGroups
+     * View pager to manage the 3 fragments
      */
     class ViewGroupPagerAdapter extends FragmentPagerAdapter {
-
-        private final Fragment
-                mFragmentViewQuestion;
-        private final Fragment mViewGroupLocationFragment;
-        private final Fragment mViewGroupMembersFragment;
+        private final int numPages = 3;
+        private Fragment
+                mFragmentViewQuestion,
+                mViewGroupLocationFragment,
+                mViewGroupMembersFragment;
 
         public ViewGroupPagerAdapter(FragmentManager fm, Location location, String userImageUrl) {
             super(fm);
             mFragmentViewQuestion = ViewQuestionFragment.newInstance(mQuestionId, isEditable);
-            mViewGroupLocationFragment = ViewQuestionLocationFragment.newInstance(mQuestionId, location, userImageUrl, isEditable, mIsLocationViewable, mIsMemberOfGroup);//TODO
+            mViewGroupLocationFragment = ViewQuestionLocationFragment.newInstance(mQuestionId, location, userImageUrl, isEditable, mIsLocationViewable, mIsMemberOfGroup);
             mViewGroupMembersFragment = ViewQuestionMembersFragment.newInstance(mQuestionId, isEditable, mIsMemberOfGroup);
 
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            if(position == 0) {
+            if (position == 0) {
                 return getResources().getString(R.string.view_group_question);
-            }
-            else if(position == 1) {
+            } else if (position == 1) {
                 return getResources().getString(R.string.view_group_location);
-            }
-            else if(position == 2) {
+            } else if (position == 2) {
                 return getResources().getString(R.string.view_group_members);
-            }
-            else {
+            } else {
                 Log.e("ViewGroup", "ERROR: Nonexistent Position!");
                 return null;
             }
         }
+
         @Override
         public Fragment getItem(int position) {
-            if(position == 0) {
+            if (position == 0) {
                 return mFragmentViewQuestion;
-            }
-            else if(position == 1) {
+            } else if (position == 1) {
                 return mViewGroupLocationFragment;
-            }
-            else if(position == 2) {
+            } else if (position == 2) {
                 return mViewGroupMembersFragment;
-            }
-            else {
+            } else {
                 Log.e("ViewGroup", "ERROR: Nonexistent Position!");
                 return new Fragment();
             }
@@ -505,31 +455,29 @@ public class ViewQuestionActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return 3;
+            return numPages;
         }
     }
 
     /**
-     * Sets up the BroadcastReceiver for the FAB
+     * Listener to receive broadcast intents from user status changes.
      */
     public class FabBroadcastReciever extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            System.out.println("Recieved custom broadcast in question ACtivity");
-            if(((ViewQuestionFragment) mViewGroupPagerAdapter.getItem(0)).mContext != null) {
+            if (((ViewQuestionFragment) mViewGroupPagerAdapter.getItem(0)).mContext != null) {
                 ((ViewQuestionFragment) mViewGroupPagerAdapter.getItem(0)).buildFab();
             }
-            if(((ViewQuestionMembersFragment) mViewGroupPagerAdapter.getItem(2)).mContext != null) {
+            if (((ViewQuestionMembersFragment) mViewGroupPagerAdapter.getItem(2)).mContext != null) {
                 ((ViewQuestionMembersFragment) mViewGroupPagerAdapter.getItem(2)).retrieveListOfRatedTutors();
             }
-
-
         }
     }
 
     /**
-     * Checks to see whether the current viewer is in the group
+     * Volley call involved in buildFab flow.
+     * This concludes by calling getData volley
      */
     private void getGroupActiveStatus() {
 
@@ -574,4 +522,6 @@ public class ViewQuestionActivity extends AppCompatActivity {
         );
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
     }
+
+
 }

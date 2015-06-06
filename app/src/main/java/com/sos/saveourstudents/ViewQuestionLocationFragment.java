@@ -209,15 +209,24 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
         mGoogleApiClient.connect();
     }
 
+    /**
+     * Implemented method from GoogleApiClient
+     */
     @Override
     public void onConnected(Bundle bundle) {
     }
 
+    /**
+     * Implemented method from GoogleApiClient
+     */
     @Override
     public void onConnectionSuspended(int i) {
 
     }
 
+    /**
+     * Implemented method from GoogleApiClient
+     */
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
