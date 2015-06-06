@@ -46,7 +46,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private Button emailButton;
     private Button passwordButton;
     private Spinner coverSpinner;
-
     private TextView currDistanceDisplay;
 
     /**
@@ -108,7 +107,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
 
         currdistance = sharedPref.getInt("distance", 1);
-
         currDistanceDisplay.setText(currdistance + "");
         distanceSlider.setPosition(currdistance, true);
         distanceSlider.setValue(currdistance, true);
@@ -130,9 +128,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             emailButton.setVisibility(View.INVISIBLE);
             passwordButton.setVisibility(View.INVISIBLE);
         }
-
-
-
 
     }
 
@@ -162,9 +157,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
         }
         else if (v == passwordButton) {
-
             showEditPasswordDialog();
-
         }
     }
 
@@ -237,10 +230,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         String paramString = URLEncodedUtils.format(params, "utf-8");
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/resetPassword?"+paramString;
 
-
-        System.out.println("resetPassword url: " + url);
-
-
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
                 (JSONObject)null,
                 new Response.Listener<JSONObject>(){
@@ -250,10 +239,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                         try {
 
                             JSONObject result = new JSONObject(response.toString());
-                            System.out.println("resetPassword result "+result);
                             if(result.getString("success").equalsIgnoreCase("1")){
-
-                                //JSONArray questionAndTags = result.getJSONObject("result").getJSONArray("myArrayList");
                                 Toast.makeText(SettingsActivity.this, "Your password has been updated!", Toast.LENGTH_SHORT).show();
 
                             }
@@ -287,13 +273,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         params.add(new BasicNameValuePair("email", newEmail));
         params.add(new BasicNameValuePair("userId", sharedPref.getString("user_id", "")));
 
-
         String paramString = URLEncodedUtils.format(params, "utf-8");
         String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/resetEmail?"+paramString;
-
-
-        System.out.println("updateEmail url: " + url);
-
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
                 (JSONObject)null,
@@ -304,7 +285,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                         try {
 
                             JSONObject result = new JSONObject(response.toString());
-                            System.out.println("resetPassword result "+result);
                             if(result.getString("success").equalsIgnoreCase("1")){
 
                                 SharedPreferences.Editor editor = sharedPref.edit();
@@ -329,7 +309,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             }
 
         });
-
 
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
     }
@@ -369,9 +348,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             LayoutInflater inflater=getLayoutInflater();
             View row = inflater.inflate(R.layout.spinner_cover_item, parent, false);
 
-
             ImageView icon = (ImageView)row.findViewById(R.id.cover_image);
-            //icon.setImageResource(arr_images[position]);
             icon.setImageResource(imgs.getResourceId(position, 0));
 
             return row;
