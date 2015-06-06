@@ -1,5 +1,6 @@
 package com.sos.saveourstudents;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,6 +9,7 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -43,9 +45,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-
 /**
- * Fragment to display users question information and comments list
+ * Fragment for first pane of ViewQuestionActivity
  */
 public class ViewQuestionFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener, LocationListener {
 
@@ -57,7 +58,6 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
     private RecycleViewAdapter mAdapter;
     private RecyclerView mRecyclerView;
-    private View rootView;
     private LinearLayout taglist;
     private FloatingActionButton fab;
     private ImageView sendButton;
@@ -81,11 +81,11 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
     private JSONObject mQuestionInfo;
     private ArrayList tags;
 
-
     /**
-     * Pass params to static initializer of this fragment
-     * @param questionId String of the questionId to retrieve
-     * @return Fragment
+     * Creates a new instance of the ViewQuestionFragment
+     * @param questionId The questionId of the current group
+     * @param isEditable Whether the group is being viewed by the owner
+     * @return
      */
     public static ViewQuestionFragment newInstance(String questionId, boolean isEditable) {
         ViewQuestionFragment fragment = new ViewQuestionFragment();
@@ -96,30 +96,43 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
         return fragment;
     }
 
-    // Required empty public constructor
+    /**
+     * Empty constructor
+     */
     public ViewQuestionFragment() {
+        // Required empty public constructor
     }
 
+    /**
+     * Begins assigning ViewGroups to member variables after inflating views
+     * @param inflater The LayoutInflater of the current context
+     * @param container The container for all views in question
+     * @param savedInstanceState Unused, necessary for overriding the method
+     * @return The view of the activity
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         mContext = getActivity();
-        rootView = inflater.inflate(R.layout.fragment_view_question, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_view_question, container, false);
 
         if (getArguments() != null) {
             mQuestionId = getArguments().getString("questionId");
-        } else {
-            Toast.makeText(mContext, "QuestionId empty in viewQuestiomFrag", Toast.LENGTH_SHORT).show();
+            boolean mEditable = getArguments().getBoolean("isEditable");
+        }else{
+            Toast.makeText(mContext, "QuestionId empty in viewQuestiomFrag" , Toast.LENGTH_SHORT).show();
         }
 
         sharedPref = mContext.getSharedPreferences(
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
-        //Need GoogleApi for location services
         buildGoogleApiClient();
 
         userImage = (ImageView) rootView.findViewById(R.id.question_image);
+
+
+
         userName = (TextView) rootView.findViewById(R.id.question_name_text);
         questionText = (TextView) rootView.findViewById(R.id.question_text);
         questionDate = (TextView) rootView.findViewById(R.id.question_timestamp);
@@ -127,29 +140,27 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
         questionTopic = (TextView) rootView.findViewById(R.id.question_topic_text);
         tutorIcon = (ImageView) rootView.findViewById(R.id.tutor_icon);
         groupIcon = (ImageView) rootView.findViewById(R.id.group_icon);
-        commentEditText = (EditText) rootView.findViewById(R.id.comment_edittext);
 
         taglist = (LinearLayout) rootView.findViewById(R.id.tag_list_layout);
+
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.my_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         fab = (FloatingActionButton) rootView.findViewById(R.id.group_action);
         fab.setVisibility(View.INVISIBLE);
+
         sendButton = (ImageView) rootView.findViewById(R.id.send_button);
         sendButton.setOnClickListener(this);
 
+        commentEditText = (EditText) rootView.findViewById(R.id.comment_edittext);
+
         getCommentsData();
 
-
-        /**
-         * Attempt to reuse question details if they have already been recovered,
-         * if they are not available, call the server to get the information
-         *
-         */
-        if (((ViewQuestionActivity) getActivity()).mQuestionInfo == null) {
+        if(((ViewQuestionActivity) getActivity()).mQuestionInfo == null) {
             getQuestionData();
-        } else {
+        }
+        else{
             mQuestionInfo = ((ViewQuestionActivity) getActivity()).mQuestionInfo;
             tags = ((ViewQuestionActivity) getActivity()).tags;
             try {
@@ -175,39 +186,42 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
             });
         }
 
-
         return rootView;
     }
 
     /**
-     * Volley request to retrieve all info pertaining to a particular questionId
+     * Retrieves the question data from the database
      */
     private void getQuestionData() {
 
-        List<NameValuePair> params = new LinkedList<NameValuePair>();
+
+        List<NameValuePair> params = new LinkedList<>();
         params.add(new BasicNameValuePair("questionId", mQuestionId));
 
         String paramString = URLEncodedUtils.format(params, "utf-8");
-        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/viewQuestion?" + paramString;
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/viewQuestion?"+paramString;
+
+
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
-                (JSONObject) null,
-                new Response.Listener<JSONObject>() {
+                (JSONObject)null,
+                new Response.Listener<JSONObject>(){
 
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
 
                             JSONObject result = new JSONObject(response.toString());
-                            if (result.getString("success").equalsIgnoreCase("1")) {
+                            if(result.getString("success").equalsIgnoreCase("1")){
+
 
                                 JSONArray questionAndTags = result.getJSONObject("result").getJSONArray("myArrayList");
 
                                 mQuestionInfo = questionAndTags.getJSONObject(0).getJSONObject("map");
                                 tags = new ArrayList<>();
-                                if (questionAndTags.length() > 1) {
-                                    for (int a = 1; a < questionAndTags.length(); a++) {
-                                        tags.add(questionAndTags.getJSONObject(a).getJSONObject("map").getString("tag"));
+                                if(questionAndTags.length() > 1){
+                                    for(int a = 1; a < questionAndTags.length(); a++){
+                                       tags.add(questionAndTags.getJSONObject(a).getJSONObject("map").getString("tag"));
                                     }
 
                                     showQuestionTags(tags);
@@ -228,32 +242,32 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
                                 });
 
                                 showQuestionDetails(mQuestionInfo);
+
                                 buildFab();
 
-                            } else {
-                                //Error...
-                            }
 
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+
                     }
                 }, new Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                System.out.println("Error with connection or url: " + error.toString());
                 showConnectionIssueDialog();
             }
+
         });
+
 
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
 
     }
 
-
     /**
-     * Volley request that gets comments attached to a given question
+     * Retrieves the comments data from the server
      */
     private void getCommentsData() {
 
@@ -261,26 +275,25 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
         params.add(new BasicNameValuePair("questionId", mQuestionId));
 
         String paramString = URLEncodedUtils.format(params, "utf-8");
-        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getComments?" + paramString;
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/getComments?"+paramString;
+
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
-                (JSONObject) null,
-                new Response.Listener<JSONObject>() {
+                (JSONObject)null,
+                new Response.Listener<JSONObject>(){
 
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
 
                             JSONObject result = new JSONObject(response.toString());
-                            if (result.getString("success").equalsIgnoreCase("1")) {
+                            if(result.getString("success").equalsIgnoreCase("1")){
 
                                 JSONArray commentList = result.getJSONObject("result").getJSONArray("myArrayList");
 
-                                mAdapter = new RecycleViewAdapter(commentList, R.layout.question_comment_item);
+                                mAdapter = new RecycleViewAdapter(commentList);
                                 mRecyclerView.setAdapter(mAdapter);
 
-                            } else {
-                                //Error...
                             }
 
                         } catch (JSONException e) {
@@ -292,31 +305,27 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                System.out.println("Error with connection or url: " + error.toString());
                 showConnectionIssueDialog();
             }
 
         });
-
         Singleton.getInstance().addToRequestQueue(jsObjRequest);
 
     }
 
-
     /**
-     * Constructs the UI using the given question details that were recovered from the
-     * GetQuestionData volley
-     * @param details Question details in the form of a JSONObject
+     * Begins setting values to the ViewGroups on the fragment
+     * @param details The JSONObject that includes all question query results
      * @throws JSONException
      */
     private void showQuestionDetails(JSONObject details) throws JSONException {
 
         String firstName = details.getString("first_name");
 
-        if (firstName.length() > 14) {
+        if(firstName.length() > 14) {
             firstName = firstName.substring(0, 13).concat("...");
         }
-        String userNameText = firstName + " " + details.getString("last_name");
+        String userNameText = firstName + " " +details.getString("last_name");
         String topicText = details.getString("topic");
         String question = details.getString("text");
         String dateText = details.getString("date");
@@ -324,7 +333,7 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
         double longitude = details.getDouble("longitude");
 
 
-        if (details.has("image")) {
+        if(details.has("image")) {
             String userImageUrl = details.getString("image");
             getUserImage(userImageUrl, userImage);
         }
@@ -332,84 +341,88 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
         mStudyGroupBool = details.getBoolean("study_group");
         mTutorBool = details.getBoolean("tutor");
 
+
         userName.setText(userNameText);
         questionText.setText(question);
         questionTopic.setText(topicText);
         questionDate.setText(Singleton.getInstance().doDateLogic(dateText));
 
-        if (mCurrentLocation != null)
-            questionDistance.setText(Singleton.getInstance().doDistanceLogic(latitude, longitude, mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), "MI") + "MI");
+        if(mCurrentLocation != null)
+            questionDistance.setText(Singleton.getInstance().doDistanceLogic(latitude, longitude, mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), "MI")+"MI");
         else
             questionDistance.setVisibility(View.INVISIBLE);
 
-        if (mTutorBool)
-            tutorIcon.setColorFilter(getResources().getColor(R.color.primary));
+        if(mTutorBool)
+        tutorIcon.setColorFilter(getResources().getColor(R.color.primary));
 
-        if (mStudyGroupBool)
-            groupIcon.setColorFilter(getResources().getColor(R.color.primary));
+        if(mStudyGroupBool)
+        groupIcon.setColorFilter(getResources().getColor(R.color.primary));
 
     }
 
     /**
-     * Display attached tags in horizontal scrollview
-     * @param tags ArrayList of tags attached to question
+     * Begins setting up horizontal scrollview ViewGroup for tags
+     * @param tags The ArrayList of tags
      */
-    private void showQuestionTags(ArrayList<String> tags) {
+    private void showQuestionTags(ArrayList<String> tags){
 
-        if (tags != null && tags.size() > 0) {
-            for (int i = 0; i < tags.size(); i++) {
+        if(tags != null && tags.size() > 0){
+            for(int i = 0; i < tags.size(); i++) {
                 TextView text = new TextView(mContext);
-                text.setText("#" + tags.get(i) + "   ");
+                text.setText("#"+tags.get(i)+ "   ");
                 text.setTextColor(getResources().getColor(R.color.primary_dark));
                 taglist.addView(text);
             }
+
         }
+
     }
 
-
     /**
-     * Dynamically build Frequent Action Button depending on status of user.
+     * Sets up the FAB depending on user details
      */
     public void buildFab() {
 
-        String currentUserId = sharedPref.getString("user_id", "");
-        String questionOwner = "";
+            String currentUserId = sharedPref.getString("user_id", "");
+            String questionOwner = "";
         try {
             questionOwner = mQuestionInfo.getString("user_id");
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        if (currentUserId.equalsIgnoreCase(questionOwner)) {
-            //owner
-            fab.setIcon(getResources().getDrawable(R.drawable.ic_create_white_24dp), false);
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent mIntent = new Intent(mContext, CreateQuestionActivity.class);
-                    mIntent.putExtra("questionId", mQuestionId);
-                    startActivityForResult(mIntent, EDIT_QUESTION);
-                }
-            });
-            fab.setVisibility(View.VISIBLE);
-        } else {
-            getGroupActiveStatus();
-        }
+
+        if(currentUserId != null ? currentUserId.equalsIgnoreCase(questionOwner) : false){
+                //owner
+                fab.setIcon(getResources().getDrawable(R.drawable.ic_create_white_24dp), false);
+                fab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent mIntent = new Intent(mContext, CreateQuestionActivity.class);
+                        mIntent.putExtra("questionId", mQuestionId);
+                        startActivityForResult(mIntent, EDIT_QUESTION);
+                    }
+                });
+                fab.setVisibility(View.VISIBLE);
+            }else{
+                getGroupActiveStatus();
+            }
 
     }
 
     /**
-     * LRU Cache call that retrieves users image via URL if the image is not in the Cache
-     * The LRU displays and saves the image once it has been recovered.
-     * @param imageUrl image address
-     * @param imageView view to show image in once it is recovered
+     * Grabs the group leader's image from the server
+     * @param imageUrl The URL of the image
+     * @param imageView The ImageView to be populated
      */
-    private void getUserImage(String imageUrl, final ImageView imageView) {
+    private void getUserImage(String imageUrl, final ImageView imageView){
 
         ImageLoader imageLoader = Singleton.getInstance().getImageLoader();
+
         imageLoader.get(imageUrl, new ImageLoader.ImageListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                //Log.e(TAG, "Image Load Error: " + error.getMessage());
             }
 
             @Override
@@ -422,23 +435,27 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
                 }
             }
         });
+
     }
 
     /**
-     * Builds the GoogleApiClient to be able to use the maps API
+     * Sets up the Google API Client
      */
-    protected synchronized void buildGoogleApiClient() {
+    private synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(mContext)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
+
         mGoogleApiClient.connect();
+
+
     }
 
-
     /**
-     * Implemented method from GoogleApiClient
+     * Once GoogleApi is connected, grab the location
+     * @param bundle Stored bundle, unused
      */
     @Override
     public void onConnected(Bundle bundle) {
@@ -446,7 +463,8 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
     }
 
     /**
-     * Implemented method from GoogleApiClient
+     * When connection is suspended, report the error
+     * @param i Unused, necessary for overriding
      */
     @Override
     public void onConnectionSuspended(int i) {
@@ -454,58 +472,67 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
     }
 
     /**
-     * Implemented method from GoogleApiClient
+     * When connection has failed, report the error
+     * @param connectionResult The result of the connection
      */
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         showConnectionIssueDialog();
     }
 
+    /**
+     * Sets up OnClickListeners for specified views
+     * @param v The view in question
+     */
     @Override
     public void onClick(View v) {
-        if (v == sendButton) {
-            if (!commentEditText.getText().toString().equalsIgnoreCase("")) {
+        if(v == sendButton){
+            if(!commentEditText.getText().toString().equalsIgnoreCase("")) {
                 commentEditText.clearError();
                 InputMethodManager imm = (InputMethodManager) mContext.getSystemService(
                         Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(commentEditText.getWindowToken(), 0);
                 addComment();
-            } else {
+            }
+            else{
                 commentEditText.setError("");
             }
+
+
         }
+
     }
 
-
     /**
-     * Overrides location listener to save current location for distance math
-     * @param location
+     * When location is changed, change member variable to reflect location change
+     * @param location The new location
      */
     @Override
     public void onLocationChanged(Location location) {
         mCurrentLocation = location;
+
     }
 
     /**
-     * Shows Snackbar on connection issue
+     * Snackbar dialog for connection issues
      */
-    private void showConnectionIssueDialog() {
-        if ((getActivity()) != null)
+    private void showConnectionIssueDialog(){
+        Toast.makeText(mContext, "Connection error, try again", Toast.LENGTH_SHORT).show();
+        if( getActivity() != null)
             ((ViewQuestionActivity) getActivity()).mSnackBar.show();
     }
 
-
     /**
-     * RecyclerView Adapter for question comments RecyclerView
+     * Sets up the RecyclerView of comments
      */
-    public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.ViewHolder> {
+    public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.ViewHolder>{
 
-        private JSONArray commentList;
-        private int rowLayout;
+        private final JSONArray commentList;
+        private final int rowLayout;
 
-        public RecycleViewAdapter(JSONArray commentList, int rowLayout) {
+        public RecycleViewAdapter(JSONArray commentList) {
             this.commentList = commentList;
-            this.rowLayout = rowLayout;
+            this.rowLayout = R.layout.question_comment_item;
         }
 
         @Override
@@ -524,19 +551,26 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
                 String text = commentList.getJSONObject(position).getJSONObject("map").getString("comment");
                 String date = commentList.getJSONObject(position).getJSONObject("map").getString("posted");
 
-                if (commentList.getJSONObject(position).getJSONObject("map").has("image") &&
-                        !commentList.getJSONObject(position).getJSONObject("map").getString("image").equalsIgnoreCase("")) {
+
+                if(commentList.getJSONObject(position).getJSONObject("map").has("image") &&
+                        !commentList.getJSONObject(position).getJSONObject("map").getString("image").equalsIgnoreCase("")){
                     String userImageUrl = commentList.getJSONObject(position).getJSONObject("map").getString("image");
                     getUserImage(userImageUrl, viewHolder.userImage);
                 }
 
+
                 viewHolder.nameText.setText(firstName + " " + lastName);
+
                 viewHolder.questionText.setText(text);
                 viewHolder.dateText.setText(Singleton.getInstance().doDateLogic(date));
+
+
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+
         }
 
         @Override
@@ -547,19 +581,20 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
         public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
 
-            public ImageView userImage;
-            public TextView questionText;
-            public TextView nameText;
-            public TextView dateText;
+            public final ImageView userImage;
+            public final TextView questionText;
+            public final TextView nameText;
+            public final TextView dateText;
 
-
-            //Declare views here, fill them in onBindViewHolder
+            //Declare views here, dont fill them
             public ViewHolder(View itemView) {
                 super(itemView);
                 questionText = (TextView) itemView.findViewById(R.id.comment_text);
                 nameText = (TextView) itemView.findViewById(R.id.comment_name_text);
                 dateText = (TextView) itemView.findViewById(R.id.comment_timestamp);
                 userImage = (ImageView) itemView.findViewById(R.id.comment_user_image);
+
+
                 userImage.setOnClickListener(this);
                 nameText.setOnClickListener(this);
 
@@ -569,7 +604,7 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
             @Override
             public void onClick(View v) {
 
-                if ((v == nameText || v == userImage)) {
+                if((v == nameText || v == userImage)){
 
                     try {
                         String userId = commentList.getJSONObject(getAdapterPosition()).getJSONObject("map").getString("user_id");
@@ -580,17 +615,18 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
                         e.printStackTrace();
                         Toast.makeText(mContext, "Missing UserId", Toast.LENGTH_SHORT).show();
                     }
+
                 }
+
             }
         }
 
     }
 
-
     /**
-     * Confirmation dialog to remove user from group
+     * FAB option for members in the group that are not the group owner
      */
-    private void showRemoveYourselfDialog() {
+    private void showRemoveYourselfDialog(){
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage("Are you sure you want to remove yourself from this group?");
@@ -612,15 +648,13 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
     }
 
     /**
-     * Constructs an AlertDialog that allows the user to choose how they want to join
-     * the group. The Dialog will only show available options.
-     * Options - Group member or Tutor
+     * FAB option for non-members viewing the group
      */
-    private void showJoinDialog() {
+    private void showJoinDialog(){
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        if (mStudyGroupBool && mTutorBool) {
+        if(mStudyGroupBool && mTutorBool) {
             builder.setMessage("Would you like to join as a tutor or a group member?");
             builder.setPositiveButton("Member", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
@@ -632,7 +666,7 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
                     sendAskToJoinGroup(1);
                 }
             });
-        } else if (mStudyGroupBool && !mTutorBool) {
+        } else if (mStudyGroupBool) {
             builder.setMessage("Would you like to join as a group member?");
             builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
@@ -645,7 +679,7 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
                     dialog.dismiss();
                 }
             });
-        } else if (!mStudyGroupBool && mTutorBool) {
+        } else if (mTutorBool) {
             builder.setMessage("Would you like to join as a tutor?");
             builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
@@ -665,7 +699,7 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
     }
 
     /**
-     * Volley request to add a comment to a question
+     * Reports newly added comment to the server and updates the RecyclerView
      */
     private void addComment() {
         SharedPreferences sharedPref = mContext.getSharedPreferences(
@@ -679,21 +713,22 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
         String paramString = URLEncodedUtils.format(params, "utf-8")
                 .replaceAll("%27", "%27%27");
 
-        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/addComment?" + paramString;
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/addComment?"+paramString;
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
-                (JSONObject) null,
-                new Response.Listener<JSONObject>() {
+                (JSONObject)null,
+                new Response.Listener<JSONObject>(){
 
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
 
                             JSONObject result = new JSONObject(response.toString());
-                            if (result.getString("success").equalsIgnoreCase("1")) {
+                            if(result.getString("success").equalsIgnoreCase("1")){
                                 commentEditText.setText("");
                                 getCommentsData();
-                            } else {
+                            }
+                            else{
                                 Toast.makeText(mContext, "Error posting comment", Toast.LENGTH_SHORT).show();
                             }
 
@@ -706,7 +741,6 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                System.out.println("Error with connection or url: " + error.toString());
             }
 
         });
@@ -715,36 +749,35 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
     }
 
-
     /**
-     * Initiate the volley request to notify the owner of this question to add this user to the group
-     * @param type 1 for tutor, 0 otherwise
+     * Sends join group request on dialog acceptance
+     * @param type Tutor or member
      */
     private void sendAskToJoinGroup(int type) {
         SharedPreferences sharedPref = mContext.getSharedPreferences(
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
-        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        List<NameValuePair> params = new LinkedList<>();
         params.add(new BasicNameValuePair("questionId", mQuestionId));
         params.add(new BasicNameValuePair("userId", sharedPref.getString("user_id", "")));
         params.add(new BasicNameValuePair("tutor", type + ""));
 
         String paramString = URLEncodedUtils.format(params, "utf-8");
-        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/askToJoinGroup?" + paramString;
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/askToJoinGroup?"+paramString;
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
-                (JSONObject) null,
-                new Response.Listener<JSONObject>() {
+                (JSONObject)null,
+                new Response.Listener<JSONObject>(){
 
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
 
                             JSONObject result = new JSONObject(response.toString());
-                            System.out.println("sending group result " + result);
-                            if (result.getString("success").equalsIgnoreCase("1")) {
+                            if(result.getString("success").equalsIgnoreCase("1")){
                                 Toast.makeText(mContext, "Requested to join the group!", Toast.LENGTH_SHORT).show();
-                            } else {
+                            }
+                            else{
                                 Toast.makeText(mContext, "Error Sending Group Request!", Toast.LENGTH_SHORT).show();
                             }
 
@@ -757,7 +790,6 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                System.out.println("Error with connection or url: " + error.toString());
             }
 
         });
@@ -766,46 +798,45 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
     }
 
-
     /**
-     * Volley call to check a users status inside this question/group
+     * Grabs the status of the viewer and whether he is in the group
      */
-    private void getGroupActiveStatus() {
+    private void getGroupActiveStatus(){
 
-        List<NameValuePair> params = new LinkedList<NameValuePair>();
+        List<NameValuePair> params = new LinkedList<>();
         params.add(new BasicNameValuePair("userId", sharedPref.getString("user_id", "")));
 
         String paramString = URLEncodedUtils.format(params, "utf-8");
-        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/inGroup?" + paramString;
+        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/inGroup?"+paramString;
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
-                (JSONObject) null,
-                new Response.Listener<JSONObject>() {
+                (JSONObject)null,
+                new Response.Listener<JSONObject>(){
 
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
 
                             JSONObject result = new JSONObject(response.toString());
-
-                            if (result.getString("success").equalsIgnoreCase("1")) {
-                                if (result.getString("expectResults").equalsIgnoreCase("1")) {
+                            if(result.getString("success").equalsIgnoreCase("1")){
+                                if(result.getString("expectResults").equalsIgnoreCase("1")) {
                                     String questionId = result.getJSONObject("result").getJSONArray("myArrayList").getJSONObject(0).getJSONObject("map").getString("question_id");
 
                                     if (questionId.equalsIgnoreCase(mQuestionId)) {
+                                        //show remove yourself button
 
                                         fab.setIcon(getResources().getDrawable(R.drawable.ic_remove_white_24dp), false);
                                         fab.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
+                                                //Do edit dialog??
                                                 showRemoveYourselfDialog();
                                             }
                                         });
                                         fab.setVisibility(View.VISIBLE);
-                                    } else {
-                                        //Hide button, your in a group, but not this one.
                                     }
-                                } else {//Not in a group. Show want to add button
+                                }
+                                else{//Not in a group. Show want to add button
                                     fab.setIcon(getResources().getDrawable(R.drawable.ic_person_add_white_18dp), false);
                                     fab.setOnClickListener(new View.OnClickListener() {
                                         @Override
@@ -814,7 +845,9 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
                                         }
                                     });
                                     fab.setVisibility(View.VISIBLE);
+
                                 }
+
                             }
 
                         } catch (JSONException e) {
@@ -826,7 +859,6 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                System.out.println("Error with connection or url: " + error.toString());
                 showConnectionIssueDialog();
             }
 
@@ -836,64 +868,63 @@ public class ViewQuestionFragment extends Fragment implements GoogleApiClient.Co
 
     }
 
-    /**
-     * Volley call to remove user from this question
-     * @param userId String of userId to remove
-     */
-    private void removeYourselfFromGroup(final String userId) {
 
-        List<NameValuePair> params = new LinkedList<NameValuePair>();
-        params.add(new BasicNameValuePair("userId", userId));
+        private void removeYourselfFromGroup(final String userId) {
 
-        String paramString = URLEncodedUtils.format(params, "utf-8");
-        String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/removeUser?" + paramString;
+            List<NameValuePair> params = new LinkedList<>();
+            params.add(new BasicNameValuePair("userId", userId));
 
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
-                (JSONObject) null,
-                new Response.Listener<JSONObject>() {
+            String paramString = URLEncodedUtils.format(params, "utf-8");
+            String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/removeUser?" + paramString;
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
+            JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url,
+                    (JSONObject) null,
+                    new Response.Listener<JSONObject>() {
 
-                            JSONObject result = new JSONObject(response.toString());
-                            if (result.getString("success").equalsIgnoreCase("1")) {
-                                Toast.makeText(mContext, "User removed", Toast.LENGTH_SHORT).show();
-                                buildFab();
-                            } else {
-                                Toast.makeText(mContext, "Error removing user", Toast.LENGTH_SHORT).show();
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+
+                                JSONObject result = new JSONObject(response.toString());
+                                if (result.getString("success").equalsIgnoreCase("1")) {
+                                    Toast.makeText(mContext, "User removed", Toast.LENGTH_SHORT).show();
+                                    buildFab();
+                                    //getActivity().setResult(getActivity().RESULT_OK);
+                                    //getActivity().finish();
+                                } else {
+                                    Toast.makeText(mContext, "Error removing user", Toast.LENGTH_SHORT).show();
+                                }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
+                    }, new Response.ErrorListener() {
 
-                    }
-                }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    showConnectionIssueDialog();
+                }
 
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                System.out.println("Error with connection or url: " + error.toString());
-                showConnectionIssueDialog();
-            }
+            });
 
-        });
+            Singleton.getInstance().addToRequestQueue(jsObjRequest);
 
-        Singleton.getInstance().addToRequestQueue(jsObjRequest);
-
-    }
+        }
 
     /**
-     * Monitor callbacks from recently closed activities
-     * @param requestCode unique activity id
-     * @param resultCode status
-     * @param data attached bundle
+     * Once CreateQuestionActivity has finished, record results
+     * @param requestCode The requestCode from CreateQuestionActivity
+     * @param resultCode The resultCode and whether it was a success
+     * @param data The data sent back
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+        // Check which request we're responding to
         if (requestCode == EDIT_QUESTION) {
-            if (resultCode == getActivity().RESULT_OK) {
+            // Make sure the request was successful
+            if (resultCode == Activity.RESULT_OK) {
                 ((ViewQuestionActivity) getActivity()).getQuestionData();
                 mQuestionInfo = ((ViewQuestionActivity) getActivity()).mQuestionInfo;
                 tags = ((ViewQuestionActivity) getActivity()).tags;
