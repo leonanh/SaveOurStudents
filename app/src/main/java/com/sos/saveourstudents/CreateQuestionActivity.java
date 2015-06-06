@@ -6,8 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 
 
+/**
+ * This activity is only used to initialize CreateQuestionFragment
+ */
 public class CreateQuestionActivity extends AppCompatActivity {
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
