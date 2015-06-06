@@ -66,7 +66,6 @@ public class MemberWantsToJoinActivity extends AppCompatActivity implements View
 
         getUserInfo();
 
-
         userProfile = (RelativeLayout) findViewById(R.id.joining_member_info);
         acceptButton = (FloatingActionButton) findViewById(R.id.accept_fab);
         declineButton = (FloatingActionButton) findViewById(R.id.decline_fab);
@@ -106,7 +105,6 @@ public class MemberWantsToJoinActivity extends AppCompatActivity implements View
         imageLoader.get(imageUrl, new ImageLoader.ImageListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                //Log.e(TAG, "Image Load Error: " + error.getMessage());
             }
 
             @Override
@@ -159,7 +157,6 @@ public class MemberWantsToJoinActivity extends AppCompatActivity implements View
                                     getUserImage(userObject.getString("image"), userImage);
                                 }
 
-
                             } else {
                                 //Error...
                             }
@@ -204,7 +201,6 @@ public class MemberWantsToJoinActivity extends AppCompatActivity implements View
                             } else {
                                 Toast.makeText(MemberWantsToJoinActivity.this, "Error Accepting User", Toast.LENGTH_SHORT).show();
                             }
-
 
                         } catch (JSONException e) {
                             e.printStackTrace();

@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -26,7 +25,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 public class SignupActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -98,10 +96,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             //Perform database signup
             if (passCheck && email && firstCheck && lastCheck && regid != null) {
 
-                //==================================================================================
-
-
-                //http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createUser
                 String url = "http://54.200.33.91:8080/com.mysql.services/rest/serviceclass/createUser?" +
                         "firstName=" + firstName  +
                         "&lastName=" + lastName  +
@@ -119,14 +113,11 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
                                     if(response.getString("success").equalsIgnoreCase("1")){
                                         // Sign Up successful
-                                        //Intent loginActivity = new Intent(SignupActivity.this, LoginActivity.class);
-                                        //startActivity(loginActivity);
                                         finish();
 
                                     } else {
                                         //Failed to Sign Up b/c email is taken
                                         emailInput.setError("Email is taken");
-                                        //response.getJSONObject("result").getJSONArray("myArrayList");
                                     }
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -142,7 +133,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
 
                 Singleton.getInstance().addToRequestQueue(jsObjRequest);
-                //==================================================================================
             }
         }
 
@@ -256,7 +246,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
      * @return The registration ID
      */
     private String getRegistrationId(Context context) {
-        //final SharedPreferences prefs = getGCMPreferences(context);
         SharedPreferences sharedPref = getSharedPreferences(
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         String registrationId = sharedPref.getString(PROPERTY_REG_ID, "");

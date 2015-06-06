@@ -47,6 +47,10 @@ public class ForgotLoginActivity extends Activity implements View.OnClickListene
 
     }
 
+    /**
+     * Implemented View event listener
+     * @param v
+     */
     @Override
     public void onClick(View v) {
         if(v == sendEmailBtn) {
