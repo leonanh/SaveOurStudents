@@ -24,7 +24,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -210,15 +209,24 @@ public class ViewQuestionLocationFragment extends android.support.v4.app.Fragmen
         mGoogleApiClient.connect();
     }
 
+    /**
+     * Implemented method from GoogleApiClient
+     */
     @Override
     public void onConnected(Bundle bundle) {
     }
 
+    /**
+     * Implemented method from GoogleApiClient
+     */
     @Override
     public void onConnectionSuspended(int i) {
 
     }
 
+    /**
+     * Implemented method from GoogleApiClient
+     */
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
